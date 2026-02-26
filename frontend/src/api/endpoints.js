@@ -13,10 +13,12 @@ const ENDPOINTS = {
   },
   USERS: {
     ALL: "/api/users/all-users",
+    Status: (id) => `/api/users/${id}/status`,
   },
-  CodeS: {
+  Codes: {
     Create: "/api/code/create",
     ALL: "/api/code/all-codes",
+    Import: "/api/code/import",
   },
 };
 

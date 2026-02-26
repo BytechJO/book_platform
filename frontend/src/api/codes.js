@@ -10,7 +10,7 @@ const fetcher = (url) =>
 // GET ALL CODES (Admin only)
 // =============================
 export function useGetCodes() {
-  const URL = ENDPOINTS.CodeS.ALL;
+  const URL = ENDPOINTS.Codes.ALL;
     const { data, isLoading, error, isValidating } =    
     useSWR(URL, fetcher);
 

@@ -28,11 +28,15 @@ export default function DashBar() {
       sx={{
         backgroundColor: "#1A4D96",
         boxShadow: "none",
-        pt: 2.5,
-        height: 40,
       }}
     >
-      <Toolbar sx={{ justifyContent: "space-between" }}>
+      <Toolbar
+        sx={{
+          justifyContent: "space-between",
+          minHeight: 70, 
+          px: 2,
+        }}
+      >
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <img
             src={logoWhite}

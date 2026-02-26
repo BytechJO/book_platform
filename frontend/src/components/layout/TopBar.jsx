@@ -31,7 +31,13 @@ export default function TopBar() {
       }}
     >
       <Toolbar sx={{ justifyContent: "space-between" }}>
-        <Typography variant="h6" fontWeight="500">
+        <Typography
+          variant="h6"
+          fontWeight="500"
+          onClick={() => navigate("/admin/dashboard")}
+          sx={{ cursor: "pointer", ml: 2 }}
+          fontSize="34px"
+        >
           Publisher Platform
         </Typography>
 
@@ -99,7 +105,6 @@ export default function TopBar() {
               horizontal: "right",
             }}
           >
-            
             <MenuItem
               onClick={() => {
                 localStorage.removeItem("token");

@@ -1,0 +1,22 @@
+export default function DeleteIconButton({ size = 32 }) {
+  return (
+    <svg
+      width={size}
+      height={(size * 31) / 32}
+      viewBox="0 0 32 31"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {/* Background */}
+      <rect width="32" height="31" rx="4" fill="#E74C3C" />
+
+      {/* Delete Icon */}
+      <g transform="translate(8,6)">
+        <path
+          d="M3 18C2.45 18 1.97917 17.8042 1.5875 17.4125C1.19583 17.0208 1 16.55 1 16V3H0V1H5V0H11V1H16V3H15V16C15 16.55 14.8042 17.0208 14.4125 17.4125C14.0208 17.8042 13.55 18 13 18H3ZM13 3H3V16H13V3ZM5 14H7V5H5V14ZM9 14H11V5H9V14Z"
+          fill="white"
+        />
+      </g>
+    </svg>
+  );
+}

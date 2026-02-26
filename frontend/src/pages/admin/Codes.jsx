@@ -16,12 +16,23 @@ import {
   TableBody,
   Paper,
   Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Snackbar,
+  Alert,
+  CircularProgress,
+  Backdrop,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import DownloadIcon from "@mui/icons-material/Download";
 import * as XLSX from "xlsx";
 import { useGetCodes, useGetBooks } from "src/api";
 import { Helmet } from "react-helmet-async";
+import axiosInstance from "src/api/axios";
+import ENDPOINTS from "src/api/endpoints";
+import DownloadButtonIcon from "src/components/icons/DownloadButtonIcon";
+import { useRef } from "react";
 
 function formatDate(iso) {
   if (!iso) return "—";
@@ -42,12 +53,20 @@ function roleLabel(role) {
 }
 
 export default function Codes() {
-  const { codes = [], loading, error } = useGetCodes();
+  const { codes = [], loading, error, refetch } = useGetCodes();
   const { books = [] } = useGetBooks();
   const [search, setSearch] = useState("");
   const [bookId, setBookId] = useState("all");
   const [status, setStatus] = useState("all");
   const [role, setRole] = useState("all");
+  const [openDialog, setOpenDialog] = useState(false);
+  const fileInputRef = useRef(null);
+  const [importLoading, setImportLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -93,7 +112,87 @@ export default function Codes() {
 
     XLSX.writeFile(workbook, "codes.xlsx");
   };
+  const handleGenerateCodes = async (e) => {
+    e.preventDefault();
 
+    const formData = new FormData(e.currentTarget);
+
+    const number_of_codes = Number(formData.get("number_of_codes"));
+    const allowed_role = formData.get("allowed_role");
+    const validity_months = Number(formData.get("validity_months"));
+
+    if (!number_of_codes || number_of_codes <= 0) return;
+
+    try {
+      await axiosInstance.post(ENDPOINTS.Codes.Create, {
+        number_of_codes,
+        allowed_role,
+        validity_months,
+      });
+
+      await refetch();
+      setOpenDialog(false);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  const handleImportExcel = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = async (e) => {
+      try {
+        setImportLoading(true); // 🔥 يبدأ بعد اختيار الملف
+
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: "array" });
+
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+        const parseDate = (dateStr) => {
+          if (!dateStr || dateStr === "—") return null;
+          const [day, month, year] = dateStr.split("/");
+          return new Date(`${year}-${month}-${day}`);
+        };
+
+        const formattedCodes = jsonData.map((row) => ({
+          code: row.Code?.trim(),
+          validity_months: Number(row["Validity (Months)"]) || 0,
+          allowed_role: row.Role?.toLowerCase(),
+          is_used: row.Status === "Used",
+          created_at: parseDate(row.Created) || new Date(),
+          used_at: parseDate(row.Used),
+        }));
+
+        await axiosInstance.post(ENDPOINTS.Codes.Import, {
+          codes: formattedCodes,
+        });
+
+        await refetch();
+
+        setSnackbar({
+          open: true,
+          message: "Codes imported successfully ✅",
+          severity: "success",
+        });
+      } catch (error) {
+        setSnackbar({
+          open: true,
+          message: error.response?.data?.message || "Failed to import codes ❌",
+          severity: "error",
+        });
+      } finally {
+        setImportLoading(false);
+      }
+    };
+
+    reader.readAsArrayBuffer(file);
+  };
   return (
     <>
       <Helmet>
@@ -125,29 +224,45 @@ export default function Codes() {
             <Button
               variant="contained"
               sx={{
-                backgroundColor: "#2d5aa7",
+                height: 36,
+                px: 3,
+                borderRadius: "4px",
                 textTransform: "none",
-                borderRadius: 1.5,
-                px: 2,
-                "&:hover": { backgroundColor: "#244a86" },
+                fontWeight: 500,
+                fontSize: 15,
+                backgroundColor: "#FFFFFF",
+                color: "#2B5A9E",
               }}
-              onClick={() => {
-                alert("Generate Code (TODO)");
+              onClick={() => fileInputRef.current.click()}
+            >
+              Import Code
+            </Button>
+
+            <input
+              type="file"
+              accept=".xlsx, .xls"
+              hidden
+              ref={fileInputRef}
+              onChange={handleImportExcel}
+            />
+            <Button
+              variant="contained"
+              sx={{
+                height: 36,
+                px: 3,
+                borderRadius: "4px",
+                textTransform: "none",
+                fontWeight: 500,
+                fontSize: 15,
+                backgroundColor: "#2B5A9E",
               }}
+              onClick={() => setOpenDialog(true)}
             >
               Generate Code
             </Button>
 
-            <IconButton
-              onClick={handleExportExcel}
-              sx={{
-                border: "1px solid #d6dbe6",
-                borderRadius: 1.5,
-                width: 40,
-                height: 40,
-              }}
-            >
-              <DownloadIcon />
+            <IconButton onClick={handleExportExcel} sx={{ p: 0 }}>
+              <DownloadButtonIcon size={36} />
             </IconButton>
           </Stack>
         </Box>
@@ -236,37 +351,66 @@ export default function Codes() {
         <Paper
           elevation={0}
           sx={{
-            borderRadius: 2,
-            border: "1px solid #e6eaf2",
-            overflow: "hidden",
-            backgroundColor: "white",
+            width: "100%",
+            backgroundColor: "transparent",
+            boxShadow: "none",
           }}
         >
-          <Table>
+          <Table
+            sx={{
+              width: "100%",
+              tableLayout: "fixed",
+              "& .MuiTableCell-root": {
+                borderBottom: "none",
+                paddingTop: "18px",
+                paddingBottom: "18px",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              },
+            }}
+          >
+            <colgroup>
+              <col style={{ width: "22%" }} /> {/* Code */}
+              <col style={{ width: "15%" }} /> {/* Validity */}
+              <col style={{ width: "15%" }} /> {/* Role */}
+              <col style={{ width: "15%" }} /> {/* Status */}
+              <col style={{ width: "16.5%" }} /> {/* Created */}
+              <col style={{ width: "16.5%" }} /> {/* Used */}
+            </colgroup>
             <TableHead>
-              <TableRow>
-                <TableCell sx={{ color: "#7a869a", fontWeight: 500 }}>
+              <TableRow sx={{ borderBottom: "2px solid #e0e0e0" }}>
+                <TableCell sx={{ color: "#7a869a", fontSize: 16 }}>
                   Code
                 </TableCell>
                 <TableCell
                   align="center"
-                  sx={{
-                    color: "#7a869a",
-                    fontWeight: 500,
-                  }}
+                  sx={{ color: "#7a869a", fontSize: 16 }}
                 >
                   Validity (Months)
                 </TableCell>
-                <TableCell sx={{ color: "#7a869a", fontWeight: 500 }}>
+                <TableCell
+                  align="center"
+                  sx={{ color: "#7a869a", fontSize: 16 }}
+                >
                   Role
                 </TableCell>
-                <TableCell sx={{ color: "#7a869a", fontWeight: 500 }}>
+                <TableCell
+                  align="center"
+                  sx={{ color: "#7a869a", fontSize: 16 }}
+                >
                   Status
                 </TableCell>
-                <TableCell sx={{ color: "#7a869a", fontWeight: 500 }}>
+                <TableCell
+                  align="center"
+                  sx={{ color: "#7a869a", fontSize: 16 }}
+                >
                   Created
                 </TableCell>
-                <TableCell sx={{ color: "#7a869a", fontWeight: 500 }}>
+                <TableCell
+                  align="center"
+                  sx={{ color: "#7a869a", fontSize: 16 }}
+                >
                   Used
                 </TableCell>
               </TableRow>
@@ -303,8 +447,21 @@ export default function Codes() {
               {!loading &&
                 !error &&
                 filtered.map((c) => (
-                  <TableRow key={c.id} hover>
-                    <TableCell sx={{ fontFamily: "monospace" }}>
+                  <TableRow
+                    key={c.id}
+                    sx={{
+                      "&:hover": {
+                        backgroundColor: "#f9fafc",
+                      },
+                    }}
+                  >
+                    <TableCell
+                      sx={{
+                        fontFamily: "Roboto",
+                        fontSize: 16,
+                        color: "#333333",
+                      }}
+                    >
                       {c.code}
                     </TableCell>
                     <TableCell
@@ -312,14 +469,17 @@ export default function Codes() {
                       sx={{
                         color: "#0073D8",
                         fontWeight: 400,
+                        fontFamily: "Roboto",
+                        fontSize: 16,
                       }}
                     >
                       {c.validity_months}
                     </TableCell>
-                    <TableCell>{roleLabel(c.allowed_role)}</TableCell>
+                    <TableCell align="center">
+                      {roleLabel(c.allowed_role)}
+                    </TableCell>
 
-                    {/* Status placeholder */}
-                    <TableCell>
+                    <TableCell align="center">
                       <Typography
                         sx={{
                           fontWeight: 500,
@@ -330,8 +490,12 @@ export default function Codes() {
                       </Typography>
                     </TableCell>
 
-                    <TableCell sx={{ color: "#7a869a" }}>
+                    <TableCell align="center" sx={{ color: "#7a869a" }}>
                       {formatDate(c.created_at)}
+                    </TableCell>
+
+                    <TableCell align="center" sx={{ color: "#7a869a" }}>
+                      {c.used_at ? formatDate(c.used_at) : "—"}
                     </TableCell>
 
                     {/* Used placeholder */}
@@ -341,7 +505,200 @@ export default function Codes() {
             </TableBody>
           </Table>
         </Paper>
+        <Dialog
+          open={openDialog}
+          onClose={() => setOpenDialog(false)}
+          maxWidth={false}
+          fullWidth
+          PaperProps={{
+            component: "form",
+            onSubmit: handleGenerateCodes,
+            sx: {
+              width: 540,
+              borderRadius: "30px",
+              p: 3,
+            },
+          }}
+        >
+          <DialogTitle
+            sx={{
+              textAlign: "center",
+              fontWeight: 600,
+              color: "#2d5aa7",
+              fontSize: 20,
+            }}
+          >
+            Generate Activation Codes
+          </DialogTitle>
+
+          <DialogContent sx={{ mt: 2 }}>
+            <Stack spacing={3}>
+              {/* Number of Codes */}
+              <Box>
+                <Typography
+                  sx={{
+                    fontSize: 16,
+                    fontWeight: 500,
+                    mb: 1,
+                    color: "#7A869A",
+                  }}
+                >
+                  Number of Codes *
+                </Typography>
+
+                <TextField
+                  name="number_of_codes"
+                  fullWidth
+                  placeholder="Enter number of codes"
+                  InputProps={{
+                    sx: {
+                      height: 56,
+                      borderRadius: "12px",
+                      backgroundColor: "#F9FBFF",
+                    },
+                  }}
+                />
+              </Box>
+
+              {/* Role */}
+              <Box>
+                <Typography
+                  sx={{
+                    fontSize: 16,
+                    fontWeight: 500,
+                    mb: 1,
+                    color: "#7A869A",
+                  }}
+                >
+                  Role *
+                </Typography>
+
+                <FormControl fullWidth>
+                  <Select
+                    name="allowed_role"
+                    defaultValue="teacher"
+                    displayEmpty
+                    sx={{
+                      height: 56,
+                      borderRadius: "12px",
+                      backgroundColor: "#F9FBFF",
+                    }}
+                  >
+                    <MenuItem value="teacher">Teacher</MenuItem>
+                    <MenuItem value="student">Student</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+
+              {/* Validity */}
+              <Box>
+                <Typography
+                  sx={{
+                    fontSize: 16,
+                    fontWeight: 500,
+                    mb: 1,
+                    color: "#7A869A",
+                  }}
+                >
+                  Validity Duration (Months) *
+                </Typography>
+
+                <TextField
+                  name="validity_months"
+                  type="number"
+                  required
+                  fullWidth
+                  placeholder="Enter number of months"
+                  inputProps={{ min: 1 }}
+                  InputProps={{
+                    sx: {
+                      height: 56,
+                      borderRadius: "12px",
+                      backgroundColor: "#F9FBFF",
+                    },
+                  }}
+                />
+              </Box>
+            </Stack>
+          </DialogContent>
+          <DialogActions
+            sx={{
+              justifyContent: "center",
+              gap: 3,
+              pb: 5,
+            }}
+          >
+            {/* Generate */}
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                width: 126,
+                height: 59,
+                borderRadius: "10px",
+                textTransform: "none",
+                fontWeight: 600,
+                fontSize: 16,
+                backgroundColor: "#ECECEC",
+                color: "#2B5A9E",
+                boxShadow: "none",
+                "&:hover": {
+                  backgroundColor: "#DCDCDC",
+                  boxShadow: "none",
+                },
+              }}
+            >
+              Generate
+            </Button>
+
+            {/* Cancel */}
+            <Button
+              onClick={() => setOpenDialog(false)}
+              variant="contained"
+              sx={{
+                width: 126,
+                height: 59,
+                borderRadius: "10px",
+                textTransform: "none",
+                fontWeight: 600,
+                fontSize: 16,
+                backgroundColor: "#466FAA",
+                color: "#FFFFFF",
+                boxShadow: "none",
+                "&:hover": {
+                  backgroundColor: "#3D6399",
+                  boxShadow: "none",
+                },
+              }}
+            >
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
+      {/* Loading Overlay */}
+      <Backdrop
+        open={importLoading}
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 999 }}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+
+      {/* Snackbar Notification */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          severity={snackbar.severity}
+          variant="filled"
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </>
   );
 }
