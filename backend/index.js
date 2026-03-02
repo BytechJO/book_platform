@@ -2,11 +2,13 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const pool = require("./database/connection");
+const morgan = require("morgan");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(morgan("dev"));
 
 //  Import and use auth routes
 const authRouter = require("./router/auth");
@@ -23,7 +25,6 @@ app.use("/api/code", codeRouter);
 // Import and use user routes
 const userRouter = require("./router/user");
 app.use("/api/users", userRouter);
-
 
 app.get("/", async (req, res) => {
   try {

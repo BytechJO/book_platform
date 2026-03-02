@@ -4,15 +4,13 @@ import useSWR, { mutate } from "swr";
 import axiosInstance from "./axios";
 import ENDPOINTS from "./endpoints";
 
-const fetcher = (url) =>
-  axiosInstance.get(url).then((res) => res.data);
+const fetcher = (url) => axiosInstance.get(url).then((res) => res.data);
 // =============================
 // GET ALL CODES (Admin only)
 // =============================
 export function useGetCodes() {
   const URL = ENDPOINTS.Codes.ALL;
-    const { data, isLoading, error, isValidating } =    
-    useSWR(URL, fetcher);
+  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
 
   const memoizedValue = useMemo(
     () => ({
@@ -22,10 +20,34 @@ export function useGetCodes() {
       validating: isValidating,
       empty: !isLoading && !data?.length,
     }),
-    [data, error, isLoading, isValidating]
-  );    
-    const refetch = async () => {
+    [data, error, isLoading, isValidating],
+  );
+  const refetch = async () => {
     await mutate(URL);
-    };
-    return { ...memoizedValue, refetch };
+  };
+  return { ...memoizedValue, refetch };
+}
+
+export function useGetBookCodes(bookId) {
+  const URL = ENDPOINTS.Codes.getBookCodes(bookId);
+  const { data, isLoading, error, isValidating } = useSWR(
+    bookId ? URL : null,
+    fetcher,
+  );
+
+  const memoizedValue = useMemo(
+    () => ({
+      codes: data || [],
+      loading: isLoading,
+
+      error,
+      validating: isValidating,
+      empty: !isLoading && !data?.length,
+    }),
+    [data, error, isLoading, isValidating],
+  );
+  const refetch = async () => {
+    await mutate(URL);
+  };
+  return { ...memoizedValue, refetch };
 }

@@ -14,8 +14,10 @@ import Register from "../pages/auth/Register";
 import AuthLayout from "../pages/auth/authLayout";
 import ProtectedRoute from "../utils/ProtectedRoute";
 import Users from "../pages/admin/Users";
-import Books from "../pages/admin/Books";
+import Books from "../pages/admin/books/Books";
 import Codes from "../pages/admin/Codes";
+import CreateBook from "../pages/admin/books/CreateBook";
+import ViewBook from "../pages/admin/books/ViewBook";
 
 export default function AppRoutes() {
   return (
@@ -41,13 +43,15 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       >
-        {/* لما يفتح /admin مباشرة */}
         <Route index element={<Navigate to="dashboard" replace />} />
 
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="users" element={<Users />} />
         <Route path="books" element={<Books />} />
         <Route path="codes" element={<Codes />} />
+        <Route path="books/create" element={<CreateBook />} />
+        <Route path ="books/:id/edit" element={<CreateBook />} />
+        <Route path="books/:id" element={<ViewBook />} />
       </Route>
     </Routes>
   );

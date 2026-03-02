@@ -33,6 +33,7 @@ import axiosInstance from "src/api/axios";
 import ENDPOINTS from "src/api/endpoints";
 import DownloadButtonIcon from "src/components/icons/DownloadButtonIcon";
 import { useRef } from "react";
+import { LoadingButton } from "@mui/lab";
 
 function formatDate(iso) {
   if (!iso) return "—";
@@ -60,6 +61,7 @@ export default function Codes() {
   const [status, setStatus] = useState("all");
   const [role, setRole] = useState("all");
   const [openDialog, setOpenDialog] = useState(false);
+  const [generateLoading, setGenerateLoading] = useState(false);
   const fileInputRef = useRef(null);
   const [importLoading, setImportLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -120,20 +122,26 @@ export default function Codes() {
     const number_of_codes = Number(formData.get("number_of_codes"));
     const allowed_role = formData.get("allowed_role");
     const validity_months = Number(formData.get("validity_months"));
+    const book_id = formData.get("book_id");
 
     if (!number_of_codes || number_of_codes <= 0) return;
 
     try {
+      setGenerateLoading(true);
+
       await axiosInstance.post(ENDPOINTS.Codes.Create, {
         number_of_codes,
         allowed_role,
         validity_months,
+        book_id,
       });
 
       await refetch();
       setOpenDialog(false);
     } catch (err) {
       console.error(err);
+    } finally {
+      setGenerateLoading(false);
     }
   };
   const handleImportExcel = (event) => {
@@ -144,7 +152,7 @@ export default function Codes() {
 
     reader.onload = async (e) => {
       try {
-        setImportLoading(true); // 🔥 يبدأ بعد اختيار الملف
+        setImportLoading(true);
 
         const data = new Uint8Array(e.target.result);
         const workbook = XLSX.read(data, { type: "array" });
@@ -371,15 +379,19 @@ export default function Codes() {
             }}
           >
             <colgroup>
-              <col style={{ width: "22%" }} /> {/* Code */}
-              <col style={{ width: "15%" }} /> {/* Validity */}
-              <col style={{ width: "15%" }} /> {/* Role */}
-              <col style={{ width: "15%" }} /> {/* Status */}
-              <col style={{ width: "16.5%" }} /> {/* Created */}
-              <col style={{ width: "16.5%" }} /> {/* Used */}
+              <col style={{ width: "18%" }} /> {/* Book */}
+              <col style={{ width: "20%" }} /> {/* Code */}
+              <col style={{ width: "14%" }} /> {/* Validity */}
+              <col style={{ width: "14%" }} /> {/* Role */}
+              <col style={{ width: "14%" }} /> {/* Status */}
+              <col style={{ width: "10%" }} /> {/* Created */}
+              <col style={{ width: "10%" }} /> {/* Used */}
             </colgroup>
             <TableHead>
               <TableRow sx={{ borderBottom: "2px solid #e0e0e0" }}>
+                <TableCell sx={{ color: "#7a869a", fontSize: 16 }}>
+                  Book
+                </TableCell>
                 <TableCell sx={{ color: "#7a869a", fontSize: 16 }}>
                   Code
                 </TableCell>
@@ -455,6 +467,15 @@ export default function Codes() {
                       },
                     }}
                   >
+                    <TableCell
+                      sx={{
+                        fontFamily: "Roboto",
+                        fontSize: 16,
+                        color: "#333333",
+                      }}
+                    >
+                      {c.book_title || "—"}
+                    </TableCell>
                     <TableCell
                       sx={{
                         fontFamily: "Roboto",
@@ -559,7 +580,42 @@ export default function Codes() {
                   }}
                 />
               </Box>
+              <Box>
+                <Typography
+                  sx={{
+                    fontSize: 16,
+                    fontWeight: 500,
+                    mb: 1,
+                    color: "#7A869A",
+                  }}
+                >
+                  Book name *
+                </Typography>
 
+                <FormControl fullWidth>
+                  <Select
+                    name="book_id"
+                    required
+                    defaultValue=""
+                    displayEmpty
+                    sx={{
+                      height: 56,
+                      borderRadius: "12px",
+                      backgroundColor: "#F9FBFF",
+                    }}
+                  >
+                    <MenuItem value="" disabled>
+                      Select book
+                    </MenuItem>
+
+                    {books.map((b) => (
+                      <MenuItem key={b.id} value={b.id}>
+                        {b.title}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
               {/* Role */}
               <Box>
                 <Typography
@@ -629,10 +685,12 @@ export default function Codes() {
             }}
           >
             {/* Generate */}
-            <Button
+            <LoadingButton
               type="submit"
+              loading={generateLoading}
+              loadingPosition="center"
               variant="contained"
-              sx={{
+                 sx={{
                 width: 126,
                 height: 59,
                 borderRadius: "10px",
@@ -649,7 +707,7 @@ export default function Codes() {
               }}
             >
               Generate
-            </Button>
+            </LoadingButton>
 
             {/* Cancel */}
             <Button

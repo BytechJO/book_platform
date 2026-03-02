@@ -139,8 +139,28 @@ const importCodes = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+const getCodeByBookId = async (req, res) => {
+  try {
+    const { bookId } = req.params;
+    const result = await pool.query(
+      `SELECT id, code, validity_months, allowed_role, created_at, is_used
+        FROM book_codes
+        WHERE book_id = $1
+        ORDER BY created_at DESC`,
+      [bookId],
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Get codes by book ID error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  } 
+};
+
 module.exports = {
   createCode,
   getAllCodes,
   importCodes,
+  getCodeByBookId,
 };

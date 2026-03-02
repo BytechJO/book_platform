@@ -11,24 +11,45 @@ import {
   Button,
   IconButton,
   Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { useState, useMemo } from "react";
-import { useGetBooks } from "../../api";
-import EditIconButton from "../../components/icons/EditIconButton";
-import DeleteIconButton from "../../components/icons/DeleteIconButton";
+import { useGetBooks } from "../../../api";
+import EditIconButton from "../../../components/icons/EditIconButton";
+import DeleteIconButton from "../../../components/icons/DeleteIconButton";
 import { Helmet } from "react-helmet-async";
+import { useNavigate } from "react-router-dom";
+import axiosInstance from "src/api/axios";
+import ENDPOINTS from "src/api/endpoints";
 
 export default function Books() {
-  const { books = [] } = useGetBooks();
+  const { books = [], refetch } = useGetBooks();
   const [search, setSearch] = useState("");
-
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedBookId, setSelectedBookId] = useState(null);
+  const navigate = useNavigate();
   const filteredBooks = useMemo(() => {
     if (!search) return books;
     return books.filter((b) =>
       b.title?.toLowerCase().includes(search.toLowerCase()),
     );
   }, [books, search]);
+
+  const handleDelete = async () => {
+    try {
+      await axiosInstance.delete(ENDPOINTS.BOOKS.DELETE(selectedBookId));
+
+      setDeleteDialogOpen(false);
+      setSelectedBookId(null);
+      refetch();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <Box sx={{ py: 3 }}>
@@ -43,18 +64,48 @@ export default function Books() {
         }}
       >
         {/* Title */}
-        <Typography
+        <Box
           sx={{
-            fontFamily: "IBM Plex Sans Thai Looped",
-            fontSize: "40px",
-            fontWeight: 400,
-            color: "#2d5aa7",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
             mb: 3,
           }}
         >
-          All Books
-        </Typography>
+          <Typography
+            sx={{
+              fontFamily: "IBM Plex Sans Thai Looped",
+              fontSize: "40px",
+              fontWeight: 400,
+              color: "#2d5aa7",
+            }}
+          >
+            All Books
+          </Typography>
 
+          <Button
+            variant="contained"
+            onClick={() => {
+              navigate("create");
+            }}
+            sx={{
+              textTransform: "none",
+              fontWeight: 500,
+              fontSize: 15,
+              px: 3,
+              height: 42,
+              borderRadius: "8px",
+              backgroundColor: "#2B5A9E",
+              boxShadow: "none",
+              "&:hover": {
+                backgroundColor: "#244a86",
+                boxShadow: "none",
+              },
+            }}
+          >
+            Create Book
+          </Button>
+        </Box>
         {/* Search */}
         <Box sx={{ maxWidth: 350, mb: 4 }}>
           <TextField
@@ -92,23 +143,25 @@ export default function Books() {
               key={book.id}
               sx={{
                 borderRadius: 3,
-                overflow: "hidden", 
-                boxShadow: "0 2px 8px rgba(0,0,0,0.06)", 
+                overflow: "hidden",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
                 transition: "0.2s ease",
                 "&:hover": {
                   transform: "translateY(-4px)",
                   boxShadow: "0 6px 16px rgba(0,0,0,0.1)",
                 },
+                cursor: "pointer",
               }}
+              onClick={() => navigate(`/admin/books/${book.id}`)}
             >
               <CardMedia
                 component="img"
-                image={book.cover_image_url || "/placeholder-book.png"}
+                image={book.cover_image_url_short}
                 alt={book.title}
                 sx={{
                   width: "100%",
-                  aspectRatio: "3 / 4", 
-                  objectFit: "cover", 
+                  aspectRatio: "3 / 4",
+                  objectFit: "cover",
                   display: "block",
                 }}
               />
@@ -162,20 +215,40 @@ export default function Books() {
                   </Button>
 
                   <IconButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/admin/books/${book.id}/edit`);
+                    }}
                     sx={{
-                      p: 0, 
-                      width: 32,
-                      height: 31,
+                      p: 0,
+                      width: 34,
+                      height: 34,
+                      borderRadius: "8px",
+                      transition: "all 0.2s ease",
+                      "&:hover": {
+                        backgroundColor: "#e3ecf8",
+                        transform: "scale(1.1)",
+                      },
                     }}
                   >
                     <EditIconButton size={32} />
                   </IconButton>
-
                   <IconButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedBookId(book.id);
+                      setDeleteDialogOpen(true);
+                    }}
                     sx={{
                       p: 0,
-                      width: 32,
-                      height: 31,
+                      width: 34,
+                      height: 34,
+                      borderRadius: "8px",
+                      transition: "all 0.2s ease",
+                      "&:hover": {
+                        backgroundColor: "#fdeaea",
+                        transform: "scale(1.1)",
+                      },
                     }}
                   >
                     <DeleteIconButton size={32} />
@@ -190,6 +263,37 @@ export default function Books() {
           ))}
         </Box>
       </Box>
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+      >
+        <DialogTitle sx={{ fontWeight: 600 }}>Delete Book</DialogTitle>
+
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete this book? This action cannot be
+            undone.
+          </Typography>
+        </DialogContent>
+
+        <DialogActions sx={{ p: 2 }}>
+          <Button
+            onClick={() => setDeleteDialogOpen(false)}
+            sx={{ textTransform: "none" }}
+          >
+            Cancel
+          </Button>
+
+          <Button
+            onClick={handleDelete}
+            variant="contained"
+            color="error"
+            sx={{ textTransform: "none" }}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

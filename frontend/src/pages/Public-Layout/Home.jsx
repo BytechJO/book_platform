@@ -6,7 +6,15 @@ import Student3 from "../../assets/student3.svg";
 import Student4 from "../../assets/student4.svg";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
-
+const circles = [
+  { size: 25, color: "#3b82f6", top: "25%", left: "16%" },
+  { size: 25, color: "#facc15", bottom: "20%", left: "30%" },
+  { size: 20, color: "#ec4899", top: "55%", left: "13%" },
+  { size: 16, color: "#22c55e", top: "45%", right: "20%" },
+  { size: 18, color: "#8b5cf6", bottom: "20%", right: "30%" },
+  { size: 14, color: "#f59e0b", bottom: "10%", left: "45%" },
+  { size: 15, color: "#00C3A5", top: "40%", right: "35%" },
+];
 export default function Home() {
   const navigate = useNavigate();
   return (
@@ -30,23 +38,12 @@ export default function Home() {
       <Box
         sx={{
           position: "absolute",
-          width: 20,
-          height: 20,
+          width: 30,
+          height: 30,
           borderRadius: "50%",
           backgroundColor: "#ff4d4f",
           top: "65%",
-          right: "8%",
-        }}
-      />
-      <Box
-        sx={{
-          position: "absolute",
-          width: 14,
-          height: 14,
-          borderRadius: "50%",
-          backgroundColor: "#facc15",
-          top: "70%",
-          left: "15%",
+          right: "12%",
         }}
       />
       <Box
@@ -71,7 +68,20 @@ export default function Home() {
           left: "40%",
         }}
       />
-      <Container sx={{ textAlign: "center", py: 8 }}>
+      {circles.map((circle, index) => (
+        <Box
+          key={index}
+          sx={{
+            position: "absolute",
+            width: circle.size,
+            height: circle.size,
+            borderRadius: "50%",
+            backgroundColor: circle.color,
+            ...circle,
+          }}
+        />
+      ))}
+      <Container sx={{ textAlign: "center", py: 2 }}>
         {/* Logo */}
         <Box sx={{ mb: 3 }}>
           <img src={Logo} alt="Logo" style={{ height: 40 }} />
@@ -81,13 +91,9 @@ export default function Home() {
         <Typography
           variant="h3"
           fontWeight="bold"
+          fontSize="36px"
           sx={{
             mb: 2,
-            fontSize: {
-              xs: "28px", // موبايل
-              sm: "34px",
-              md: "40px", // ديسكتوب
-            },
           }}
         >
           Innovative Learning <br />
@@ -97,13 +103,12 @@ export default function Home() {
         {/* Subtitle */}
         <Typography
           variant="body1"
+          fontSize="18px"
           color="text.secondary"
+          fontWeight={400}
+          fontFamily="Rubik"
           sx={{
-            mb: 4,
-            fontSize: {
-              xs: "14px",
-              sm: "16px",
-            },
+            mb: 2,
           }}
         >
           Smart, accessible educational content for <br />
@@ -144,8 +149,8 @@ export default function Home() {
           justifyContent: "center",
           alignItems: "flex-end",
           gap: { xs: 1.5, sm: 3, md: 4 },
-          pb: 8,
-          flexWrap: "nowrap", // مهم عشان يضلهم جنب بعض
+          pb: 2,
+          flexWrap: "nowrap",
         }}
       >
         {[Student1, Student2, Student3, Student4].map((img, index) => (
@@ -159,10 +164,13 @@ export default function Home() {
               boxShadow: 3,
               transform:
                 index === 0 || index === 3
-                  ? "translateY(0px)"
+                  ? {
+                      xs: "translateY(-30px)",
+                      md: "translateY(-80px)",
+                    }
                   : {
-                      xs: "translateY(15px)",
-                      md: "translateY(50px)",
+                      xs: "translateY(10px)",
+                      md: "translateY(30px)",
                     },
             }}
             gap={2}
