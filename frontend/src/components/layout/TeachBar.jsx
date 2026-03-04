@@ -23,16 +23,18 @@ import { Menu, MenuItem } from "@mui/material";
 import axiosInstance from "../../api/axios";
 import ENDPOINTS from "../../api/endpoints";
 import { LoadingButton } from "@mui/lab";
+import { useGetMyBooks } from "../../api/user_books";
 export default function TeachBar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const location = useLocation();
   const [activationError, setActivationError] = useState("");
+  const { refetch } = useGetMyBooks();
   const isExactActive = (path) => location.pathname === path;
   const isStartsWithActive = (path) => location.pathname.startsWith(path);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
-
+  const role = localStorage.getItem("role");
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -53,18 +55,17 @@ export default function TeachBar() {
 
     try {
       setActivateLoading(true);
-      setActivationError(""); // امسح أي خطأ قديم
+      setActivationError("");
 
       await axiosInstance.post(ENDPOINTS.User_book.Create, {
         code: activationCode,
       });
-
+      refetch();
       setOpenDialog(false);
       setActivationCode("");
     } catch (err) {
       console.error(err);
 
-      // لو عندك رسالة من الباك
       const message = err.response?.data?.message || "Invalid activation code";
 
       setActivationError(message);
@@ -94,7 +95,7 @@ export default function TeachBar() {
             src={logo}
             alt="logo"
             style={{ height: 40, cursor: "pointer", marginRight: 20 }}
-            onClick={() => navigate("/teacher")}
+            onClick={() => navigate(`/${role}`)}
             width={250}
           />
           <Box
@@ -107,15 +108,15 @@ export default function TeachBar() {
           >
             {/* Home */}
             <Box
-              onClick={() => navigate("/teacher")}
+              onClick={() => navigate(`/${role}`)}
               sx={{
                 px: 3,
                 py: 0.8,
                 borderRadius: "20px",
-                backgroundColor: isExactActive("/teacher")
+                backgroundColor: isExactActive(`/${role}`)
                   ? "#2f4f8f"
                   : "transparent",
-                color: isExactActive("/teacher") ? "#fff" : "#535353",
+                color: isExactActive(`/${role}`) ? "#fff" : "#535353",
                 fontWeight: 400,
                 fontFamily: "Poppins",
                 cursor: "pointer",
@@ -127,15 +128,15 @@ export default function TeachBar() {
 
             {/* Books */}
             <Box
-              onClick={() => navigate("/teacher/books")}
+              onClick={() => navigate(`/${role}/books`)}
               sx={{
                 px: 3,
                 py: 0.8,
                 borderRadius: "20px",
-                backgroundColor: isStartsWithActive("/teacher/books")
+                backgroundColor: isStartsWithActive(`/${role}/books`)
                   ? "#2f4f8f"
                   : "transparent",
-                color: isStartsWithActive("/teacher/books")
+                color: isStartsWithActive(`/${role}/books`)
                   ? "#fff"
                   : "#535353",
                 fontWeight: 400,
@@ -149,15 +150,15 @@ export default function TeachBar() {
 
             {/* Help */}
             <Box
-              onClick={() => navigate("/teacher/help")}
+              onClick={() => navigate(`/${role}/help`)}
               sx={{
                 px: 3,
                 py: 0.8,
                 borderRadius: "20px",
-                backgroundColor: isStartsWithActive("/teacher/help")
+                backgroundColor: isStartsWithActive(`/${role}/help`)
                   ? "#2f4f8f"
                   : "transparent",
-                color: isStartsWithActive("/teacher/help") ? "#fff" : "#535353",
+                color: isStartsWithActive(`/${role}/help`) ? "#fff" : "#535353",
                 fontWeight: 400,
                 fontFamily: "Poppins",
                 cursor: "pointer",

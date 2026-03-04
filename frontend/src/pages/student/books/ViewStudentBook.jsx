@@ -11,7 +11,7 @@ import { Helmet } from "react-helmet-async";
 import SiteLoader from "src/components/SiteLoade";
 import AccessMessage from "src/components/AccessMessage";
 
-export default function ViewTeacherBook() {
+export default function ViewStudentBook() {
   const { id } = useParams();
 
   const isArabic = (text) => /[\u0600-\u06FF]/.test(text);

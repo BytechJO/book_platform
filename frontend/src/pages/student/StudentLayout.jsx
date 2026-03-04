@@ -3,8 +3,9 @@ import { Box } from "@mui/material";
 import TeachBar from "../../components/layout/TeachBar";
 import useSessionCheck from "../../hooks/useSessionCheck";
 
-export default function TeacherLayout() {
-  useSessionCheck();
+export default function StudentLayout() {
+    useSessionCheck();
+  
   return (
     <Box
       sx={{
@@ -20,7 +21,7 @@ export default function TeacherLayout() {
         sx={{
           width: "100%",
           flex: 1,
-          mt: "100px",
+          mt: "100px",  
         }}
       >
         <Outlet />

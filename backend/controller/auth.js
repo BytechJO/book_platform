@@ -154,6 +154,7 @@ const login = async (req, res) => {
         email: user.email,
         full_name: user.full_name,
         role: user.role,
+        status:user.status
       },
     });
   } catch (error) {
@@ -166,7 +167,7 @@ const me = async (req, res) => {
     const userId = req.user.id;
 
     const result = await pool.query(
-      "SELECT id, email, full_name, role FROM users WHERE id = $1",
+      "SELECT * FROM users WHERE id = $1",
       [userId],
     );
 

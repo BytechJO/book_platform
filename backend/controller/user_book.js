@@ -111,11 +111,7 @@ const getMyBookById = async (req, res) => {
         ub.id AS user_book_id,
         ub.activated_at,
         ub.expires_at,
-        ub.created_at AS enrolled_at,
-        CASE 
-          WHEN NOW() > ub.expires_at THEN false
-          ELSE true
-        END AS is_active
+        ub.created_at AS enrolled_at
       FROM user_books ub
       JOIN books b ON ub.book_id = b.id
       WHERE ub.user_id = $1
@@ -126,10 +122,20 @@ const getMyBookById = async (req, res) => {
     );
 
     if (result.rowCount === 0) {
-      return res.status(404).json({ message: "Book not found" });
+      return res.status(404).json({
+        message: "Book not found for this user",
+      });
     }
 
-    res.json(result.rows[0]);
+    const book = result.rows[0];
+
+    if (new Date() > new Date(book.expires_at)) {
+      return res.status(403).json({
+        message: "Book access expired",
+      });
+    }
+
+    res.json(book);
   } catch (error) {
     console.error("Get my book error:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -138,5 +144,5 @@ const getMyBookById = async (req, res) => {
 module.exports = {
   activateBookCode,
   getMyBooks,
-  getMyBookById
+  getMyBookById,
 };

@@ -25,6 +25,11 @@ import Help from "../pages/teacher/Help";
 import TeacherHome from "../pages/teacher/TeacherHome";
 import ViewPuplicBook from "../pages/Public-Layout/ViewPuplicBook";
 import NotFound from "../pages/NotFound";
+import StudentLayout from "../pages/student/StudentLayout";
+import StudentBooks from "../pages/student/books/StudentBooks";
+import ViewStudentBook from "../pages/student/books/ViewStudentBook";
+import StudentHome from "../pages/student/StudentHome";
+import HelpStudent from "../pages/student/Help";
 
 export default function AppRoutes() {
   return (
@@ -74,6 +79,19 @@ export default function AppRoutes() {
         <Route path="books" element={<TeacherBooks />} />
         <Route path="books/:id" element={<ViewTeacherBook />} />
         <Route path="help" element={<Help />} />
+      </Route>
+         <Route
+        path="/student"
+        element={
+          <ProtectedRoute allowedRoles={["student"]}>
+            <StudentLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<StudentHome />} />
+        <Route path="books" element={<StudentBooks />} />
+        <Route path="books/:id" element={<ViewStudentBook />} />
+        <Route path="help" element={<HelpStudent />} />
       </Route>
       {/* 404 Page */}
       <Route path="*" element={<NotFound />} />

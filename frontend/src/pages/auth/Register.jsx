@@ -79,7 +79,9 @@ export default function Register() {
       if (user.role === "admin") {
         navigate("/admin/dashboard", { replace: true });
       } else if (user.role === "teacher") {
-        navigate("/teacher/books", { replace: true });
+        navigate("/teacher", { replace: true });
+      } else if (user.role === "student") {
+        navigate("/student", { replace: true });
       } else {
         navigate("/", { replace: true });
       }
@@ -110,16 +112,20 @@ export default function Register() {
       </Helmet>
       <Box
         sx={{
-          minHeight: "100vh",
           display: "flex",
           flexDirection: "column",
           backgroundColor: "#fff",
         }}
       >
         {/* ================= HEADER ================= */}
-        <Container maxWidth="xl" sx={{ pt: 3, pb: 8 }}>
+        <Container maxWidth="xl" sx={{ pt: 2, pb: 3 }}>
           <Box sx={{ display: "flex", justifyContent: "flex-start", pl: 6 }}>
-            <img src={Logo2} alt="logo" style={{ height: 70 }} />
+            <img
+              src={Logo2}
+              alt="logo"
+              style={{ height: 70, cursor: "pointer" }}
+              onClick={() => navigate(`/`)}
+            />
           </Box>
         </Container>
 
@@ -127,7 +133,7 @@ export default function Register() {
         <Box sx={{ flex: 1 }}>
           <Grid
             container
-            spacing={8}
+            spacing={3}
             sx={{
               px: 6,
             }}
@@ -141,7 +147,7 @@ export default function Register() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                py: { xs: 6, md: 0 },
+                py: { xs: 3, md: 0 },
                 pl: { md: 6 },
               }}
             >
@@ -191,7 +197,7 @@ export default function Register() {
                     lineHeight: "35px",
                     letterSpacing: "0.08em", // 8%
                     color: "#535353",
-                    mb: 6,
+                    mb: 3,
                   }}
                 >
                   Create Account
@@ -205,7 +211,7 @@ export default function Register() {
                     {...register("fullName")}
                     error={!!errors.fullName}
                     helperText={errors.fullName?.message}
-                    sx={{ mb: 3 }}
+                    sx={{ mb: 2 }}
                   />
                   <TextField
                     fullWidth
@@ -214,7 +220,7 @@ export default function Register() {
                     {...register("email")}
                     error={!!errors.email}
                     helperText={errors.email?.message}
-                    sx={{ mb: 3 }}
+                    sx={{ mb: 2 }}
                   />
                   <TextField
                     fullWidth
@@ -224,7 +230,7 @@ export default function Register() {
                     {...register("password")}
                     error={!!errors.password}
                     helperText={errors.password?.message}
-                    sx={{ mb: 3 }}
+                    sx={{ mb: 2 }}
                     slotProps={{
                       input: {
                         endAdornment: (
@@ -252,7 +258,7 @@ export default function Register() {
                     {...register("confirmPassword")}
                     error={!!errors.confirmPassword}
                     helperText={errors.confirmPassword?.message}
-                    sx={{ mb: 3 }}
+                    sx={{ mb: 2 }}
                     slotProps={{
                       input: {
                         endAdornment: (
@@ -282,7 +288,7 @@ export default function Register() {
                     {...register("code")}
                     error={!!errors.code}
                     helperText={errors.code?.message}
-                    sx={{ mb: 3 }}
+                    sx={{ mb: 2 }}
                   />
                   <FormControlLabel
                     control={<Checkbox size="small" />}
@@ -331,7 +337,6 @@ export default function Register() {
         <Box
           sx={{
             textAlign: "center",
-            pb: 3,
           }}
         >
           <Typography

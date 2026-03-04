@@ -20,7 +20,7 @@ import { useGetMyBooks } from "../../../api/user_books";
 import { useNavigate } from "react-router-dom";
 import SiteLoader from "src/components/SiteLoade";
 
-export default function TeacherBooks() {
+export default function StudentBooks() {
   const { books, loading } = useGetMyBooks();
   const navigate = useNavigate();
 
@@ -225,7 +225,7 @@ export default function TeacherBooks() {
                 }}
                 onClick={() => {
                   if (!book.is_active) return;
-                  navigate(`/teacher/books/${book.id}`);
+                  navigate(`/student/books/${book.id}`);
                 }}
               >
                 <CardMedia

@@ -34,6 +34,7 @@ import ENDPOINTS from "src/api/endpoints";
 import DownloadButtonIcon from "src/components/icons/DownloadButtonIcon";
 import { useRef } from "react";
 import { LoadingButton } from "@mui/lab";
+import { data } from "react-router-dom";
 
 function formatDate(iso) {
   if (!iso) return "—";
@@ -65,6 +66,7 @@ export default function Codes() {
   const fileInputRef = useRef(null);
   const [importLoading, setImportLoading] = useState(false);
   const [importedCodes, setImportedCodes] = useState([]);
+  const [generatedCodes, setGeneratedCodes] = useState([]);
   const [importPreviewOpen, setImportPreviewOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -132,21 +134,22 @@ export default function Codes() {
     try {
       setGenerateLoading(true);
 
-      await axiosInstance.post(ENDPOINTS.Codes.Create, {
+      const res = await axiosInstance.post(ENDPOINTS.Codes.Create, {
         number_of_codes,
         allowed_role,
         validity_months,
         book_id,
       });
 
+      setGeneratedCodes(res.data.codes);
       await refetch();
-      setOpenDialog(false);
     } catch (err) {
       console.error(err);
     } finally {
       setGenerateLoading(false);
     }
   };
+
   const handleImportExcel = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -193,7 +196,7 @@ export default function Codes() {
             created_at: new Date(),
             used_at: parseDate(row.Used),
             book_id: matchedBook?.id || null,
-            isDuplicate, // ✅ مهم
+            isDuplicate,
           };
         });
         setImportedCodes(formattedCodes);
@@ -242,6 +245,30 @@ export default function Codes() {
     } finally {
       setImportLoading(false);
     }
+  };
+
+  const handleDownloadGenerated = () => {
+    if (!generatedCodes.length) return;
+
+    const data = generatedCodes.map((c) => {
+      const book = books.find((b) => b.id === c.book_id);
+
+      return {
+        "Book Name": book?.title || "—",
+        Code: c.code,
+        "Validity (Months)": c.validity_months,
+        Role: roleLabel(c.allowed_role),
+        Status: c.is_used ? "Used" : "Unused",
+        Created: formatDate(c.created_at),
+      };
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Generated Codes");
+
+    XLSX.writeFile(workbook, "generated_codes.xlsx");
   };
   return (
     <>
@@ -306,7 +333,10 @@ export default function Codes() {
                 fontSize: 15,
                 backgroundColor: "#2B5A9E",
               }}
-              onClick={() => setOpenDialog(true)}
+              onClick={() => {
+                setGeneratedCodes([]);
+                setOpenDialog(true);
+              }}
             >
               Generate Code
             </Button>
@@ -747,6 +777,7 @@ export default function Codes() {
                   boxShadow: "none",
                 },
               }}
+              disabled={generatedCodes.length > 0}
             >
               Generate
             </LoadingButton>
@@ -774,6 +805,22 @@ export default function Codes() {
               Cancel
             </Button>
           </DialogActions>
+          {generatedCodes.length > 0 && (
+            <Box sx={{ mt: 3, textAlign: "center" }}>
+              <Typography sx={{ mb: 1, color: "#7A869A" }}>
+                Codes generated successfully. If you want, you can download
+                them.
+              </Typography>
+
+              <Button
+                variant="outlined"
+                onClick={handleDownloadGenerated}
+                disabled={generateLoading}
+              >
+                Download Generated Codes
+              </Button>
+            </Box>
+          )}
         </Dialog>
         <Dialog
           open={importPreviewOpen}

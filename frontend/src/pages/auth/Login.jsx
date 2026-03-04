@@ -1,3 +1,6 @@
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { useForm } from "react-hook-form";
 import {
   Box,
   Grid,
@@ -9,6 +12,7 @@ import {
   Container,
   InputAdornment,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import Logo2 from "../../assets/logo2.svg";
@@ -21,16 +25,27 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
+  const schema = yup.object().shape({
+    email: yup
+      .string()
+      .required("Email is required")
+      .email("Invalid email format"),
 
+    password: yup
+      .string()
+      .required("Password is required")
+      .min(6, "Password must be at least 6 characters"),
+  });
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
   useEffect(() => {
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
@@ -45,24 +60,50 @@ export default function Login() {
       }
     }
   }, [navigate]);
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const onSubmit = async (data) => {
     try {
-      const response = await axiosInstance.post(ENDPOINTS.AUTH.LOGIN, form);
+      const response = await axiosInstance.post(ENDPOINTS.AUTH.LOGIN, data);
 
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("role", response.data.user.role);
+      if (response.data.user.status === "inactive") {
+        setError("email", {
+          type: "server",
+          message:
+            "Your account is inactive. Please contact the administrator.",
+        });
+        return;
+      }
 
-      if (response.data.user.role === "admin") {
+      const { token, user } = response.data;
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", user.role);
+
+      // eslint-disable-next-line react-hooks/immutability
+      axiosInstance.defaults.headers.common["Authorization"] =
+        `Bearer ${token}`;
+
+      if (user.role === "admin") {
         navigate("/admin/dashboard", { replace: true });
-      } else if (response.data.user.role === "teacher") {
+      } else if (user.role === "teacher") {
         navigate("/teacher/books", { replace: true });
+      } else if (user.role === "student") {
+        navigate("/student/books", { replace: true });
       } else {
         navigate("/", { replace: true });
       }
     } catch (error) {
-      console.error(error.response?.data || error.message);
+      const message = error.response?.data?.message;
+
+      if (message === "Invalid credentials") {
+        setError("email", {
+          type: "server",
+        });
+
+        setError("password", {
+          type: "server",
+          message: "Invalid email or password",
+        });
+      }
     }
   };
   return (
@@ -72,7 +113,6 @@ export default function Login() {
       </Helmet>
       <Box
         sx={{
-          minHeight: "100vh",
           display: "flex",
           flexDirection: "column",
           backgroundColor: "#fff",
@@ -81,7 +121,12 @@ export default function Login() {
         {/* ================= HEADER ================= */}
         <Container maxWidth="xl" sx={{ pt: 3, pb: 8 }}>
           <Box sx={{ display: "flex", justifyContent: "flex-start", pl: 6 }}>
-            <img src={Logo2} alt="logo" style={{ height: 70 }} />
+            <img
+              src={Logo2}
+              alt="logo"
+              style={{ height: 70, cursor: "pointer" }}
+              onClick={() => navigate(`/`)}
+            />
           </Box>
         </Container>
 
@@ -146,7 +191,12 @@ export default function Login() {
                   flexDirection: "column",
                 }}
               >
-                <Typography variant="h5" fontWeight="bold" mb={1}>
+                <Typography
+                  variant="h5"
+                  fontWeight="700"
+                  mb={1}
+                  color="#535353"
+                >
                   LOGIN
                 </Typography>
 
@@ -154,14 +204,16 @@ export default function Login() {
                   Al-Rowad for Publishing & Distribution
                 </Typography>
 
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit(onSubmit)} autoComplete="on">
                   <TextField
                     fullWidth
                     variant="standard"
                     label="Email"
-                    name="email"
-                    value={form.email}
-                    onChange={handleChange}
+                    type="email"
+                    autoComplete="email"
+                    {...register("email")}
+                    error={!!errors.email}
+                    helperText={errors.email?.message}
                     sx={{ mb: 5 }}
                   />
 
@@ -170,24 +222,29 @@ export default function Login() {
                     variant="standard"
                     type={showPassword ? "text" : "password"}
                     label="Password"
-                    name="password"
-                    value={form.password}
-                    onChange={handleChange}
+                    autoComplete="current-password"
+                    {...register("password")}
+                    error={!!errors.password}
+                    helperText={errors.password?.message}
                     sx={{ mb: 3 }}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={() => setShowPassword(!showPassword)}
-                            edge="end"
-                          >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
+                    slotProps={{
+                      input: {
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={() => setShowPassword(!showPassword)}
+                            >
+                              {showPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      },
                     }}
                   />
-
                   <FormControlLabel
                     control={<Checkbox size="small" />}
                     label="Remember username"
@@ -204,6 +261,7 @@ export default function Login() {
                     fullWidth
                     type="submit"
                     variant="contained"
+                    disabled={isSubmitting}
                     sx={{
                       backgroundColor: "#234a8b",
                       py: 1.8,
@@ -215,8 +273,21 @@ export default function Login() {
                       },
                     }}
                   >
-                    CONTINUE
+                    {isSubmitting ? (
+                      <CircularProgress size={22} sx={{ color: "white" }} />
+                    ) : (
+                      "CONTINUE"
+                    )}
                   </Button>
+                  <Typography variant="body2" sx={{ mt: 2 }} align="center">
+                    Already have an account?{" "}
+                    <span
+                      style={{ color: "#2f6ad9", cursor: "pointer" }}
+                      onClick={() => navigate("/register")}
+                    >
+                      Sign Up here
+                    </span>
+                  </Typography>
                 </form>
               </Box>
             </Grid>
@@ -227,7 +298,7 @@ export default function Login() {
         <Box
           sx={{
             textAlign: "center",
-            pb: 3,
+            pt: 3,
           }}
         >
           <Typography
