@@ -64,6 +64,8 @@ export default function Codes() {
   const [generateLoading, setGenerateLoading] = useState(false);
   const fileInputRef = useRef(null);
   const [importLoading, setImportLoading] = useState(false);
+  const [importedCodes, setImportedCodes] = useState([]);
+  const [importPreviewOpen, setImportPreviewOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -99,12 +101,13 @@ export default function Codes() {
 
   const handleExportExcel = () => {
     const data = filtered.map((c) => ({
+      "Book Name": c.book_title || "—",
       Code: c.code,
       "Validity (Months)": c.validity_months,
       Role: roleLabel(c.allowed_role),
       Status: c.is_used ? "Used" : "Unused",
       Created: formatDate(c.created_at),
-      Used: c.used ? formatDate(c.used_at) : "—",
+      Used: c.used_at ? formatDate(c.used_at) : "—",
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(data);
@@ -168,38 +171,77 @@ export default function Codes() {
           return new Date(`${year}-${month}-${day}`);
         };
 
-        const formattedCodes = jsonData.map((row) => ({
-          code: row.Code?.trim(),
-          validity_months: Number(row["Validity (Months)"]) || 0,
-          allowed_role: row.Role?.toLowerCase(),
-          is_used: row.Status === "Used",
-          created_at: parseDate(row.Created) || new Date(),
-          used_at: parseDate(row.Used),
-        }));
+        const formattedCodes = jsonData.map((row) => {
+          const bookName = row["Book Name"]?.trim();
 
-        await axiosInstance.post(ENDPOINTS.Codes.Import, {
-          codes: formattedCodes,
+          const matchedBook = books.find(
+            (b) => b.title.toLowerCase() === bookName?.toLowerCase(),
+          );
+
+          const codeValue = row.Code?.trim();
+
+          const isDuplicate = codes.some(
+            (existing) =>
+              existing.code?.toLowerCase() === codeValue?.toLowerCase(),
+          );
+
+          return {
+            code: codeValue,
+            validity_months: Number(row["Validity (Months)"]) || 0,
+            allowed_role: row.Role?.toLowerCase(),
+            is_used: row.Status === "Used",
+            created_at: new Date(),
+            used_at: parseDate(row.Used),
+            book_id: matchedBook?.id || null,
+            isDuplicate, // ✅ مهم
+          };
         });
-
-        await refetch();
-
-        setSnackbar({
-          open: true,
-          message: "Codes imported successfully ✅",
-          severity: "success",
-        });
+        setImportedCodes(formattedCodes);
+        setImportPreviewOpen(true);
       } catch (error) {
-        setSnackbar({
-          open: true,
-          message: error.response?.data?.message || "Failed to import codes ❌",
-          severity: "error",
-        });
+        console.log(error);
       } finally {
         setImportLoading(false);
+
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
       }
     };
 
     reader.readAsArrayBuffer(file);
+  };
+
+  const handleChangeImportedBook = (index, bookId) => {
+    const updated = [...importedCodes];
+    updated[index].book_id = bookId;
+    setImportedCodes(updated);
+  };
+  const handleConfirmImport = async () => {
+    try {
+      setImportLoading(true);
+
+      await axiosInstance.post(ENDPOINTS.Codes.Import, {
+        codes: importedCodes,
+      });
+
+      await refetch();
+      setImportPreviewOpen(false);
+
+      setSnackbar({
+        open: true,
+        message: "Codes imported successfully ",
+        severity: "success",
+      });
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: error.response?.data?.message || "Failed to import codes ",
+        severity: "error",
+      });
+    } finally {
+      setImportLoading(false);
+    }
   };
   return (
     <>
@@ -690,7 +732,7 @@ export default function Codes() {
               loading={generateLoading}
               loadingPosition="center"
               variant="contained"
-                 sx={{
+              sx={{
                 width: 126,
                 height: 59,
                 borderRadius: "10px",
@@ -730,6 +772,96 @@ export default function Codes() {
               }}
             >
               Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          open={importPreviewOpen}
+          onClose={() => setImportPreviewOpen(false)}
+          maxWidth="lg"
+          fullWidth
+        >
+          <DialogTitle>Review Imported Codes</DialogTitle>
+
+          <DialogContent>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Code</TableCell>
+                  <TableCell>Book</TableCell>
+                  <TableCell>Validity</TableCell>
+                  <TableCell>Role</TableCell>
+                </TableRow>
+              </TableHead>
+
+              <TableBody>
+                {importedCodes.map((c, index) => (
+                  <TableRow
+                    key={index}
+                    sx={{
+                      backgroundColor: c.isDuplicate ? "#ffe6e6" : "inherit",
+                    }}
+                  >
+                    <TableCell>
+                      <Typography
+                        sx={{
+                          color: c.isDuplicate ? "red" : "inherit",
+                          fontWeight: c.isDuplicate ? 600 : 400,
+                        }}
+                      >
+                        {c.code}
+                      </Typography>
+
+                      {c.isDuplicate && (
+                        <Typography variant="caption" sx={{ color: "red" }}>
+                          This code already exists
+                        </Typography>
+                      )}
+                    </TableCell>
+
+                    <TableCell>
+                      {c.book_id ? (
+                        books.find((b) => b.id === c.book_id)?.title
+                      ) : (
+                        <FormControl fullWidth size="small">
+                          <Select
+                            value={c.book_id || ""}
+                            onChange={(e) =>
+                              handleChangeImportedBook(index, e.target.value)
+                            }
+                            displayEmpty
+                          >
+                            <MenuItem value="" disabled>
+                              Select Book
+                            </MenuItem>
+
+                            {books.map((b) => (
+                              <MenuItem key={b.id} value={b.id}>
+                                {b.title}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      )}
+                    </TableCell>
+
+                    <TableCell>{c.validity_months}</TableCell>
+                    <TableCell>{c.allowed_role}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </DialogContent>
+
+          <DialogActions>
+            <Button onClick={() => setImportPreviewOpen(false)}>Cancel</Button>
+
+            <Button
+              variant="contained"
+              onClick={handleConfirmImport}
+              disabled={importedCodes.some((c) => !c.book_id)}
+            >
+              Confirm Import
             </Button>
           </DialogActions>
         </Dialog>

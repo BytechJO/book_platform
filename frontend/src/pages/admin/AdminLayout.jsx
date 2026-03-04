@@ -1,7 +1,7 @@
 import { Outlet, useLocation } from "react-router-dom";
 import TopBar from "../../components/layout/TopBar";
 import DashBar from "../../components/layout/DashBar";
-import { Box } from "@mui/material";
+import { Box, Toolbar } from "@mui/material";
 
 export default function AdminLayout() {
   const location = useLocation();
@@ -19,7 +19,8 @@ export default function AdminLayout() {
     >
       {isDashboard ? <DashBar /> : <TopBar />}
 
-      {/* 🔥 هذا هو التصليح */}
+      {!isDashboard && <Toolbar />}
+
       <Box
         sx={{
           width: "100%",

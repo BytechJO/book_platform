@@ -1,26 +1,22 @@
 body {
   margin: 0;
-  font-family: "Inter", sans-serif;
+  font-family: "Inter", sans-serif,"Poppins";
 }
-/* عرض السكرول */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
-/* المسار الخلفي */
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 
-/* شكل السكرول نفسه */
 ::-webkit-scrollbar-thumb {
-  background-color: #8ea9c9;   /* أزرق فاتح */
+  background-color: #8ea9c9;   
   border-radius: 20px;
   border: 2px solid transparent;
   background-clip: content-box;
 }
 
-/* عند hover */
 ::-webkit-scrollbar-thumb:hover {
   background-color: #5c82b8;
 }

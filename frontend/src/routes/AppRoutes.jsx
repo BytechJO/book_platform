@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import PublicLayout from "../pages/Public-Layout/PublicLayout";
 import AdminLayout from "../pages/admin/AdminLayout";
 
-import Home from "../pages/Public-Layout/Home";
+import Home from "../pages/Public-Layout/Home/Home";
 import About from "../pages/Public-Layout/About";
 import Contact from "../pages/Public-Layout/contact";
 
@@ -18,6 +18,13 @@ import Books from "../pages/admin/books/Books";
 import Codes from "../pages/admin/Codes";
 import CreateBook from "../pages/admin/books/CreateBook";
 import ViewBook from "../pages/admin/books/ViewBook";
+import TeacherBooks from "../pages/teacher/books/TeacherBooks";
+import TeacherLayout from "../pages/teacher/TeacherLayout";
+import ViewTeacherBook from "../pages/teacher/books/ViewTeacherBook";
+import Help from "../pages/teacher/Help";
+import TeacherHome from "../pages/teacher/TeacherHome";
+import ViewPuplicBook from "../pages/Public-Layout/ViewPuplicBook";
+import NotFound from "../pages/NotFound";
 
 export default function AppRoutes() {
   return (
@@ -25,6 +32,7 @@ export default function AppRoutes() {
       {/*  Public Pages */}
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
+        <Route path="/books/:id" element={<ViewPuplicBook />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/book-series" element={<BookSeries />} />
@@ -50,9 +58,25 @@ export default function AppRoutes() {
         <Route path="books" element={<Books />} />
         <Route path="codes" element={<Codes />} />
         <Route path="books/create" element={<CreateBook />} />
-        <Route path ="books/:id/edit" element={<CreateBook />} />
+        <Route path="books/:id/edit" element={<CreateBook />} />
         <Route path="books/:id" element={<ViewBook />} />
       </Route>
+
+      <Route
+        path="/teacher"
+        element={
+          <ProtectedRoute allowedRoles={["teacher"]}>
+            <TeacherLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<TeacherHome />} />
+        <Route path="books" element={<TeacherBooks />} />
+        <Route path="books/:id" element={<ViewTeacherBook />} />
+        <Route path="help" element={<Help />} />
+      </Route>
+      {/* 404 Page */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

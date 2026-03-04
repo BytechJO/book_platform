@@ -1,3 +1,6 @@
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import {
   Box,
   Typography,
@@ -23,36 +26,64 @@ export default function CreateBook() {
   const [shortPreview, setShortPreview] = useState(null);
   const [longPreview, setLongPreview] = useState(null);
   const { books } = useGetBooks();
+  const schema = yup.object().shape({
+    title: yup
+      .string()
+      .trim()
+      .required("Title is required")
+      .min(3, "Title must be at least 3 characters"),
+
+    description: yup.string().nullable(),
+
+    isbn: yup
+      .string()
+      .nullable()
+      .matches(/^[0-9-]*$/, "ISBN must contain only numbers and dashes"),
+
+    app_store_url: yup.string().nullable().url("Invalid App Store URL"),
+
+    google_play_url: yup.string().nullable().url("Invalid Google Play URL"),
+
+    online_book_url: yup.string().nullable().url("Invalid Online Book URL"),
+  });
+
   useEffect(() => {
     if (isEdit && books.length > 0) {
       const book = books.find((b) => b.id === parseInt(id));
 
       if (book) {
-        setForm({
-          title: book.title || "",
-          description: book.description || "",
-          app_store_url: book.app_store_url || "",
-          google_play_url: book.google_play_url || "",
-          online_book_url: book.online_book_url || "",
-          isbn: book.isbn || "",
-        });
+        setValue("title", book.title || "");
+        setValue("description", book.description || "");
+        setValue("app_store_url", book.app_store_url || "");
+        setValue("google_play_url", book.google_play_url || "");
+        setValue("online_book_url", book.online_book_url || "");
+        setValue("isbn", book.isbn || "");
 
         setShortPreview(book.cover_image_url_short);
-
         setLongPreview(book.cover_image_url_long);
       } else {
         navigate("/admin/books");
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, books, navigate, isEdit]);
 
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    isbn: "",
-    app_store_url: "",
-    google_play_url: "",
-    online_book_url: "",
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    setError,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      title: "",
+      description: "",
+      isbn: "",
+      app_store_url: "",
+      google_play_url: "",
+      online_book_url: "",
+    },
   });
   const handleImageChange = (file, type) => {
     if (!file) return;
@@ -67,17 +98,12 @@ export default function CreateBook() {
       setLongPreview(previewUrl);
     }
   };
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const onSubmit = async (data) => {
     const formData = new FormData();
 
-    Object.keys(form).forEach((key) => {
-      formData.append(key, form[key]);
+    Object.keys(data).forEach((key) => {
+      formData.append(key, data[key]);
     });
 
     if (shortImage) formData.append("cover_short", shortImage);
@@ -87,18 +113,23 @@ export default function CreateBook() {
       setLoading(true);
 
       if (isEdit) {
-        await axiosInstance.put(ENDPOINTS.BOOKS.UPDATE(id), formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        await axiosInstance.put(ENDPOINTS.BOOKS.UPDATE(id), formData);
       } else {
-        await axiosInstance.post(ENDPOINTS.BOOKS.CREATE, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        await axiosInstance.post(ENDPOINTS.BOOKS.CREATE, formData);
       }
 
       navigate("/admin/books");
     } catch (err) {
-      console.error(err);
+      const message = err.response?.data?.message;
+
+      if (message === "Book title already exists") {
+        setError("title", {
+          type: "server",
+          message: "This title already exists",
+        });
+      } else {
+        console.log(message || "Something went wrong");
+      }
     } finally {
       setLoading(false);
     }
@@ -107,7 +138,11 @@ export default function CreateBook() {
   return (
     <>
       <Helmet>
-        <title>Create Book - Admin Dashboard</title>
+        {isEdit ? (
+          <title>Edit Book - Admin Dashboard</title>
+        ) : (
+          <title>Create Book - Admin Dashboard</title>
+        )}
       </Helmet>
 
       <Box sx={{ py: 4 }}>
@@ -116,54 +151,52 @@ export default function CreateBook() {
             {isEdit ? "Edit Book" : "Create Book"}
           </Typography>
 
-          <Box component="form" onSubmit={handleSubmit}>
+          <Box component="form" onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={3}>
               <TextField
                 label="Title *"
-                name="title"
-                value={form.title}
-                onChange={handleChange}
-                required
+                {...register("title")}
+                error={!!errors.title}
+                helperText={errors.title?.message}
                 fullWidth
               />
-
               <TextField
                 label="Description"
-                name="description"
-                value={form.description}
-                onChange={handleChange}
+                {...register("description")}
+                error={!!errors.description}
+                helperText={errors.description?.message}
                 multiline
                 rows={4}
                 fullWidth
               />
               <TextField
                 label="ISBN"
-                name="isbn"
-                value={form.isbn}
-                onChange={handleChange}
+                {...register("isbn")}
+                error={!!errors.isbn}
+                helperText={errors.isbn?.message}
                 fullWidth
               />
               <TextField
                 label="App Store URL"
-                name="app_store_url"
-                value={form.app_store_url}
-                onChange={handleChange}
+                {...register("app_store_url")}
+                error={!!errors.app_store_url}
+                helperText={errors.app_store_url?.message}
                 fullWidth
               />
 
               <TextField
                 label="Google Play URL"
-                name="google_play_url"
-                value={form.google_play_url}
-                onChange={handleChange}
+                {...register("google_play_url")}
+                error={!!errors.google_play_url}
+                helperText={errors.google_play_url?.message}
                 fullWidth
               />
 
               <TextField
                 label="Online Book URL"
-                name="online_book_url"
-                value={form.online_book_url}
-                onChange={handleChange}
+                {...register("online_book_url")}
+                error={!!errors.online_book_url}
+                helperText={errors.online_book_url?.message}
                 fullWidth
               />
               <Stack spacing={4}>

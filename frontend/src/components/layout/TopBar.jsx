@@ -24,7 +24,7 @@ export default function TopBar() {
 
   return (
     <AppBar
-      position="static"
+      position="fixed"
       sx={{
         backgroundColor: "#1A4D96",
         boxShadow: "none",

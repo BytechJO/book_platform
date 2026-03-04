@@ -1,6 +1,6 @@
 import React from "react";
 import { AppBar, Toolbar, Box, Button, IconButton } from "@mui/material";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 import FacebookIcon from "@mui/icons-material/Facebook";
 import TwitterIcon from "@mui/icons-material/Twitter";
@@ -9,7 +9,7 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 export default function PublicTopBar() {
   return (
     <AppBar
-      position="static"
+      position="fixed"
       sx={{
         backgroundColor: "#1A4D96",
         height: 50,
@@ -20,8 +20,8 @@ export default function PublicTopBar() {
       <Toolbar
         sx={{
           justifyContent: "space-between",
-          pl: { xs: 2, md: 16 },  
-          pr: { xs: 2, md: 4 }, 
+          pl: { xs: 2, md: 16 },
+          pr: { xs: 2, md: 4 },
         }}
       >
         {/* Navigation */}
@@ -51,28 +51,34 @@ export default function PublicTopBar() {
 
 /* ---------- Nav Item ---------- */
 
+
 function NavItem({ to, label }) {
+  const location = useLocation();
+
+  const isActive =
+    to === "/"
+      ? location.pathname === "/" || location.pathname.startsWith("/books")
+      : location.pathname.startsWith(to);
+
   return (
     <NavLink to={to} style={{ textDecoration: "none" }}>
-      {({ isActive }) => (
-        <Button
-          sx={{
-            color: isActive ? "#1A4D96" : "white",
-            backgroundColor: isActive ? "white" : "transparent",
-            borderRadius: "20px",
-            px: 2.5,
-            py: 0.5,
-            textTransform: "none",
-            fontWeight: 500,
-            minWidth: "auto",
-            "&:hover": {
-              backgroundColor: isActive ? "white" : "rgba(255,255,255,0.1)",
-            },
-          }}
-        >
-          {label}
-        </Button>
-      )}
+      <Button
+        sx={{
+          color: isActive ? "#1A4D96" : "white",
+          backgroundColor: isActive ? "white" : "transparent",
+          borderRadius: "20px",
+          px: 2.5,
+          py: 0.5,
+          textTransform: "none",
+          fontWeight: 500,
+          minWidth: "auto",
+          "&:hover": {
+            backgroundColor: isActive ? "white" : "rgba(255,255,255,0.1)",
+          },
+        }}
+      >
+        {label}
+      </Button>
     </NavLink>
   );
 }

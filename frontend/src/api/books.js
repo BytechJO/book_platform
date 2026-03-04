@@ -47,3 +47,40 @@ export function useGetBook(id) {
     error,
   };
 }
+
+export function useGetPuplicBooks() {
+  const URL = ENDPOINTS.BOOKS.ALLPuplic;
+
+  const { data, isLoading, error, isValidating } =
+    useSWR(URL, fetcher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      books: data || [],
+      loading: isLoading,
+      error,
+      validating: isValidating,
+      empty: !isLoading && !data?.length,
+    }),
+    [data, error, isLoading, isValidating]
+  );
+
+  const refetch = async () => {
+    await mutate(URL);
+  };
+
+  return { ...memoizedValue, refetch };
+}
+
+export function useGetOnePuplicBook(id) {
+  const URL = id ? ENDPOINTS.BOOKS.ONEPuplic(id) : null;
+
+  const { data, isLoading, error } =
+    useSWR(URL, fetcher);
+
+  return {
+    book: data || null,
+    loading: isLoading,
+    error,
+  };
+}

@@ -5,13 +5,16 @@ import { useNavigate } from "react-router-dom";
 import { useGetUsers } from "../../api/users";
 import { useGetCodes } from "../../api";
 import { Helmet } from "react-helmet-async";
+import SiteLoader from "../../components/SiteLoade";
 
 export default function Dashboard() {
-  const { books } = useGetBooks();
-  const { users } = useGetUsers();
-  const { codes } = useGetCodes();
+  const { books = [], loading: booksLoading } = useGetBooks();
+  const { users = [], loading: usersLoading } = useGetUsers();
+  const { codes = [], loading: codesLoading } = useGetCodes();
   const navigate = useNavigate();
-
+  if (booksLoading || usersLoading || codesLoading) {
+    return <SiteLoader fullScreen text="Loading Dashboard..." />;
+  }
   return (
     <>
       <Helmet>

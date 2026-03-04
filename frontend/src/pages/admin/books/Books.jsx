@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  CircularProgress,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { useState, useMemo } from "react";
@@ -25,12 +26,15 @@ import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "src/api/axios";
 import ENDPOINTS from "src/api/endpoints";
+import SiteLoader from "src/components/SiteLoade";
 
 export default function Books() {
-  const { books = [], refetch } = useGetBooks();
+  const { books = [], refetch, loading } = useGetBooks();
   const [search, setSearch] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedBookId, setSelectedBookId] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
   const navigate = useNavigate();
   const filteredBooks = useMemo(() => {
     if (!search) return books;
@@ -41,6 +45,8 @@ export default function Books() {
 
   const handleDelete = async () => {
     try {
+      setDeleteLoading(true);
+
       await axiosInstance.delete(ENDPOINTS.BOOKS.DELETE(selectedBookId));
 
       setDeleteDialogOpen(false);
@@ -48,9 +54,13 @@ export default function Books() {
       refetch();
     } catch (error) {
       console.error(error);
+    } finally {
+      setDeleteLoading(false);
     }
   };
-
+  if (loading) {
+    return <SiteLoader fullScreen text="Loading Books..." />;
+  }
   return (
     <Box sx={{ py: 3 }}>
       <Helmet>
@@ -89,18 +99,13 @@ export default function Books() {
               navigate("create");
             }}
             sx={{
+              height: 36,
+              px: 3,
+              borderRadius: "4px",
               textTransform: "none",
               fontWeight: 500,
               fontSize: 15,
-              px: 3,
-              height: 42,
-              borderRadius: "8px",
               backgroundColor: "#2B5A9E",
-              boxShadow: "none",
-              "&:hover": {
-                backgroundColor: "#244a86",
-                boxShadow: "none",
-              },
             }}
           >
             Create Book
@@ -125,7 +130,7 @@ export default function Books() {
         </Box>
 
         {/* Grid */}
-        <Box
+       <Box
           sx={{
             maxWidth: 1200,
             mx: "auto",
@@ -175,8 +180,8 @@ export default function Books() {
                 >
                   <Typography
                     fontWeight={400}
-                    fontSize={26}
-                    fontFamily="IBM Plex Sans Thai Looped"
+                    fontSize={24}
+                    fontFamily="Poppins"
                     color="#535353"
                   >
                     {book.title}
@@ -202,18 +207,6 @@ export default function Books() {
                 </Typography>
 
                 <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    sx={{
-                      textTransform: "none",
-                      backgroundColor: "#2B5A9E",
-                      "&:hover": { backgroundColor: "#244a86" },
-                    }}
-                  >
-                    Manage Code
-                  </Button>
-
                   <IconButton
                     onClick={(e) => {
                       e.stopPropagation();
@@ -280,6 +273,7 @@ export default function Books() {
           <Button
             onClick={() => setDeleteDialogOpen(false)}
             sx={{ textTransform: "none" }}
+            disabled={deleteLoading}
           >
             Cancel
           </Button>
@@ -288,9 +282,17 @@ export default function Books() {
             onClick={handleDelete}
             variant="contained"
             color="error"
-            sx={{ textTransform: "none" }}
+            disabled={deleteLoading}
+            sx={{
+              textTransform: "none",
+              minWidth: 100,
+            }}
           >
-            Delete
+            {deleteLoading ? (
+              <CircularProgress size={22} sx={{ color: "white" }} />
+            ) : (
+              "Delete"
+            )}
           </Button>
         </DialogActions>
       </Dialog>

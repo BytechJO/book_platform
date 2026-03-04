@@ -1,42 +1,31 @@
 import { Box, Typography, Stack, Card, Divider } from "@mui/material";
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import axiosInstance from "../../../api/axios";
-import ENDPOINTS from "../../../api/endpoints";
-import ISPNIconButton from "../../../components/icons/ISPNIcon";
-import PrinterIcon from "../../../components/icons/PrinterIcon";
-import Icon from "../../../assets/icon/icone.svg";
-import AppleCircleIcon from "../../../components/icons/AppleCircleIcon";
-import AndroidCircleIcon from "../../../components/icons/AndroidCircleIcon";
-import onlineIcon1 from "../../../assets/icon/onlineIcon.png";
-import { Helmet } from "react-helmet-async";
+import ISPNIconButton from "src/components/icons/ISPNIcon";
+import PrinterIcon from "src/components/icons/PrinterIcon";
+import Icon from "src/assets/icon/icone.svg";
+import { useGetOnePuplicBook } from "src/api";
 
-export default function ViewBook() {
+export default function ViewPuplicBook() {
   const { id } = useParams();
-  const [book, setBook] = useState(null);
 
   const isArabic = (text) => /[\u0600-\u06FF]/.test(text);
-
-  useEffect(() => {
-    const fetchBook = async () => {
-      const res = await axiosInstance.get(ENDPOINTS.BOOKS.BY_ID(id));
-      setBook(res.data);
-    };
-    fetchBook();
-  }, [id]);
-
+  const { book } = useGetOnePuplicBook(id);
   if (!book) return null;
 
   const isRTL = isArabic(book.title);
 
   return (
     <>
-      <Helmet>
-        <title>Book details - Teacher Dashboard</title>
-      </Helmet>
+      <Divider
+        sx={{
+          width: "100%",
+          borderColor: "#1A4D965C",
+          mb: 2,
+        }}
+      />
       <Box
         sx={{
-          backgroundColor: "#f3f5f9",
+          backgroundColor: "#ffffff",
           display: "flex",
           justifyContent: "center",
         }}
@@ -146,71 +135,11 @@ export default function ViewBook() {
                   </Typography>
                 </Box>
 
-                <Divider sx={{ my: 1 }} />
-
-                <Typography sx={{ fontWeight: 600, mb: 2, color: "#1A4D96" }}>
-                  Available on
-                </Typography>
-
-                <Stack direction="row" spacing={2}>
-                  {book.app_store_url && (
-                    <Box
-                      onClick={() => window.open(book.app_store_url, "_blank")}
-                      sx={{
-                        cursor: "pointer",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
-                    >
-                      <AppleCircleIcon width={40} height={40} />
-                      <Typography variant="caption">App Store</Typography>
-                    </Box>
-                  )}
-
-                  {book.google_play_url && (
-                    <Box
-                      onClick={() =>
-                        window.open(book.google_play_url, "_blank")
-                      }
-                      sx={{
-                        cursor: "pointer",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
-                    >
-                      <AndroidCircleIcon width={40} height={40} />
-                      <Typography variant="caption">Google play</Typography>
-                    </Box>
-                  )}
-
-                  {book.online_book_url && (
-                    <Box
-                      onClick={() =>
-                        window.open(book.online_book_url, "_blank")
-                      }
-                      sx={{
-                        cursor: "pointer",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Box
-                        component="img"
-                        src={onlineIcon1}
-                        sx={{ width: 40 }}
-                      />
-                      <Typography variant="caption">Online book</Typography>
-                    </Box>
-                  )}
-                </Stack>
               </Box>
             </Box>
 
             {/* RIGHT SIDE */}
-            <Box sx={{ flex: 1, textAlign: isRTL ? "right" : "left" }}>
+            <Box sx={{ flex: 1, textAlign: isRTL ? "right" : "left", pt: 10 }}>
               <Typography
                 sx={{
                   fontSize: 36,
@@ -251,6 +180,7 @@ export default function ViewBook() {
               fontWeight: 500,
               fontSize: 14,
               color: "#2d5aa7",
+              mt:3
             }}
           >
             alrowadpub.com
