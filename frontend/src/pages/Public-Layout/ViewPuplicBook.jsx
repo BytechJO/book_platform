@@ -38,7 +38,7 @@ export default function ViewPuplicBook() {
           >
             {/* LEFT SIDE */}
             <Box
-              sx={{
+           sx={{
                 width: { xs: "100%", md: 450 },
                 position: "relative",
                 height: "auto",
@@ -51,6 +51,7 @@ export default function ViewPuplicBook() {
                   zIndex: 2,
                   borderRadius: "24px",
                   overflow: "hidden",
+                  boxShadow: "0px 10px 15px -5px rgba(0,0,0,0.35)",
                 }}
               >
                 <Box
@@ -63,6 +64,7 @@ export default function ViewPuplicBook() {
                     transform: "scale(1.06)",
                     transformOrigin: "center",
                     height: "auto",
+                    boxShadow: "5px 5px 15px 5px #888888",
                   }}
                 />
               </Box>

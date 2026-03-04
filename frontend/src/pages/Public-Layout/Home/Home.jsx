@@ -94,6 +94,7 @@ export default function Home() {
             variant="h3"
             fontWeight="bold"
             fontSize="36px"
+            fontFamily="Poppins"
             sx={{
               mb: 2,
             }}
@@ -106,9 +107,9 @@ export default function Home() {
           <Typography
             variant="body1"
             fontSize="18px"
-            color="text.secondary"
+            color="#504D4E"
             fontWeight={400}
-            fontFamily="Rubik"
+            fontFamily="Poppins"
             sx={{
               mb: 2,
             }}
@@ -126,7 +127,24 @@ export default function Home() {
                 px: 4,
                 borderRadius: "30px",
               }}
-              onClick={() => navigate("/login")}
+              onClick={() => {
+                const token = localStorage.getItem("token");
+                const role = localStorage.getItem("role");
+
+                if (token) {
+                  if (role === "admin") {
+                    navigate("/admin/dashboard");
+                  } else if (role === "teacher") {
+                    navigate("/teacher/books");
+                  } else if (role === "student") {
+                    navigate("/student/books");
+                  } else {
+                    navigate("/");
+                  }
+                } else {
+                  navigate("/login");
+                }
+              }}
             >
               Login
             </Button>

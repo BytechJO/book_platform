@@ -23,10 +23,11 @@ import SiteLoader from "src/components/SiteLoade";
 export default function TeacherBooks() {
   const { books, loading } = useGetMyBooks();
   const navigate = useNavigate();
+  const isArabic = (text) => /[\u0600-\u06FF]/.test(text || "");
 
   const [sortBy, setSortBy] = useState("latest");
   const [searchTerm, setSearchTerm] = useState("");
-  const [status, setStatus] = useState("all");
+  const [status, setStatus] = useState("active");
   const [page, setPage] = useState(1);
 
   const booksPerPage = 8;
@@ -205,61 +206,67 @@ export default function TeacherBooks() {
           }}
         >
           {paginatedBooks.length > 0 ? (
-            paginatedBooks.map((book) => (
-              <Card
-                key={book.id}
-                sx={{
-                  borderRadius: 3,
-                  overflow: "hidden",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-                  transition: "0.2s ease",
-                  opacity: book.is_active ? 1 : 0.5,
-                  cursor: book.is_active ? "pointer" : "auto",
+            paginatedBooks.map((book) => {
+              const isDescRTL = isArabic(book.description);
 
-                  "&:hover": book.is_active
-                    ? {
-                        transform: "translateY(-4px)",
-                        boxShadow: "0 6px 16px rgba(0,0,0,0.1)",
-                      }
-                    : {},
-                }}
-                onClick={() => {
-                  if (!book.is_active) return;
-                  navigate(`/teacher/books/${book.id}`);
-                }}
-              >
-                <CardMedia
-                  component="img"
-                  image={book.cover_image_url_short}
-                  alt={book.title}
+              return (
+                <Card
+                  key={book.id}
                   sx={{
-                    width: "100%",
-                    aspectRatio: "3 / 4",
-                    objectFit: "cover",
+                    borderRadius: 3,
+                    overflow: "hidden",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+                    transition: "0.2s ease",
+                    opacity: book.is_active ? 1 : 0.5,
+                    cursor: book.is_active ? "pointer" : "auto",
+
+                    "&:hover": book.is_active
+                      ? {
+                          transform: "translateY(-4px)",
+                          boxShadow: "0 6px 16px rgba(0,0,0,0.1)",
+                        }
+                      : {},
                   }}
-                />
-
-                <CardContent>
-                  <Typography fontSize={18} color="#535353" noWrap>
-                    {book.title}
-                  </Typography>
-
-                  <Typography
-                    variant="body2"
+                  onClick={() => {
+                    if (!book.is_active) return;
+                    navigate(`/teacher/books/${book.id}`);
+                  }}
+                >
+                  <CardMedia
+                    component="img"
+                    image={book.cover_image_url_short}
+                    alt={book.title}
                     sx={{
-                      mt: 1,
-                      color: "#7a869a",
-                      display: "-webkit-box",
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: "vertical",
-                      overflow: "hidden",
+                      width: "100%",
+                      aspectRatio: "3 / 4",
+                      objectFit: "cover",
                     }}
-                  >
-                    {book.description || "No description available."}
-                  </Typography>
-                </CardContent>
-              </Card>
-            ))
+                  />
+
+                  <CardContent>
+                    <Typography fontSize={18} color="#535353" noWrap>
+                      {book.title}
+                    </Typography>
+
+                    <Typography
+                      variant="body2"
+                      dir={isDescRTL ? "rtl" : "ltr"}
+                      textAlign={isDescRTL ? "right" : "left"}
+                      sx={{
+                        mt: 1,
+                        color: "#7a869a",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 1,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                      }}
+                    >
+                      {book.description || "No description available."}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              );
+            })
           ) : (
             <Box
               sx={{

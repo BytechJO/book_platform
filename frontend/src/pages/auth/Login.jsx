@@ -55,6 +55,8 @@ export default function Login() {
         navigate("/admin/dashboard", { replace: true });
       } else if (role === "teacher") {
         navigate("/teacher/books", { replace: true });
+      } else if (role === "student") {
+        navigate("/student/books", { replace: true });
       } else {
         navigate("/", { replace: true });
       }

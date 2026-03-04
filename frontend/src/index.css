@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: "Inter", sans-serif,"Poppins";
+  font-family: "Poppins", "Inter", sans-serif;
 }
 ::-webkit-scrollbar {
   width: 8px;
@@ -11,7 +11,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #8ea9c9;   
+  background-color: #8ea9c9;
   border-radius: 20px;
   border: 2px solid transparent;
   background-clip: content-box;

@@ -42,7 +42,7 @@ export default function ViewStudentBook() {
   return (
     <>
       <Helmet>
-        <title>Book details - Teacher Dashboard</title>
+        <title>Book details - Student Dashboard</title>
       </Helmet>
       <Divider
         sx={{
@@ -79,6 +79,7 @@ export default function ViewStudentBook() {
                   zIndex: 2,
                   borderRadius: "24px",
                   overflow: "hidden",
+                  boxShadow: "0px 10px 15px -5px rgba(0,0,0,0.35)",
                 }}
               >
                 <Box
@@ -91,6 +92,7 @@ export default function ViewStudentBook() {
                     transform: "scale(1.06)",
                     transformOrigin: "center",
                     height: "auto",
+                    boxShadow: "5px 5px 15px 5px #888888",
                   }}
                 />
               </Box>
