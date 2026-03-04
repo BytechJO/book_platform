@@ -30,7 +30,28 @@ const createBook = async (req, res) => {
     if (!title) {
       return res.status(400).json({ message: "Title is required" });
     }
+    const existingBook = await pool.query(
+      "SELECT id FROM books WHERE LOWER(title) = LOWER($1)",
+      [title.trim()],
+    );
 
+    if (existingBook.rows.length > 0) {
+      return res.status(400).json({
+        message: "Book title already exists",
+      });
+    }
+    if (isbn) {
+      const existingIsbn = await pool.query(
+        "SELECT id FROM books WHERE isbn = $1",
+        [isbn],
+      );
+
+      if (existingIsbn.rows.length > 0) {
+        return res.status(400).json({
+          message: "ISBN already exists",
+        });
+      }
+    }
     let shortUrl = null;
     let longUrl = null;
     let shortPublicId = null;
@@ -106,6 +127,25 @@ const getAllBooks = async (req, res) => {
   }
 };
 
+const getAllBooksPublic = async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        b.id,
+        b.title,
+        b.description,
+        b.cover_image_url_short,
+        b.cover_image_url_long
+      FROM books b
+      ORDER BY b.created_at DESC
+    `);
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Get books (public) error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 const getBookById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -128,14 +168,41 @@ const getBookById = async (req, res) => {
   }
 };
 
+const getPuplicBookById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(
+      `SELECT 
+        b.id,
+        b.title,
+        b.description,
+        b.cover_image_url_short,
+        b.cover_image_url_long,
+        b.created_at,
+        b.isbn
+      FROM books b
+      WHERE b.id = $1 
+      ORDER BY b.created_at DESC`,
+      [id],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Get book by ID error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 const deleteBook = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const existing = await pool.query(
-      "SELECT * FROM books WHERE id = $1",
-      [id]
-    );
+    const existing = await pool.query("SELECT * FROM books WHERE id = $1", [
+      id,
+    ]);
 
     if (existing.rows.length === 0) {
       return res.status(404).json({ message: "Book not found" });
@@ -154,7 +221,6 @@ const deleteBook = async (req, res) => {
     await pool.query("DELETE FROM books WHERE id = $1", [id]);
 
     res.json({ message: "Book deleted successfully" });
-
   } catch (error) {
     console.error("Delete book error:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -170,6 +236,20 @@ const updateBook = async (req, res) => {
 
     if (existingBook.rows.length === 0) {
       return res.status(404).json({ message: "Book not found" });
+    }
+    if (req.body.title) {
+      const duplicate = await pool.query(
+        `SELECT id FROM books 
+     WHERE LOWER(title) = LOWER($1) 
+     AND id != $2`,
+        [req.body.title.trim(), id],
+      );
+
+      if (duplicate.rows.length > 0) {
+        return res.status(400).json({
+          message: "Book title already exists",
+        });
+      }
     }
 
     const book = existingBook.rows[0];
@@ -245,11 +325,12 @@ const updateBook = async (req, res) => {
   }
 };
 
-
 module.exports = {
   createBook,
   getAllBooks,
   getBookById,
   deleteBook,
   updateBook,
+  getAllBooksPublic,
+  getPuplicBookById,
 };

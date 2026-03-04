@@ -65,7 +65,7 @@ const createCode = async (req, res) => {
 const getAllCodes = async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT bc.id, bc.code, bc.validity_months, bc.allowed_role, bc.created_at,bc.is_used,
+      `SELECT bc.id, bc.code, bc.validity_months, bc.allowed_role, bc.created_at,bc.is_used,bc.used_at,
               b.id AS book_id, b.title AS book_title
        FROM book_codes bc
        LEFT JOIN books b ON bc.book_id = b.id

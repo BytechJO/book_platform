@@ -6,6 +6,8 @@ const {
   getBookById,
   deleteBook,
   updateBook,
+  getAllBooksPublic,
+  getPuplicBookById,
 } = require("../controller/book");
 const { authenticate } = require("../middleware/authenticate");
 const authorize = require("../middleware/authorized");
@@ -22,6 +24,12 @@ router.post(
   ]),
   createBook,
 );
+
+//http://localhost:5000/api/books/all(GET)
+router.get("/all-books-public", getAllBooksPublic);
+
+//http://localhost:5000/api/books/all(GET)
+router.get("/all-books-public/:id", getPuplicBookById);
 
 //http://localhost:5000/api/books/all(GET)
 router.get("/all-books", authenticate, authorize("admin"), getAllBooks);

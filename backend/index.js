@@ -26,6 +26,10 @@ app.use("/api/code", codeRouter);
 const userRouter = require("./router/user");
 app.use("/api/users", userRouter);
 
+// Import and use user-bookes routes
+const bookCodesRoutes = require("./router/user_book");
+app.use("/api/user-books", bookCodesRoutes);
+
 app.get("/", async (req, res) => {
   try {
     const result = await pool.query("SELECT NOW()");
