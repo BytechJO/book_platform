@@ -12,6 +12,7 @@ import BookSeries from "../pages/Public-Layout/Book-series";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import AuthLayout from "../pages/auth/AuthLayout";
+
 import ProtectedRoute from "../utils/ProtectedRoute";
 import Users from "../pages/admin/Users";
 import Books from "../pages/admin/books/Books";
@@ -80,7 +81,7 @@ export default function AppRoutes() {
         <Route path="books/:id" element={<ViewTeacherBook />} />
         <Route path="help" element={<Help />} />
       </Route>
-         <Route
+      <Route
         path="/student"
         element={
           <ProtectedRoute allowedRoles={["student"]}>
