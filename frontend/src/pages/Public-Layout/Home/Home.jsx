@@ -6,7 +6,7 @@ import Student3 from "../../../assets/student3.svg";
 import Student4 from "../../../assets/student4.svg";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
-import BookSlider from "./Bookslider";
+import BookSlider from "./BookSlider";
 const circles = [
   { size: 25, color: "#3b82f6", top: "25%", left: "16%" },
   { size: 25, color: "#facc15", bottom: "20%", left: "30%" },
