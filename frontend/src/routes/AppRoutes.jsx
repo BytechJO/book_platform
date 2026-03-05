@@ -11,7 +11,7 @@ import Dashboard from "../pages/admin/Dashboard";
 import BookSeries from "../pages/Public-Layout/Book-series";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
-import AuthLayout from "../pages/auth/AuthLayoutTemp";
+import AuthLayout from "../pages/auth/AuthLayout"
 
 import ProtectedRoute from "../utils/ProtectedRoute";
 import Users from "../pages/admin/Users";
