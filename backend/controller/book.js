@@ -40,17 +40,19 @@ const createBook = async (req, res) => {
         message: "Book title already exists",
       });
     }
-    if (isbn) {
-      const existingIsbn = await pool.query(
-        "SELECT id FROM books WHERE isbn = $1",
-        [isbn],
-      );
+    if (!isbn) {
+      return res.status(400).json({ message: "ISBN is required" });
+    }
 
-      if (existingIsbn.rows.length > 0) {
-        return res.status(400).json({
-          message: "ISBN already exists",
-        });
-      }
+    const existingIsbn = await pool.query(
+      "SELECT id FROM books WHERE isbn = $1",
+      [isbn.trim()],
+    );
+
+    if (existingIsbn.rows.length > 0) {
+      return res.status(400).json({
+        message: "ISBN already exists",
+      });
     }
     let shortUrl = null;
     let longUrl = null;
@@ -251,7 +253,22 @@ const updateBook = async (req, res) => {
         });
       }
     }
+    if (!req.body.isbn) {
+      return res.status(400).json({ message: "ISBN is required" });
+    }
 
+    const duplicateIsbn = await pool.query(
+      `SELECT id FROM books 
+   WHERE isbn = $1 
+   AND id != $2`,
+      [req.body.isbn.trim(), id],
+    );
+
+    if (duplicateIsbn.rows.length > 0) {
+      return res.status(400).json({
+        message: "ISBN already exists",
+      });
+    }
     const book = existingBook.rows[0];
 
     let shortUrl = book.cover_image_url_short;
@@ -290,19 +307,20 @@ const updateBook = async (req, res) => {
 
     const result = await pool.query(
       `
-      UPDATE books
-      SET title=$1,
-          description=$2,
-          app_store_url=$3,
-          google_play_url=$4,
-          online_book_url=$5,
-          cover_image_url_short=$6,
-          cover_image_url_long=$7,
-          cover_image_short_public_id=$8,
-          cover_image_long_public_id=$9,
-          updated_at=NOW()
-      WHERE id=$10
-      RETURNING *
+  UPDATE books
+    SET title=$1,
+    description=$2,
+    app_store_url=$3,
+    google_play_url=$4,
+    online_book_url=$5,
+    cover_image_url_short=$6,
+    cover_image_url_long=$7,
+    cover_image_short_public_id=$8,
+    cover_image_long_public_id=$9,
+    isbn=$10,
+    updated_at=NOW()
+    WHERE id=$11
+    RETURNING *
       `,
       [
         req.body.title,
@@ -314,6 +332,7 @@ const updateBook = async (req, res) => {
         longUrl,
         shortPublicId,
         longPublicId,
+        req.body.isbn,
         id,
       ],
     );

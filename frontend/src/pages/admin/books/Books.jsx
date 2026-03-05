@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { useState, useMemo } from "react";
-import { useGetBooks } from "../../../api";
+import { useGetBooks, useGetCodes } from "../../../api";
 import EditIconButton from "../../../components/icons/EditIconButton";
 import DeleteIconButton from "../../../components/icons/DeleteIconButton";
 import { Helmet } from "react-helmet-async";
@@ -34,6 +34,7 @@ export default function Books() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedBookId, setSelectedBookId] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const { codes } = useGetCodes();
 
   const navigate = useNavigate();
   const filteredBooks = useMemo(() => {
@@ -130,7 +131,7 @@ export default function Books() {
         </Box>
 
         {/* Grid */}
-       <Box
+        <Box
           sx={{
             maxWidth: 1200,
             mx: "auto",
@@ -143,117 +144,128 @@ export default function Books() {
             gap: 10,
           }}
         >
-          {filteredBooks.map((book) => (
-            <Card
-              key={book.id}
-              sx={{
-                borderRadius: 3,
-                overflow: "hidden",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-                transition: "0.2s ease",
-                "&:hover": {
-                  transform: "translateY(-4px)",
-                  boxShadow: "0 6px 16px rgba(0,0,0,0.1)",
-                },
-                cursor: "pointer",
-              }}
-              onClick={() => navigate(`/admin/books/${book.id}`)}
-            >
-              <CardMedia
-                component="img"
-                image={book.cover_image_url_short}
-                alt={book.title}
+          {filteredBooks.map((book) => {
+            const bookCodes = codes.filter((c) => c.book_id === book.id);
+
+            const totalCodes = bookCodes.length;
+
+            const usedCodes = bookCodes.filter((c) => c.is_used).length;
+
+            return (
+              <Card
+                key={book.id}
                 sx={{
-                  width: "100%",
-                  aspectRatio: "3 / 4",
-                  objectFit: "cover",
-                  display: "block",
+                  borderRadius: 3,
+                  overflow: "hidden",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+                  transition: "0.2s ease",
+                  "&:hover": {
+                    transform: "translateY(-4px)",
+                    boxShadow: "0 6px 16px rgba(0,0,0,0.1)",
+                  },
+                  cursor: "pointer",
                 }}
-              />
-              <CardContent
-                sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}
+                onClick={() => navigate(`/admin/books/${book.id}`)}
               >
-                <Stack
-                  direction="row"
-                  justifyContent="space-between"
-                  alignItems="center"
+                <CardMedia
+                  component="img"
+                  image={book.cover_image_url_short}
+                  alt={book.title}
+                  sx={{
+                    width: "100%",
+                    aspectRatio: "3 / 4",
+                    objectFit: "cover",
+                    display: "block",
+                  }}
+                />
+                <CardContent
+                  sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}
                 >
-                  <Typography
-                    fontWeight={400}
-                    fontSize={24}
-                    fontFamily="Poppins"
-                    color="#535353"
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
                   >
-                    {book.title}
+                    <Typography
+                      fontWeight={400}
+                      fontSize={24}
+                      fontFamily="Poppins"
+                      color="#535353"
+                    >
+                      {book.title}
+                    </Typography>
+
+                    <Chip
+                      label="WEB"
+                      size="small"
+                      sx={{
+                        backgroundColor: "#2B5A9E73",
+                        color: "#2B5A9E",
+                        fontWeight: 400,
+                        borderRadius: "3px",
+                      }}
+                    />
+                  </Stack>
+
+                  <Typography variant="body2" sx={{ mt: 1, color: "#7a869a" }}>
+                    {book.description
+                      ? book.description.slice(0, 30) +
+                        (book.description.length > 30 ? "..." : "")
+                      : "No description available."}
                   </Typography>
 
-                  <Chip
-                    label="WEB"
-                    size="small"
-                    sx={{
-                      backgroundColor: "#2B5A9E73",
-                      color: "#2B5A9E",
-                      fontWeight: 400,
-                      borderRadius: "3px",
-                    }}
-                  />
-                </Stack>
+                  <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
+                    <IconButton
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/admin/books/${book.id}/edit`);
+                      }}
+                      sx={{
+                        p: 0,
+                        width: 34,
+                        height: 34,
+                        borderRadius: "8px",
+                        transition: "all 0.2s ease",
+                        "&:hover": {
+                          backgroundColor: "#e3ecf8",
+                          transform: "scale(1.1)",
+                        },
+                      }}
+                    >
+                      <EditIconButton size={32} />
+                    </IconButton>
+                    <IconButton
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedBookId(book.id);
+                        setDeleteDialogOpen(true);
+                      }}
+                      sx={{
+                        p: 0,
+                        width: 34,
+                        height: 34,
+                        borderRadius: "8px",
+                        transition: "all 0.2s ease",
+                        "&:hover": {
+                          backgroundColor: "#fdeaea",
+                          transform: "scale(1.1)",
+                        },
+                      }}
+                    >
+                      <DeleteIconButton size={32} />
+                    </IconButton>
+                  </Stack>
 
-                <Typography variant="body2" sx={{ mt: 1, color: "#7a869a" }}>
-                  {book.description
-                    ? book.description.slice(0, 30) +
-                      (book.description.length > 30 ? "..." : "")
-                    : "No description available."}
-                </Typography>
-
-                <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
-                  <IconButton
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/admin/books/${book.id}/edit`);
-                    }}
-                    sx={{
-                      p: 0,
-                      width: 34,
-                      height: 34,
-                      borderRadius: "8px",
-                      transition: "all 0.2s ease",
-                      "&:hover": {
-                        backgroundColor: "#e3ecf8",
-                        transform: "scale(1.1)",
-                      },
-                    }}
+                  <Typography
+                    variant="caption"
+                    sx={{ mt: 1, color: "#7a869a" }}
                   >
-                    <EditIconButton size={32} />
-                  </IconButton>
-                  <IconButton
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedBookId(book.id);
-                      setDeleteDialogOpen(true);
-                    }}
-                    sx={{
-                      p: 0,
-                      width: 34,
-                      height: 34,
-                      borderRadius: "8px",
-                      transition: "all 0.2s ease",
-                      "&:hover": {
-                        backgroundColor: "#fdeaea",
-                        transform: "scale(1.1)",
-                      },
-                    }}
-                  >
-                    <DeleteIconButton size={32} />
-                  </IconButton>
-                </Stack>
-
-                <Typography variant="caption" sx={{ mt: 1, color: "#7a869a" }}>
-                  Codes: {book.codes_count || 0} used
-                </Typography>
-              </CardContent>
-            </Card>
-          ))}
+                    Codes: {usedCodes} / {totalCodes}
+                  </Typography>
+                </CardContent>
+              </Card>
+            );
+          })}
         </Box>
       </Box>
       <Dialog

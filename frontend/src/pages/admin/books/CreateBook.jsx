@@ -25,6 +25,8 @@ export default function CreateBook() {
   const isEdit = Boolean(id);
   const [shortPreview, setShortPreview] = useState(null);
   const [longPreview, setLongPreview] = useState(null);
+  const [shortImageError, setShortImageError] = useState("");
+  const [longImageError, setLongImageError] = useState("");
   const { books } = useGetBooks();
   const schema = yup.object().shape({
     title: yup
@@ -37,7 +39,7 @@ export default function CreateBook() {
 
     isbn: yup
       .string()
-      .nullable()
+      .required("ISBN is required")
       .matches(/^[0-9-]*$/, "ISBN must contain only numbers and dashes"),
 
     app_store_url: yup.string().nullable().url("Invalid App Store URL"),
@@ -93,13 +95,28 @@ export default function CreateBook() {
     if (type === "short") {
       setShortImage(file);
       setShortPreview(previewUrl);
+      setShortImageError("");
     } else {
       setLongImage(file);
       setLongPreview(previewUrl);
+      setLongImageError("");
     }
   };
-
   const onSubmit = async (data) => {
+    if (!shortImage && !shortPreview) {
+      setShortImageError("Short cover image is required");
+      return;
+    } else {
+      setShortImageError("");
+    }
+
+    if (!longImage && !longPreview) {
+      setLongImageError("Long cover image is required");
+      return;
+    } else {
+      setLongImageError("");
+    }
+
     const formData = new FormData();
 
     Object.keys(data).forEach((key) => {
@@ -108,7 +125,6 @@ export default function CreateBook() {
 
     if (shortImage) formData.append("cover_short", shortImage);
     if (longImage) formData.append("cover_long", longImage);
-
     try {
       setLoading(true);
 
@@ -126,6 +142,16 @@ export default function CreateBook() {
         setError("title", {
           type: "server",
           message: "This title already exists",
+        });
+      } else if (message === "ISBN already exists") {
+        setError("isbn", {
+          type: "server",
+          message: "ISBN already exists",
+        });
+      } else if (message === "ISBN is required") {
+        setError("isbn", {
+          type: "server",
+          message: "ISBN is required",
         });
       } else {
         console.log(message || "Something went wrong");
@@ -207,12 +233,23 @@ export default function CreateBook() {
                   onFileSelect={(file) => handleImageChange(file, "short")}
                 />
 
-                {/* Long Image */}
+                {shortImageError && (
+                  <Typography color="error" fontSize={14}>
+                    {shortImageError}
+                  </Typography>
+                )}
+
                 <ImageUploadBox
                   label="Long Cover (16:9)"
                   preview={longPreview}
                   onFileSelect={(file) => handleImageChange(file, "long")}
                 />
+
+                {longImageError && (
+                  <Typography color="error" fontSize={14}>
+                    {longImageError}
+                  </Typography>
+                )}
               </Stack>
               <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
                 <Button
