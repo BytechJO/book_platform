@@ -188,9 +188,15 @@ export default function Books() {
                   >
                     <Typography
                       fontWeight={400}
-                      fontSize={24}
+                      fontSize={20}
                       fontFamily="Poppins"
                       color="#535353"
+                      sx={{
+                        display: "-webkit-box",
+                        WebkitLineClamp: 1,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                      }}
                     >
                       {book.title}
                     </Typography>
@@ -207,7 +213,11 @@ export default function Books() {
                     />
                   </Stack>
 
-                  <Typography variant="body2" sx={{ mt: 1, color: "#7a869a" }}>
+                  <Typography
+                    variant="body2"
+                    sx={{ mt: 1, color: "#7a869a" }}
+                    fontSize={12}
+                  >
                     {book.description
                       ? book.description.slice(0, 30) +
                         (book.description.length > 30 ? "..." : "")
