@@ -50,6 +50,10 @@ export default function Register() {
       .oneOf([yup.ref("password")], "Passwords must match"),
 
     code: yup.string().required("Activation code is required"),
+
+    terms: yup
+      .boolean()
+      .oneOf([true], "You must accept the terms and privacy policy"),
   });
   const {
     register,
@@ -291,11 +295,16 @@ export default function Register() {
                     sx={{ mb: 2 }}
                   />
                   <FormControlLabel
-                    control={<Checkbox size="small" />}
-                    label="I have received and agree to the Terms of Service and Privacy
-                  Policy"
-                    sx={{ mb: 2 }}
+                    control={<Checkbox size="small" {...register("terms")} />}
+                    label="I have received and agree to the Terms of Service and Privacy Policy"
+                    sx={{ mb: 1 }}
                   />
+
+                  {errors.terms && (
+                    <Typography color="error" variant="caption">
+                      {errors.terms.message}
+                    </Typography>
+                  )}
                   <Button
                     fullWidth
                     type="submit"

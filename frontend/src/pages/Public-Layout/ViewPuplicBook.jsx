@@ -1,5 +1,5 @@
-import { Box, Typography, Stack, Card, Divider } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { Box, Typography, Stack, Card, Divider, Button } from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
 import ISPNIconButton from "src/components/icons/ISPNIcon";
 import PrinterIcon from "src/components/icons/PrinterIcon";
 import Icon from "src/assets/icon/icone.svg";
@@ -7,13 +7,37 @@ import { useGetOnePuplicBook } from "src/api";
 
 export default function ViewPuplicBook() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const isArabic = (text) => /[\u0600-\u06FF]/.test(text);
-  const { book } = useGetOnePuplicBook(id);
+  const { book, error } = useGetOnePuplicBook(id);
+  if (error) {
+    return (
+      <Box
+        sx={{
+          textAlign: "center",
+          py: 10,
+          maxWidth: 500,
+          mx: "auto",
+        }}
+      >
+        <Typography variant="h4" sx={{ mb: 2 }}>
+          Book Not Found
+        </Typography>
+
+        <Typography sx={{ color: "#7a869a", mb: 4 }}>
+          This book does not belong to your account.
+        </Typography>
+
+        <Button variant="contained" onClick={() => navigate(`/`)}>
+          Back to Home
+        </Button>
+      </Box>
+    );
+  }
   if (!book) return null;
 
   const isRTL = isArabic(book.title);
-
   return (
     <>
       <Divider
@@ -38,7 +62,7 @@ export default function ViewPuplicBook() {
           >
             {/* LEFT SIDE */}
             <Box
-           sx={{
+              sx={{
                 width: { xs: "100%", md: 450 },
                 position: "relative",
                 height: "auto",
@@ -136,7 +160,6 @@ export default function ViewPuplicBook() {
                     Published: {new Date(book.created_at).getFullYear()}
                   </Typography>
                 </Box>
-
               </Box>
             </Box>
 
@@ -182,7 +205,7 @@ export default function ViewPuplicBook() {
               fontWeight: 500,
               fontSize: 14,
               color: "#2d5aa7",
-              mt:3
+              mt: 3,
             }}
           >
             alrowadpub.com

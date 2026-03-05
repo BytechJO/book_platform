@@ -41,10 +41,10 @@ export default function Dashboard() {
           }}
         >
           <Typography
-            sx={{ opacity: 0.85 }}
             mb={2}
             fontSize="30px"
             fontWeight="400"
+            color="#fff"
           >
             Publisher Platform
           </Typography>

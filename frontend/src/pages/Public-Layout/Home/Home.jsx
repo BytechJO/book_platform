@@ -214,15 +214,20 @@ export default function Home() {
           {/* Title */}
           <Typography
             variant="h4"
-            fontWeight="bold"
+            fontWeight="700"
             textAlign="center"
             sx={{ mb: 2 }}
           >
-            Our Educational <span style={{ color: "#f97316" }}>Categories</span>
+            Our Educational <span style={{ color: "#F15A29" }}>Categories</span>
           </Typography>
 
           {/* Subtitle */}
-          <Typography textAlign="center" color="text.secondary" sx={{ mb: 6 }}>
+          <Typography
+            textAlign="center"
+            color="text.secondary"
+            sx={{ mb: 6 }}
+            fontWeight="400"
+          >
             Building a world where learning meets innovation, a platform that
             empowers every mind to grow.
           </Typography>
