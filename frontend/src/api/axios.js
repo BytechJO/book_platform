@@ -9,7 +9,6 @@ const axiosInstance = axios.create({
   baseURL: BASE_URL,
 });
 
-// يضيف التوكن مع كل request
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
 
@@ -20,7 +19,6 @@ axiosInstance.interceptors.request.use((config) => {
   return config;
 });
 
-// يمسك الأخطاء القادمة من السيرفر
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {

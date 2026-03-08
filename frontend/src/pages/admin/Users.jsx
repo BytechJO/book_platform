@@ -24,6 +24,7 @@ import BlockUserIcon from "../../components/icons/BlockUserIcon";
 import axiosInstance from "../../api/axios";
 import ENDPOINTS from "../../api/endpoints";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import SiteLoader from "../../components/SiteLoade";
 
 function roleLabel(role) {
   if (!role) return "—";
@@ -68,6 +69,11 @@ export default function Users() {
       setUpdating(false);
     }
   };
+
+  if (loading) {
+    return <SiteLoader fullScreen text="Loading Books..." />;
+  }
+
   return (
     <>
       <Helmet>

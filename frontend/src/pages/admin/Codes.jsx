@@ -34,6 +34,7 @@ import ENDPOINTS from "src/api/endpoints";
 import DownloadButtonIcon from "src/components/icons/DownloadButtonIcon";
 import { useRef } from "react";
 import { LoadingButton } from "@mui/lab";
+import SiteLoader from "../../components/SiteLoade";
 
 function formatDate(iso) {
   if (!iso) return "—";
@@ -269,6 +270,10 @@ export default function Codes() {
 
     XLSX.writeFile(workbook, "generated_codes.xlsx");
   };
+  if (loading) {
+    return <SiteLoader fullScreen text="Loading Books..." />;
+  }
+
   return (
     <>
       <Helmet>

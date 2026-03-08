@@ -127,15 +127,20 @@ export default function UserProfile() {
   return (
     <>
       <Helmet>
-        <title>User Profile - Admin Dashboard</title>
+        <title>User Profile - Student Dashboard</title>
       </Helmet>
+      <Divider
+        sx={{
+          width: "100%",
+          borderColor: "#1A4D965C",
+          mb: 2,
+        }}
+      />
       <Box
         sx={{
           p: { xs: 2, md: 4 },
           display: "flex",
           justifyContent: "center",
-          minHeight: "80vh",
-          bgcolor: "#f0f2f5",
         }}
       >
         <Paper
@@ -149,7 +154,7 @@ export default function UserProfile() {
         >
           <Box
             sx={{
-              height: 140,
+              height: 100,
               background: `linear-gradient(135deg, ${primaryColor} 0%, #3a6fb0 100%)`,
               position: "relative",
               display: "flex",

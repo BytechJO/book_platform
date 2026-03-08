@@ -11,6 +11,7 @@ import {
   TextField,
   Typography,
   Button,
+  Avatar,
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -24,6 +25,7 @@ import axiosInstance from "../../api/axios";
 import ENDPOINTS from "../../api/endpoints";
 import { LoadingButton } from "@mui/lab";
 import { useGetMyBooks } from "../../api/user_books";
+import { useAuthMe } from "../../api";
 export default function TeachBar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const location = useLocation();
@@ -38,6 +40,7 @@ export default function TeachBar() {
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
+  const { user } = useAuthMe();
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -189,10 +192,12 @@ export default function TeachBar() {
         {/* Right Side Icons */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
           {/* Settings */}
-          <IconButton sx={{ color: "black" }}>
+          <IconButton
+            sx={{ color: "black" }}
+            onClick={() => navigate("/student/profile")}
+          >
             <SettingsIcon size={26} />
           </IconButton>
-
           {/* Notifications */}
           <IconButton sx={{ color: "black", position: "relative" }}>
             <BellIcon size={26} />
@@ -221,14 +226,23 @@ export default function TeachBar() {
           {/* User */}
           <IconButton
             sx={{
-              color: "black",
               display: "flex",
               alignItems: "center",
               gap: 0.5,
             }}
             onClick={handleOpen}
           >
-            <UserIcon size={26} />
+            {user?.avatar_url ? (
+              <Avatar
+                src={user.avatar_url}
+                sx={{
+                  width: 28,
+                  height: 28,
+                }}
+              />
+            ) : (
+              <UserIcon size={26} />
+            )}
             <KeyboardArrowDownIcon
               sx={{
                 fontSize: 20,

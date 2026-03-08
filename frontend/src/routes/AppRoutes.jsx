@@ -11,7 +11,7 @@ import Dashboard from "../pages/admin/Dashboard";
 import BookSeries from "../pages/Public-Layout/Book-series";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
-import AuthLayout from "../pages/auth/AuthLayout"
+import AuthLayout from "../pages/auth/AuthLayout";
 
 import ProtectedRoute from "../utils/ProtectedRoute";
 import Users from "../pages/admin/Users";
@@ -32,6 +32,8 @@ import ViewStudentBook from "../pages/student/books/ViewStudentBook";
 import StudentHome from "../pages/student/StudentHome";
 import HelpStudent from "../pages/student/Help";
 import UserProfile from "../pages/admin/UserProfile";
+import UserProfileStudent from "../pages/student/UserProfile";
+import UserProfileTeacher from "../pages/teacher/UserProfile";
 
 export default function AppRoutes() {
   return (
@@ -68,7 +70,6 @@ export default function AppRoutes() {
         <Route path="books/:id/edit" element={<CreateBook />} />
         <Route path="books/:id" element={<ViewBook />} />
         <Route path="profile" element={<UserProfile />} />
-        
       </Route>
 
       <Route
@@ -83,6 +84,7 @@ export default function AppRoutes() {
         <Route path="books" element={<TeacherBooks />} />
         <Route path="books/:id" element={<ViewTeacherBook />} />
         <Route path="help" element={<Help />} />
+        <Route path="profile" element={<UserProfileTeacher />} />
       </Route>
       <Route
         path="/student"
@@ -96,6 +98,7 @@ export default function AppRoutes() {
         <Route path="books" element={<StudentBooks />} />
         <Route path="books/:id" element={<ViewStudentBook />} />
         <Route path="help" element={<HelpStudent />} />
+        <Route path="profile" element={<UserProfileStudent />} />
       </Route>
       {/* 404 Page */}
       <Route path="*" element={<NotFound />} />
