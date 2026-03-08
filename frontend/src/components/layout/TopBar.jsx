@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { AppBar, Toolbar, Typography, IconButton, Box } from "@mui/material";
+import { AppBar, Toolbar, Typography, IconButton, Box, Avatar } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -8,8 +8,10 @@ import SettingsIcon from "../icons/SettingsIcon";
 import BellIcon from "../icons/BellIcon";
 import UserIcon from "../icons/UserIcon";
 import { Menu, MenuItem } from "@mui/material";
+import { useAuthMe } from "src/api";
 export default function TopBar() {
   const [anchorEl, setAnchorEl] = useState(null);
+  const { user } = useAuthMe();
 
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
@@ -44,7 +46,10 @@ export default function TopBar() {
         {/* Right Side Icons */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
           {/* Settings */}
-          <IconButton sx={{ color: "white" }}>
+          <IconButton
+            sx={{ color: "white" }}
+            onClick={() => navigate("/admin/profile")}
+          >
             <SettingsIcon size={26} />
           </IconButton>
 
@@ -74,6 +79,7 @@ export default function TopBar() {
           </IconButton>
 
           {/* User */}
+          {/* User */}
           <IconButton
             sx={{
               color: "white",
@@ -83,7 +89,17 @@ export default function TopBar() {
             }}
             onClick={handleOpen}
           >
-            <UserIcon size={26} />
+            {user?.avatar_url ? (
+              <Avatar
+                src={user.avatar_url}
+                sx={{
+                  width: 28,
+                  height: 28,
+                }}
+              />
+            ) : (
+              <UserIcon size={26} />
+            )}
             <KeyboardArrowDownIcon
               sx={{
                 fontSize: 20,

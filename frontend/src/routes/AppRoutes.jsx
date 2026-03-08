@@ -31,6 +31,7 @@ import StudentBooks from "../pages/student/books/StudentBooks";
 import ViewStudentBook from "../pages/student/books/ViewStudentBook";
 import StudentHome from "../pages/student/StudentHome";
 import HelpStudent from "../pages/student/Help";
+import UserProfile from "../pages/admin/UserProfile";
 
 export default function AppRoutes() {
   return (
@@ -66,6 +67,8 @@ export default function AppRoutes() {
         <Route path="books/create" element={<CreateBook />} />
         <Route path="books/:id/edit" element={<CreateBook />} />
         <Route path="books/:id" element={<ViewBook />} />
+        <Route path="profile" element={<UserProfile />} />
+        
       </Route>
 
       <Route

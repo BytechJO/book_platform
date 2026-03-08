@@ -1,7 +1,21 @@
 const bcrypt = require("bcrypt");
 const pool = require("../database/connection");
 const jwt = require("jsonwebtoken");
+const cloudinary = require("../utils/cloudinary");
+const streamifier = require("streamifier");
+const uploadToCloudinary = (fileBuffer, folder) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder },
+      (error, result) => {
+        if (result) resolve(result);
+        else reject(error);
+      },
+    );
 
+    streamifier.createReadStream(fileBuffer).pipe(stream);
+  });
+};
 const register = async (req, res) => {
   const client = await pool.connect();
 
@@ -111,7 +125,6 @@ const register = async (req, res) => {
     client.release();
   }
 };
-
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -154,7 +167,7 @@ const login = async (req, res) => {
         email: user.email,
         full_name: user.full_name,
         role: user.role,
-        status:user.status
+        status: user.status,
       },
     });
   } catch (error) {
@@ -166,10 +179,9 @@ const me = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const result = await pool.query(
-      "SELECT * FROM users WHERE id = $1",
-      [userId],
-    );
+    const result = await pool.query("SELECT * FROM users WHERE id = $1", [
+      userId,
+    ]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ message: "User not found" });
@@ -181,5 +193,93 @@ const me = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { full_name, email } = req.body;
 
-module.exports = { register, login, me };
+    const existingUser = await pool.query("SELECT * FROM users WHERE id=$1", [
+      userId,
+    ]);
+
+    if (existingUser.rows.length === 0) {
+      return res.status(404).json({
+        errors: { general: "User not found" },
+      });
+    }
+
+    const user = existingUser.rows[0];
+
+    // check duplicate email
+    if (email) {
+      const emailCheck = await pool.query(
+        `SELECT id FROM users 
+         WHERE email=$1 AND id != $2`,
+        [email, userId],
+      );
+
+      if (emailCheck.rows.length > 0) {
+        return res.status(400).json({
+          errors: {
+            email: "This email is already used",
+          },
+        });
+      }
+    }
+
+    let avatarUrl = user.avatar_url;
+    let avatarPublicId = user.avatar_public_id;
+
+    if (req.file) {
+      try {
+        if (avatarPublicId) {
+          await cloudinary.uploader.destroy(avatarPublicId);
+        }
+
+        const uploaded = await uploadToCloudinary(
+          req.file.buffer,
+          "users/avatar",
+        );
+
+        avatarUrl = uploaded.secure_url;
+        avatarPublicId = uploaded.public_id;
+      } catch (cloudinaryError) {
+        if (cloudinaryError.message?.includes("File size")) {
+          return res.status(400).json({
+            errors: {
+              avatar: "Image must be smaller than 10MB",
+            },
+          });
+        }
+
+        throw cloudinaryError;
+      }
+    }
+
+    const result = await pool.query(
+      `
+      UPDATE users
+      SET
+        full_name = COALESCE($1, full_name),
+        email = COALESCE($2, email),
+        avatar_url = COALESCE($3, avatar_url),
+        avatar_public_id = COALESCE($4, avatar_public_id),
+        updated_at = NOW()
+      WHERE id = $5
+      RETURNING id,email,full_name,role,status,avatar_url
+      `,
+      [full_name, email, avatarUrl, avatarPublicId, userId],
+    );
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Update profile error:", error);
+
+    res.status(500).json({
+      errors: {
+        general: "Internal server error",
+      },
+    });
+  }
+};
+module.exports = { register, login, me, updateProfile };

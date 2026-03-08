@@ -1,9 +1,9 @@
 import { Box, Container, Typography, Button } from "@mui/material";
 import Logo from "../../../assets/logo.svg";
 import Student1 from "../../../assets/student1.svg";
-import Student2 from "../../../assets/student2.svg";
+import Student2 from "../../../assets/student2.png";
 import Student3 from "../../../assets/student3.svg";
-import Student4 from "../../../assets/student4.svg";
+import Student4 from "../../../assets/student4.png";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import BookSlider from "./BookSlider";
