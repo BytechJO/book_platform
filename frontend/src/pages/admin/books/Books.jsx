@@ -117,7 +117,7 @@ export default function Books() {
           <TextField
             fullWidth
             size="small"
-            placeholder="Search in your courses..."
+            placeholder="Search in your books..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             InputProps={{

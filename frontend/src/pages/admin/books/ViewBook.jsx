@@ -1,14 +1,14 @@
 import { Box, Typography, Stack, Card, Divider } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axiosInstance from "../../../api/axios";
-import ENDPOINTS from "../../../api/endpoints";
-import ISPNIconButton from "../../../components/icons/ISPNIcon";
-import PrinterIcon from "../../../components/icons/PrinterIcon";
-import Icon from "../../../assets/icon/icone.svg";
-import AppleCircleIcon from "../../../components/icons/AppleCircleIcon";
-import AndroidCircleIcon from "../../../components/icons/AndroidCircleIcon";
-import onlineIcon1 from "../../../assets/icon/onlineIcon.png";
+import axiosInstance from "src/api/axios";
+import ENDPOINTS from "src/api/endpoints";
+import ISPNIconButton from "src/components/icons/ISPNIcon";
+import PrinterIcon from "src/components/icons/PrinterIcon";
+import Icon from "src/assets/icon/icone.svg";
+import AppleCircleIcon from "src/components/icons/AppleCircleIcon";
+import AndroidCircleIcon from "src/components/icons/AndroidCircleIcon";
+import onlineIcon1 from "src/assets/icon/onlineIcon.png";
 import { Helmet } from "react-helmet-async";
 
 export default function ViewBook() {

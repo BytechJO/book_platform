@@ -124,12 +124,11 @@ export default function Codes() {
 
     const formData = new FormData(e.currentTarget);
 
-    const number_of_codes = Number(formData.get("number_of_codes"));
+    const number_of_codes = Number(formData.get("number_of_codes")) || 1;
     const allowed_role = formData.get("allowed_role");
     const validity_months = Number(formData.get("validity_months"));
     const book_id = formData.get("book_id");
 
-    if (!number_of_codes || number_of_codes <= 0) return;
 
     try {
       setGenerateLoading(true);
