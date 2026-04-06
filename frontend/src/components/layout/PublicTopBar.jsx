@@ -12,7 +12,7 @@ export default function PublicTopBar() {
       position="fixed"
       sx={{
         backgroundColor: "#1A4D96",
-        height: 50,
+        height: { xs: 48, sm: 52, md: 60, lg: 64 },
         justifyContent: "center",
         boxShadow: "none",
       }}
@@ -20,28 +20,64 @@ export default function PublicTopBar() {
       <Toolbar
         sx={{
           justifyContent: "space-between",
-          pl: { xs: 2, md: 16 },
-          pr: { xs: 2, md: 4 },
+          alignItems: "center",
+          minHeight: "unset",
+          width: "100%",
+          px: { xs: 1.2, sm: 2, md: 4, lg: 6 },
+          pl: { xs: 1.2, sm: 2, md: 8, lg: 16 },
+          pr: { xs: 1.5, sm: 2, md: 4, lg: 6 },
+          overflow: "hidden",
         }}
       >
-        {/* Navigation */}
-        <Box sx={{ display: "flex", gap: 3 }}>
-          <NavItem to="/" label="Home" />
-          <NavItem to="/about" label="About Us" />
-          <NavItem to="/book-series" label="Book series" />
-          <NavItem to="/contact" label="Contact" />
+        {/* LEFT SIDE */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            minWidth: 0,
+            flex: 1,
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: { xs: 0.2, sm: 0.5, md: 1.2, lg: 2 },
+              flexWrap: "nowrap",
+              overflowX: "auto",
+              scrollbarWidth: "none",
+              "&::-webkit-scrollbar": {
+                display: "none",
+              },
+            }}
+          >
+            <NavItem to="/" label="Home" />
+            <NavItem to="/about" label="About Us" />
+            <NavItem to="/book-series" label="Book series" />
+            <NavItem to="/contact" label="Contact" />
+          </Box>
         </Box>
 
-        {/* Social Icons */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        {/* RIGHT SIDE */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-end",
+            flexShrink: 0,
+            gap: { xs: 0.2, sm: 0.4, md: 0.8, lg: 1 },
+            ml: { xs: 0.5, sm: 1, md: 2 },
+            pr: { xs: 0.5, sm: 0.5, md: 0 },
+          }}
+        >
           <SocialIcon>
-            <FacebookIcon fontSize="small" />
+            <FacebookIcon />
           </SocialIcon>
           <SocialIcon>
-            <TwitterIcon fontSize="small" />
+            <TwitterIcon />
           </SocialIcon>
           <SocialIcon>
-            <InstagramIcon fontSize="small" />
+            <InstagramIcon />
           </SocialIcon>
         </Box>
       </Toolbar>
@@ -50,7 +86,6 @@ export default function PublicTopBar() {
 }
 
 /* ---------- Nav Item ---------- */
-
 
 function NavItem({ to, label }) {
   const location = useLocation();
@@ -61,17 +96,28 @@ function NavItem({ to, label }) {
       : location.pathname.startsWith(to);
 
   return (
-    <NavLink to={to} style={{ textDecoration: "none" }}>
+    <NavLink to={to} style={{ textDecoration: "none", flexShrink: 0 }}>
       <Button
         sx={{
           color: isActive ? "#1A4D96" : "white",
           backgroundColor: isActive ? "white" : "transparent",
           borderRadius: "20px",
-          px: 2.5,
-          py: 0.5,
+          minWidth: "auto",
           textTransform: "none",
           fontWeight: 500,
-          minWidth: "auto",
+          whiteSpace: "nowrap",
+          lineHeight: 1.1,
+
+          px: { xs: 0.7, sm: 1, md: 1.8, lg: 2.2 },
+          py: { xs: 0.3, sm: 0.45, md: 0.6 },
+          fontSize: {
+            xs: "8px",
+            sm: "10px",
+            md: "13px",
+            lg: "15px",
+            xl: "16px",
+          },
+
           "&:hover": {
             backgroundColor: isActive ? "white" : "rgba(255,255,255,0.1)",
           },
@@ -90,9 +136,16 @@ function SocialIcon({ children }) {
     <IconButton
       sx={{
         color: "white",
-        width: 36,
-        height: 36,
-        borderRadius: "50%",
+        flexShrink: 0,
+        p: 0,
+
+        width: { xs: 20, sm: 24, md: 32, lg: 36 },
+        height: { xs: 20, sm: 24, md: 32, lg: 36 },
+
+        "& svg": {
+          fontSize: { xs: 12, sm: 14, md: 18, lg: 20 },
+        },
+
         "&:hover": {
           backgroundColor: "rgba(255,255,255,0.1)",
         },
