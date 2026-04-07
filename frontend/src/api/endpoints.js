@@ -32,6 +32,9 @@ const ENDPOINTS = {
     Create: "/api/user-books/create",
     my_books: "/api/user-books/my-books",
     my_books_one: (bookId) => `/api/user-books/my-books/${bookId}`,
+    AddClass: (id) => `/api/user-books/${id}/class`,
+    activateClassCode: (id) => `/api/user-books/${id}/class/student`,
+    Student_one: (bookId) => `/api/user-books/student/${bookId}`,
   },
 };
 

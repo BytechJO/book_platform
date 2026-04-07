@@ -25,7 +25,6 @@ export default function WelcomeBanner() {
           opacity: 0.9,
           pt:1,
           mb: 3,
-          fontFamily: "Poppins",
           fontWeight: 400,
           fontSize: "16px",
         }}
@@ -39,7 +38,6 @@ export default function WelcomeBanner() {
         sx={{
           fontWeight: 600,
           mb: 1,
-          fontFamily: "Poppins",
         }}
       >
         Welcome back, Student {firstName} !
@@ -50,7 +48,6 @@ export default function WelcomeBanner() {
         variant="body1"
         sx={{
           opacity: 0.9,
-          fontFamily: "Poppins",
         }}
       >
         Always stay updated in your portal

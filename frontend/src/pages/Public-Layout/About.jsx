@@ -16,7 +16,6 @@ export default function AlRowadPublishingSection() {
         alignItems: "stretch",
         overflow: "hidden",
         position: "relative",
-        fontFamily: "Arial, sans-serif",
         marginTop: { xs: 8, md: 15 },
         px: { xs: 3, md: 0 },
       }}

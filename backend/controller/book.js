@@ -181,6 +181,7 @@ const getPuplicBookById = async (req, res) => {
         b.cover_image_url_short,
         b.cover_image_url_long,
         b.created_at,
+        b.youtube_url,
         b.isbn
       FROM books b
       WHERE b.id = $1 

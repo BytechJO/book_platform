@@ -11,7 +11,6 @@ export default function Help() {
           borderRadius: 4,
           boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
           textAlign: "center",
-          fontFamily: "Poppins",
         }}
       >
         <Typography variant="h4" sx={{ mb: 2, fontWeight: 600 }}>

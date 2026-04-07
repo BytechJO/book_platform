@@ -177,7 +177,6 @@ export default function Home() {
             variant="h3"
             fontWeight="bold"
             fontSize="36px"
-            fontFamily="Poppins"
             sx={{
               mb: 2,
               animation: `${fadeInUp} 0.8s ease-out 0.2s backwards`, // تأخير 0.2s
@@ -193,7 +192,6 @@ export default function Home() {
             fontSize="18px"
             color="#504D4E"
             fontWeight={400}
-            fontFamily="Poppins"
             sx={{
               mb: 2,
               animation: `${fadeInUp} 0.8s ease-out 0.4s backwards`, // تأخير 0.4s

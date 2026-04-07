@@ -4,6 +4,9 @@ const {
   activateBookCode,
   getMyBooks,
   getMyBookById,
+  addBookClass,
+  activateClassCode,
+  getStudentBookById,
 } = require("../controller/user_book");
 const { authenticate } = require("../middleware/authenticate");
 const authorize = require("../middleware/authorized");
@@ -28,5 +31,21 @@ router.get(
   authenticate,
   authorize("teacher", "student"),
   getMyBookById,
+);
+
+router.post("/:id/class", authenticate, authorize("teacher"), addBookClass);
+
+router.post(
+  "/:id/class/student",
+  authenticate,
+  authorize("student"),
+  activateClassCode,
+);
+
+router.get(
+  "/student/:bookId",
+  authenticate,
+  authorize("student"),
+  getStudentBookById,
 );
 module.exports = router;

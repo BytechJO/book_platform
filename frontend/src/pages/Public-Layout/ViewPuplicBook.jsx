@@ -49,168 +49,200 @@ export default function ViewPuplicBook() {
       />
       <Box
         sx={{
-          backgroundColor: "#ffffff",
+          minHeight: "90vh",
           display: "flex",
-          justifyContent: "center",
+          flexDirection: "column",
         }}
       >
-        <Box sx={{ maxWidth: 1200, mx: "auto", px: 2 }}>
-          <Stack
-            direction={{ xs: "column", md: isRTL ? "row" : "row-reverse" }}
-            spacing={6}
-            alignItems="flex-start"
-          >
-            {/* LEFT SIDE */}
-            <Box
-              sx={{
-                width: { xs: "100%", md: 450 },
-                position: "relative",
-                height: "auto",
-              }}
-            >
-              {/* 🔵 IMAGE */}
-              <Box
-                sx={{
-                  position: "relative",
-                  zIndex: 2,
-                  borderRadius: "24px",
-                  overflow: "hidden",
-                  boxShadow: "0px 10px 15px -5px rgba(0,0,0,0.35)",
-                }}
-              >
-                <Box
-                  component="img"
-                  src={book.cover_image_url_long}
-                  alt={book.title}
-                  sx={{
-                    width: "100%",
-                    display: "block",
-                    transform: "scale(1.06)",
-                    transformOrigin: "center",
-                    height: "auto",
-                    boxShadow: "5px 5px 15px 5px #888888",
-                  }}
-                />
-              </Box>
-              {/* ⚪ INFO BOX */}
-              <Box
-                sx={{
-                  position: "relative",
-                  zIndex: 1,
-                  mt: "-60px",
-                  pt: 8,
-                  px: 4,
-                  pb: 4,
-                  borderRadius: "28px",
-                  backgroundColor: "#ffffff",
-                  boxShadow: "0 20px 45px rgba(0,0,0,0.08)",
-                  border: "1px solid #E1E1E1",
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontWeight: 600,
-                    color: "#2d5aa7",
-                    fontSize: 18,
-                    mt: 2,
-                    mb: 1,
-                  }}
-                >
-                  Information
-                </Typography>
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1.5,
-                    mb: 2,
-                  }}
-                >
-                  <ISPNIconButton size={20} />
-                  <Typography sx={{ color: "#1A4D96", fontSize: 14 }}>
-                    ISBN: {book.isbn || "—"}
-                  </Typography>
-                </Box>
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1.5,
-                    mb: 2,
-                  }}
-                >
-                  <PrinterIcon size={20} />
-                  <Typography sx={{ color: "#1A4D96", fontSize: 14 }}>
-                    {book.publisher || "Al-Rowad for Publishing & Distribution"}
-                  </Typography>
-                </Box>
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1.5,
-                    mb: 3,
-                  }}
-                >
-                  <Box component="img" src={Icon} sx={{ width: 20 }} />
-                  <Typography sx={{ color: "#1A4D96", fontSize: 14 }}>
-                    Published: {new Date(book.created_at).getFullYear()}
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
-
-            {/* RIGHT SIDE */}
-            <Box sx={{ flex: 1, textAlign: isRTL ? "right" : "left", pt: 10 }}>
-              <Typography
-                sx={{
-                  fontSize: 36,
-                  fontWeight: 700,
-                  color: "#2d5aa7",
-                  mb: 3,
-                }}
-              >
-                {book.title}
-              </Typography>
-
-              <Box sx={{ width: "100%" }}>
-                <Typography
-                  sx={{
-                    width: "100%",
-                    maxWidth: "100%",
-                    fontFamily: "Poppins",
-                    fontSize: 15,
-                    lineHeight: 2,
-                    color: "#1A4D96",
-                    whiteSpace: "pre-line",
-                    wordBreak: "break-word",
-                    overflowWrap: "anywhere",
-                    minHeight: "150px",
-                  }}
-                >
-                  {book.description?.trim() || "\u00A0"}
-                </Typography>
-              </Box>
-            </Box>
-          </Stack>
-
-          {/* Bottom Text */}
-          <Typography
+        <Box sx={{ flex: 1 }}>
+          <Box
             sx={{
-              textAlign: "center",
-              fontFamily: "Poppins",
-              fontWeight: 500,
-              fontSize: 14,
-              color: "#2d5aa7",
-              mt: 3,
+              backgroundColor: "#ffffff",
+              display: "flex",
+              justifyContent: "center",
             }}
           >
-            alrowadpub.com
-          </Typography>
+            <Box sx={{ maxWidth: 1200, mx: "auto", px: 2, pt: 4 }}>
+              <Stack
+                direction={{ xs: "column", md: isRTL ? "row" : "row-reverse" }}
+                spacing={6}
+                alignItems="flex-start"
+              >
+                {/* LEFT SIDE */}
+                <Box
+                  sx={{
+                    width: { xs: "100%", md: 450 },
+                    position: "relative",
+                    height: "auto",
+                  }}
+                >
+                  {/* 🔵 IMAGE */}
+                  <Box
+                    sx={{
+                      position: "relative",
+                      zIndex: 2,
+                      borderRadius: "24px",
+                      overflow: "hidden",
+                      boxShadow: "0px 10px 15px -5px rgba(0,0,0,0.35)",
+                    }}
+                  >
+                    <Box
+                      component="img"
+                      src={book.cover_image_url_long}
+                      alt={book.title}
+                      sx={{
+                        width: "100%",
+                        display: "block",
+                        transform: "scale(1.06)",
+                        transformOrigin: "center",
+                        height: "auto",
+                        boxShadow: "5px 5px 15px 5px #888888",
+                      }}
+                    />
+                  </Box>
+                  {/* ⚪ INFO BOX */}
+                  <Box
+                    sx={{
+                      position: "relative",
+                      zIndex: 1,
+                      mt: "-60px",
+                      pt: 7,
+                      px: 4,
+                      pb: 4,
+                      borderRadius: "28px",
+                      backgroundColor: "#ffffff",
+                      boxShadow: "0 20px 45px rgba(0,0,0,0.08)",
+                      border: "1px solid #E1E1E1",
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontWeight: 600,
+                        color: "#2d5aa7",
+                        fontSize: 18,
+                        mt: 2,
+                        mb: 1,
+                      }}
+                    >
+                      Information
+                    </Typography>
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1.5,
+                        mb: 2,
+                      }}
+                    >
+                      <ISPNIconButton size={20} />
+                      <Typography sx={{ color: "#1A4D96", fontSize: 14 }}>
+                        ISBN: {book.isbn || "—"}
+                      </Typography>
+                    </Box>
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1.5,
+                        mb: 2,
+                      }}
+                    >
+                      <PrinterIcon size={20} />
+                      <Typography sx={{ color: "#1A4D96", fontSize: 14 }}>
+                        {book.publisher ||
+                          "Al-Rowad for Publishing & Distribution"}
+                      </Typography>
+                    </Box>
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1.5,
+                        mb: 3,
+                      }}
+                    >
+                      <Box component="img" src={Icon} sx={{ width: 20 }} />
+                      <Typography sx={{ color: "#1A4D96", fontSize: 14 }}>
+                        Published: {new Date(book.created_at).getFullYear()}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+
+                {/* RIGHT SIDE */}
+                <Box sx={{ flex: 1, textAlign: isRTL ? "right" : "left" }}>
+                  <Typography
+                    sx={{
+                      fontSize: 32,
+                      fontWeight: 600,
+                      color: "#2d5aa7",
+                      mb: 3,
+                      fontFamily: isArabic(book.title)
+                        ? "Tajawal, sans-serif"
+                        : "Inter, sans-serif",
+                    }}
+                  >
+                    {book.title}
+                  </Typography>
+
+                  <Box sx={{ width: "100%" }}>
+                    <Typography
+                      sx={{
+                        fontWeight: 400,
+                        fontFamily: isArabic(book.description)
+                          ? "Tajawal, sans-serif"
+                          : "Inter, sans-serif",
+                        fontSize: 15,
+                        lineHeight: 2,
+                        color: "#1A4D96",
+                        direction: isArabic(book.description) ? "rtl" : "ltr",
+                        textAlign: isArabic(book.description)
+                          ? "right"
+                          : "left",
+                      }}
+                    >
+                      {book.description?.trim() || "\u00A0"}
+                    </Typography>
+                    {book.youtube_url && (
+                      <Box sx={{ mt: 3 }}>
+                        <Box
+                          component="iframe"
+                          src={book.youtube_url.replace("watch?v=", "embed/")}
+                          title="YouTube video"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          sx={{
+                            width: { xs: "100%", md: "70%" },
+                            height: 220,
+                            border: 0,
+                            borderRadius: "16px",
+                          }}
+                        />
+                      </Box>
+                    )}
+                  </Box>
+                </Box>
+              </Stack>
+
+              {/* Bottom Text */}
+            </Box>
+          </Box>
         </Box>
+        <Typography
+          sx={{
+            textAlign: "center",
+            fontWeight: 500,
+            fontSize: 14,
+            color: "#2d5aa7",
+            mt: 3,
+            pb: 0,
+          }}
+        >
+          alrowadpub.com
+        </Typography>
       </Box>
     </>
   );

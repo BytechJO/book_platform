@@ -28,8 +28,8 @@ export default function TeachBar() {
         <Toolbar
           sx={{
             justifyContent: "space-between",
-            minHeight: { xs: 80, md: 150 }, // 👈 responsive
-            px: { xs: 2, md: 4 },
+            minHeight: { xs: 80, md: 110 }, // 👈 responsive
+            px: { xs: 2, md: 2 },
             alignItems: "center",
           }}
         >

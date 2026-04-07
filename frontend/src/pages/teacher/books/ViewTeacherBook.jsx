@@ -1,4 +1,16 @@
-import { Box, Typography, Stack, Card, Divider } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Stack,
+  Card,
+  Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  Button,
+  Chip,
+} from "@mui/material";
 import { useParams } from "react-router-dom";
 import ISPNIconButton from "src/components/icons/ISPNIcon";
 import PrinterIcon from "src/components/icons/PrinterIcon";
@@ -10,18 +22,52 @@ import { useGetMyOneBook } from "src/api/user_books";
 import { Helmet } from "react-helmet-async";
 import SiteLoader from "src/components/SiteLoade";
 import AccessMessage from "src/components/AccessMessage";
+import { useState } from "react";
+import axiosInstance from "../../../api/axios";
+import ENDPOINTS from "../../../api/endpoints";
 
 export default function ViewTeacherBook() {
   const { id } = useParams();
-
+  const [loadingClass, setLoadingClass] = useState(false);
   const isArabic = (text) => /[\u0600-\u06FF]/.test(text);
-  const { book, loading, error } = useGetMyOneBook(id);
+  const { book, loading, error, refetch } = useGetMyOneBook(id);
   console.log("error", error);
-
+  const [open, setOpen] = useState(false);
+  const [classInput, setClassInput] = useState("");
+  const [expanded, setExpanded] = useState(false);
+  const shortText = book.description?.slice(0, 200) || "";
   if (loading) {
     return <SiteLoader fullScreen text="Loading Books..." />;
   }
+  const generateClassName = (classes = [], id) => {
+    const safeClasses = classes || []; // 👈 الحل
+    const nextLetter = String.fromCharCode(65 + safeClasses.length);
+    return `${nextLetter}-${id}`;
+  };
 
+  const handleSaveClass = async () => {
+    try {
+      setLoadingClass(true); // 👈 start loading
+
+      const finalClass = classInput;
+
+      await axiosInstance.post(
+        ENDPOINTS.User_book.AddClass(book.user_book_id),
+        {
+          class_name: finalClass,
+        },
+      );
+
+      await refetch();
+
+      setOpen(false);
+      setClassInput("");
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingClass(false); // 👈 stop loading
+    }
+  };
   if (error) {
     const status = error?.response?.status;
 
@@ -161,10 +207,9 @@ export default function ViewTeacherBook() {
                 >
                   <Box component="img" src={Icon} sx={{ width: 20 }} />
                   <Typography sx={{ color: "#1A4D96", fontSize: 14 }}>
-                    Published: {new Date(book.created_at).getFullYear()}
+                    Published:{new Date(book.created_at).getFullYear()}
                   </Typography>
                 </Box>
-
                 <Divider sx={{ my: 1 }} />
 
                 <Typography sx={{ fontWeight: 600, mb: 2, color: "#1A4D96" }}>
@@ -227,37 +272,239 @@ export default function ViewTeacherBook() {
                 </Stack>
               </Box>
             </Box>
-
             {/* RIGHT SIDE */}
-            <Box sx={{ flex: 1, textAlign: isRTL ? "right" : "left", pt: 10 }}>
-              <Typography
-                sx={{
-                  fontSize: 36,
-                  fontWeight: 700,
-                  color: "#2d5aa7",
-                  mb: 3,
-                }}
-              >
-                {book.title}
-              </Typography>
-
-              <Box sx={{ width: "100%" }}>
+            {/* RIGHT SIDE */}
+            <Box
+              sx={{
+                flex: 1,
+                textAlign: isRTL ? "right" : "left",
+                direction: isRTL ? "rtl" : "ltr", // 🔥 أهم سطر
+                pt: { xs: 4, md: 2 },
+              }}
+            >
+              {/* 🔵 TITLE */}
+              <Box sx={{ mb: 4 }}>
                 <Typography
                   sx={{
-                    width: "100%",
-                    maxWidth: "100%",
-                    fontFamily: "Poppins",
-                    fontSize: 15,
-                    lineHeight: 2,
+                    fontSize: { xs: 28, md: 40 },
+                    fontWeight: 800,
                     color: "#1A4D96",
-                    whiteSpace: "pre-line",
-                    wordBreak: "break-word",
-                    overflowWrap: "anywhere",
-                    minHeight: "150px",
+                    mb: 1.5,
+                    lineHeight: 1.2,
                   }}
                 >
-                  {book.description?.trim() || "\u00A0"}
+                  {book.title}
                 </Typography>
+                {/* Decorative Line */}
+                <Box
+                  sx={{
+                    width: 60,
+                    height: 4,
+                    backgroundColor: "#1A4D96",
+                    borderRadius: 2,
+                    ml: isRTL ? "auto" : 0,
+                  }}
+                />
+              </Box>
+
+              {/* 🟢 DESCRIPTION SECTION */}
+              <Box
+                sx={{
+                  mb: 4,
+                  p: 3,
+                  backgroundColor: "rgba(26, 77, 150, 0.03)",
+                  borderRadius: "16px",
+                  border: "1px solid rgba(26, 77, 150, 0.1)",
+                }}
+              >
+                <Box
+                  sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}
+                >
+                  <Box
+                    sx={{
+                      width: 4,
+                      height: 22,
+                      backgroundColor: "#1A4D96",
+                      borderRadius: 2,
+                    }}
+                  />
+                  <Typography
+                    sx={{
+                      fontWeight: 700,
+                      color: "#1A4D96",
+                      fontSize: 14,
+                      textTransform: "uppercase",
+                      letterSpacing: 1,
+                    }}
+                  >
+                    Description
+                  </Typography>
+                </Box>
+
+                <Typography
+                  sx={{
+                    fontSize: 15,
+                    lineHeight: 1.9,
+                    color: "#4a5568",
+                    textAlign: "justify",
+                  }}
+                >
+                  {expanded
+                    ? book.description
+                    : `${shortText}${book.description?.length > 200 ? "..." : ""}`}
+                </Typography>
+
+                {book.description?.length > 200 && (
+                  <Button
+                    onClick={() => setExpanded(!expanded)}
+                    sx={{
+                      mt: 1,
+                      p: 0,
+                      color: "#2d5aa7",
+                      fontWeight: 600,
+                      fontSize: 14,
+                      textTransform: "none",
+                      "&:hover": {
+                        backgroundColor: "transparent",
+                        textDecoration: "underline",
+                      },
+                    }}
+                  >
+                    {expanded ? "Show less" : "Read more"}
+                  </Button>
+                )}
+              </Box>
+
+              {/* 🟣 CLASSES SECTION */}
+              <Box>
+                <Box
+                  sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}
+                >
+                  <Box
+                    sx={{
+                      width: 4,
+                      height: 22,
+                      backgroundColor: "#1A4D96",
+                      borderRadius: 2,
+                    }}
+                  />
+                  <Typography
+                    sx={{
+                      fontWeight: 700,
+                      color: "#1A4D96",
+                      fontSize: 14,
+                      textTransform: "uppercase",
+                      letterSpacing: 1,
+                    }}
+                  >
+                    Classes
+                  </Typography>
+                </Box>
+
+                {book.book_classes?.length > 0 ? (
+                  <Box
+                    sx={{
+                      p: 2.5,
+                      backgroundColor: "#ffffff",
+                      borderRadius: "12px",
+                      border: "1px solid #E1E1E1",
+                      boxShadow: "0 4px 10px rgba(0,0,0,0.03)",
+                      mb: 3,
+                    }}
+                  >
+                    <Stack
+                      direction="row"
+                      spacing={1.5}
+                      flexWrap="wrap"
+                      useFlexGap
+                    >
+                      {book.book_classes.map((c, index) => (
+                        <Chip
+                          key={index}
+                          label={c}
+                          sx={{
+                            backgroundColor: "#E3F2FD",
+                            color: "#1565C0",
+                            fontWeight: 600,
+                            fontSize: 14,
+                            borderRadius: "8px",
+                            py: 2.5,
+                            border: "1px solid #BBDEFB",
+                            transition: "all 0.2s ease-in-out",
+                            "&:hover": {
+                              backgroundColor: "#BBDEFB",
+                            },
+                          }}
+                        />
+                      ))}
+                    </Stack>
+                  </Box>
+                ) : (
+                  <Typography
+                    sx={{
+                      fontSize: 14,
+                      color: "#a0aec0",
+                      mb: 3,
+                      fontStyle: "italic",
+                    }}
+                  >
+                    No classes added yet
+                  </Typography>
+                )}
+
+                {/* ➕ ADD CLASS */}
+                <Box
+                  sx={{
+                    border: "2px dashed rgba(26, 77, 150, 0.3)",
+                    borderRadius: "12px",
+                    p: 2.5,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    backgroundColor: "rgba(26, 77, 150, 0.02)",
+                  }}
+                >
+                  <Box>
+                    <Typography
+                      sx={{ fontSize: 15, color: "#1A4D96", fontWeight: 600 }}
+                    >
+                      Create a new class
+                    </Typography>
+                    <Typography sx={{ fontSize: 13, color: "#666", mt: 0.3 }}>
+                      A unique class code will be generated automatically.
+                    </Typography>
+                  </Box>
+                  <Button
+                    variant="outlined"
+                    
+                    sx={{
+                      borderRadius: "8px",
+                      borderWidth: 2,
+                      color: "#1A4D96",
+                      borderColor: "#1A4D96",
+                      fontWeight: 600,
+                      textTransform: "none",
+                      px: 3,
+                      py: 1,
+                      whiteSpace: "nowrap",
+                      "&:hover": {
+                        borderWidth: 2,
+                        backgroundColor: "#E3F2FD",
+                        borderColor: "#1A4D96",
+                      },
+                    }}
+                    onClick={() => {
+                      const generated = generateClassName(
+                        book.book_classes || [],
+                        book.user_book_id,
+                      );
+                      setClassInput(generated);
+                      setOpen(true);
+                    }}
+                  >
+                    Add Class
+                  </Button>
+                </Box>
               </Box>
             </Box>
           </Stack>
@@ -266,7 +513,6 @@ export default function ViewTeacherBook() {
           <Typography
             sx={{
               textAlign: "center",
-              fontFamily: "Poppins",
               fontWeight: 500,
               fontSize: 14,
               color: "#2d5aa7",
@@ -275,6 +521,28 @@ export default function ViewTeacherBook() {
             alrowadpub.com
           </Typography>
         </Box>
+        <Dialog open={open} onClose={() => setOpen(false)}>
+          <DialogTitle>Set Class</DialogTitle>
+
+          <DialogContent>
+            <TextField
+              fullWidth
+              label="Class Name"
+              value={classInput}
+              InputProps={{ readOnly: true }}
+              sx={{ mt: 2 }}
+            />
+
+            <Button
+              sx={{ mt: 2 }}
+              variant="contained"
+              onClick={handleSaveClass}
+              disabled={loadingClass}
+            >
+              {loadingClass ? "Saving..." : "Save"}
+            </Button>
+          </DialogContent>
+        </Dialog>
       </Box>
     </>
   );

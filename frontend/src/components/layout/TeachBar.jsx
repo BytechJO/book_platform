@@ -20,12 +20,14 @@ import logo from "../../assets/logo.svg";
 import SettingsIcon from "../icons/SettingsIcon";
 import BellIcon from "../icons/BellIcon";
 import UserIcon from "../icons/UserIcon";
-import { Menu, MenuItem } from "@mui/material";
+import { Menu, MenuItem, Drawer, useMediaQuery } from "@mui/material";
 import axiosInstance from "../../api/axios";
 import ENDPOINTS from "../../api/endpoints";
 import { LoadingButton } from "@mui/lab";
 import { useGetMyBooks } from "../../api/user_books";
 import { useAuthMe } from "../../api";
+import MenuIcon from "@mui/icons-material/Menu";
+
 export default function TeachBar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const location = useLocation();
@@ -37,6 +39,8 @@ export default function TeachBar() {
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
   const role = localStorage.getItem("role");
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const isMobile = useMediaQuery("(max-width:768px)");
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -81,29 +85,37 @@ export default function TeachBar() {
       <Toolbar
         sx={{
           justifyContent: "space-between",
-          minHeight: 150,
-          px: 4,
+          minHeight: isMobile ? 70 : 150,
+          px: isMobile ? 2 : 4,
           alignItems: "center",
-          pt: 4,
+          pt: isMobile ? 2 : 4,
         }}
       >
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
-            gap: 4,
+            gap: isMobile ? 2 : 4,
           }}
         >
+          {isMobile && (
+            <IconButton onClick={() => setMobileOpen(true)}>
+              <MenuIcon />
+            </IconButton>
+          )}
           <img
             src={logo}
             alt="logo"
-            style={{ height: 40, cursor: "pointer", marginRight: 20 }}
-            onClick={() => navigate(`/${role}`)}
-            width={250}
+            style={{
+              height: isMobile ? 30 : 40,
+              width: isMobile ? 150 : 250,
+              cursor: "pointer",
+              marginRight: isMobile ? 10 : 20,
+            }}
           />
           <Box
             sx={{
-              display: "flex",
+              display: isMobile ? "none" : "flex",
               alignItems: "center",
               gap: 3,
               ml: 2,
@@ -121,7 +133,6 @@ export default function TeachBar() {
                   : "transparent",
                 color: isExactActive(`/${role}`) ? "#fff" : "#535353",
                 fontWeight: 400,
-                fontFamily: "Poppins",
                 cursor: "pointer",
                 transition: "0.2s",
               }}
@@ -143,7 +154,6 @@ export default function TeachBar() {
                   ? "#fff"
                   : "#535353",
                 fontWeight: 400,
-                fontFamily: "Poppins",
                 cursor: "pointer",
                 transition: "0.2s",
               }}
@@ -163,7 +173,6 @@ export default function TeachBar() {
                   : "transparent",
                 color: isStartsWithActive(`/${role}/help`) ? "#fff" : "#535353",
                 fontWeight: 400,
-                fontFamily: "Poppins",
                 cursor: "pointer",
                 transition: "0.2s",
               }}
@@ -179,7 +188,6 @@ export default function TeachBar() {
                 backgroundColor: "transparent",
                 color: "#535353",
                 fontWeight: 400,
-                fontFamily: "Poppins",
                 cursor: "pointer",
                 transition: "0.2s",
               }}
@@ -385,6 +393,26 @@ export default function TeachBar() {
             </Button>
           </DialogActions>
         </Dialog>
+        <Drawer
+          anchor="left"
+          open={mobileOpen}
+          onClose={() => setMobileOpen(false)}
+          PaperProps={{
+            sx: {
+              width: "50%", // نص الشاشة تقريباً
+              borderTopRightRadius: "20px",
+              borderBottomRightRadius: "20px",
+              p: 3,
+            },
+          }}
+        >
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <Button onClick={() => navigate(`/${role}`)}>Home</Button>
+            <Button onClick={() => navigate(`/${role}/books`)}>Books</Button>
+            <Button onClick={() => navigate(`/${role}/help`)}>Help</Button>
+            <Button onClick={() => setOpenDialog(true)}>Activate Code</Button>
+          </Box>
+        </Drawer>
       </Toolbar>
     </AppBar>
   );

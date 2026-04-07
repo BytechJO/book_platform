@@ -47,3 +47,27 @@ export function useGetMyOneBook(bookId) {
   };
   return { ...memoizedValue, refetch };
 }
+
+export function useGetStudentBook(bookId) {
+  const URL = ENDPOINTS.User_book.Student_one(bookId);
+  const { data, isLoading, error, isValidating } = useSWR(
+    bookId ? URL : null,
+    fetcher,
+  );
+
+  const memoizedValue = useMemo(
+    () => ({
+      book: data || [],
+      loading: isLoading,
+
+      error,
+      validating: isValidating,
+      empty: !isLoading && !data?.length,
+    }),
+    [data, error, isLoading, isValidating],
+  );
+  const refetch = async () => {
+    await mutate(URL);
+  };
+  return { ...memoizedValue, refetch };
+}

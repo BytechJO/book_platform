@@ -1,7 +1,7 @@
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import AppRoutes from "./routes/AppRoutes";
-
+import ScrollToTop from "./utils/ScrollToTop";
 const theme = createTheme({
   palette: {
     primary: {
@@ -34,6 +34,7 @@ const theme = createTheme({
 function App() {
   return (
     <ThemeProvider theme={theme}>
+      <ScrollToTop />
       <CssBaseline />
       <AppRoutes />
     </ThemeProvider>

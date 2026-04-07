@@ -11,23 +11,33 @@ import {
   Stack,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import SiteLoader from "src/components/SiteLoade";
 import { useGetPuplicBooks } from "../../api";
+import "animate.css";
 
 export default function BookSeries() {
   const { books, loading } = useGetPuplicBooks();
   const [search, setSearch] = useState("");
-
-  const navigate = useNavigate();
+  const [visibleIndex, setVisibleIndex] = useState(0);
   const filteredBooks = useMemo(() => {
     if (!search) return books;
     return books.filter((b) =>
       b.title?.toLowerCase().includes(search.toLowerCase()),
     );
   }, [books, search]);
+  useEffect(() => {
+    if (visibleIndex < filteredBooks.length) {
+      const timer = setTimeout(() => {
+        setVisibleIndex((prev) => prev + 1);
+      }, 500); // مدة الأنيميشن ⏱️
+
+      return () => clearTimeout(timer);
+    }
+  }, [visibleIndex, filteredBooks.length]);
+  const navigate = useNavigate();
 
   if (loading) {
     return <SiteLoader fullScreen text="Loading Books..." />;
@@ -55,7 +65,6 @@ export default function BookSeries() {
         >
           <Typography
             sx={{
-              fontFamily: "IBM Plex Sans Thai Looped",
               fontSize: "40px",
               fontWeight: 400,
               color: "#2d5aa7",
@@ -96,20 +105,21 @@ export default function BookSeries() {
             gap: 10,
           }}
         >
-          {filteredBooks.map((book) => {
+          {filteredBooks.map((book, index) => {
+            const isVisible = index <= visibleIndex;
+
             return (
               <Card
                 key={book.id}
+                className={
+                  isVisible ? "animate__animated animate__fadeInUp" : ""
+                }
                 sx={{
                   borderRadius: 3,
                   overflow: "hidden",
                   boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-                  transition: "0.2s ease",
-                  "&:hover": {
-                    transform: "translateY(-4px)",
-                    boxShadow: "0 6px 16px rgba(0,0,0,0.1)",
-                  },
                   cursor: "pointer",
+                  opacity: isVisible ? 1 : 0,
                 }}
                 onClick={() => navigate(`/books/${book.id}`)}
               >
@@ -135,7 +145,6 @@ export default function BookSeries() {
                     <Typography
                       fontWeight={400}
                       fontSize={20}
-                      fontFamily="Poppins"
                       color="#535353"
                       sx={{
                         display: "-webkit-box",
