@@ -291,10 +291,15 @@ export default function ViewStudentBook() {
               <Box
                 sx={{
                   mb: 4,
-                  p: 3,
-                  backgroundColor: "rgba(26, 77, 150, 0.03)", // خلفية زرقاء فاتحة جداً
+                  p: expanded ? 3 : 0,
+                  backgroundColor: expanded
+                    ? "rgba(26, 77, 150, 0.03)"
+                    : "transparent", // 👈 بدون خلفية بالبداية
                   borderRadius: "16px",
-                  border: "1px solid rgba(26, 77, 150, 0.1)",
+                  border: expanded
+                    ? "1px solid rgba(26, 77, 150, 0.1)"
+                    : "none", // 👈 بدون بوردر بالبداية
+                  transition: "0.3s",
                 }}
               >
                 <Box

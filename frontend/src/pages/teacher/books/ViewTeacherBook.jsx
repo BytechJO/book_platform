@@ -286,35 +286,29 @@ export default function ViewTeacherBook() {
               <Box sx={{ mb: 4 }}>
                 <Typography
                   sx={{
-                    fontSize: { xs: 28, md: 40 },
-                    fontWeight: 800,
-                    color: "#1A4D96",
+                    fontSize: 30,
+                    fontWeight: 700,
+                    color: "#2d5aa7",
                     mb: 1.5,
-                    lineHeight: 1.2,
                   }}
                 >
                   {book.title}
                 </Typography>
-                {/* Decorative Line */}
-                <Box
-                  sx={{
-                    width: 60,
-                    height: 4,
-                    backgroundColor: "#1A4D96",
-                    borderRadius: 2,
-                    ml: isRTL ? "auto" : 0,
-                  }}
-                />
               </Box>
 
               {/* 🟢 DESCRIPTION SECTION */}
               <Box
                 sx={{
                   mb: 4,
-                  p: 3,
-                  backgroundColor: "rgba(26, 77, 150, 0.03)",
+                  p: expanded ? 3 : 0,
+                  backgroundColor: expanded
+                    ? "rgba(26, 77, 150, 0.03)"
+                    : "transparent", // 👈 بدون خلفية بالبداية
                   borderRadius: "16px",
-                  border: "1px solid rgba(26, 77, 150, 0.1)",
+                  border: expanded
+                    ? "1px solid rgba(26, 77, 150, 0.1)"
+                    : "none", // 👈 بدون بوردر بالبداية
+                  transition: "0.3s",
                 }}
               >
                 <Box
@@ -476,7 +470,6 @@ export default function ViewTeacherBook() {
                   </Box>
                   <Button
                     variant="outlined"
-                    
                     sx={{
                       borderRadius: "8px",
                       borderWidth: 2,
