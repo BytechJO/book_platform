@@ -37,26 +37,36 @@ export default function DashBar() {
       sx={{
         backgroundColor: "#1A4D96",
         boxShadow: "none",
+        borderBottom: "1px solid #1A4D96",
       }}
     >
       <Toolbar
         sx={{
           justifyContent: "space-between",
-          minHeight: 70,
-          px: 2,
+          minHeight: { xs: 60, md: 70 }, // 👈 أصغر على الموبايل
+          px: { xs: 1.5, md: 2 },
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <img
             src={logoWhite}
             alt="logo"
-            style={{ height: 40, cursor: "pointer" }}
+            style={{
+              height: window.innerWidth < 600 ? 32 : 40, // 👈 responsive
+              cursor: "pointer",
+            }}
             onClick={() => navigate("/admin/dashboard")}
           />
         </Box>
 
         {/* Right Side Icons */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: { xs: 0.5, md: 1.5 }, // 👈 أقل بالموبايل
+          }}
+        >
           {/* Settings */}
           <IconButton
             sx={{ color: "white" }}
