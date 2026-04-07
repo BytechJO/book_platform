@@ -755,7 +755,6 @@ export default function Codes() {
                       </Typography>
                     </Box>
                   </Box>{" "}
-                  // هذا تبع details
                   <Box
                     sx={{
                       display: "flex",
