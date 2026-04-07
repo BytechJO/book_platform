@@ -92,9 +92,9 @@ export default function Login() {
     if (token) {
       if (role === "admin") navigate("/admin/dashboard", { replace: true });
       else if (role === "teacher")
-        navigate("/teacher/books", { replace: true });
+        navigate("/teacher", { replace: true });
       else if (role === "student")
-        navigate("/student/books", { replace: true });
+        navigate("/student", { replace: true });
       else navigate("/", { replace: true });
     }
   }, [navigate]);
@@ -120,9 +120,9 @@ export default function Login() {
       if (user.role === "admin")
         navigate("/admin/dashboard", { replace: true });
       else if (user.role === "teacher")
-        navigate("/teacher/books", { replace: true });
+        navigate("/teacher", { replace: true });
       else if (user.role === "student")
-        navigate("/student/books", { replace: true });
+        navigate("/student", { replace: true });
       else navigate("/", { replace: true });
     } catch (error) {
       const message = error.response?.data?.message;
