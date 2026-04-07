@@ -294,9 +294,8 @@ export default function Login() {
                 sx={{
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: { xs: "center", md: "flex-start" },
-                  pl: { xs: 0, md: 14 },
-                  pr: { xs: 0, md: 6 },
+                  justifyContent: "center", // 👈 بدل flex-start
+                  px: { md: 4 },
                   animation: `${fadeInLeft} 1s ease-out`, // أنيميشن من اليسار
                 }}
               >

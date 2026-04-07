@@ -7,14 +7,6 @@ import {
   Box,
   Avatar,
   ListItemButton,
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import MenuIcon from "@mui/icons-material/Menu";
-import SettingsIcon from "../icons/SettingsIcon";
-import BellIcon from "../icons/BellIcon";
-import UserIcon from "../icons/UserIcon";
-import {
   Menu,
   MenuItem,
   Drawer,
@@ -22,63 +14,67 @@ import {
   ListItem,
   ListItemText,
 } from "@mui/material";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import MenuIcon from "@mui/icons-material/Menu";
+import SettingsIcon from "../icons/SettingsIcon";
+import BellIcon from "../icons/BellIcon";
+import UserIcon from "../icons/UserIcon";
 import { useAuthMe } from "src/api";
+
 export default function TopBar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const { user } = useAuthMe();
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-  const open = Boolean(anchorEl);
   const navigate = useNavigate();
 
-  const handleOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const open = Boolean(anchorEl);
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
+  const handleOpen = (e) => setAnchorEl(e.currentTarget);
+  const handleClose = () => setAnchorEl(null);
+
   const navItems = [
     { label: "Dashboard", path: "/admin/dashboard" },
     { label: "Users", path: "/admin/users" },
     { label: "Books", path: "/admin/books" },
     { label: "Codes", path: "/admin/codes" },
   ];
+
   return (
     <AppBar
       position="fixed"
-      sx={{
-        backgroundColor: "#1A4D96",
-        boxShadow: "none",
-      }}
+      sx={{ backgroundColor: "#1A4D96", boxShadow: "none" }}
     >
-      <Toolbar sx={{ justifyContent: "space-between" }}>
-        <IconButton
-          color="inherit"
-          edge="start"
-          onClick={handleDrawerToggle}
-          sx={{ display: { md: "none" } }}
-        >
-          <MenuIcon />
-        </IconButton>
-        <Typography
-          onClick={() => navigate("/admin/dashboard")}
-          sx={{
-            cursor: "pointer",
-            fontSize: { xs: 20, md: 28 },
-            ml: { xs: 1, md: 2 },
-          }}
-        >
-          Publisher Platform
-        </Typography>
+      <Toolbar>
+        {/* LEFT */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <IconButton
+            color="inherit"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ display: { md: "none" } }}
+          >
+            <MenuIcon />
+          </IconButton>
+
+          <Typography
+            onClick={() => navigate("/admin/dashboard")}
+            sx={{
+              cursor: "pointer",
+              fontSize: { xs: 20, md: 28 },
+            }}
+          >
+            Publisher Platform
+          </Typography>
+        </Box>
+
+        {/* NAV */}
         <Box
           sx={{
             display: { xs: "none", md: "flex" },
-            gap: 3,
+            gap: 2, // 👈 قللنا المسافة
             ml: 4,
           }}
         >
@@ -91,15 +87,13 @@ export default function TopBar() {
                 onClick={() => navigate(item.path)}
                 sx={{
                   cursor: "pointer",
-                  fontSize: 16,
-                  px: 2,
+                  fontSize: 15,
+                  px: 1.5,
                   py: 0.5,
                   borderRadius: "20px",
                   transition: "0.2s",
-
                   backgroundColor: isActive ? "#FFFFFF" : "transparent",
                   color: isActive ? "#1A4D96" : "white",
-
                   "&:hover": {
                     backgroundColor: isActive
                       ? "#FFFFFF"
@@ -112,19 +106,25 @@ export default function TopBar() {
             );
           })}
         </Box>
-        {/* Right Side Icons */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-          {/* Settings */}
+
+        {/* RIGHT */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1, // 👈 قربنا العناصر من بعض
+            ml: "auto", // 👈 هذا المهم
+          }}
+        >
           <IconButton
             sx={{ color: "white" }}
             onClick={() => navigate("/admin/profile")}
           >
-            <SettingsIcon size={26} />
+            <SettingsIcon size={24} />
           </IconButton>
 
-          {/* Notifications */}
           <IconButton sx={{ color: "white", position: "relative" }}>
-            <BellIcon size={26} />
+            <BellIcon size={24} />
 
             <Box
               sx={{
@@ -147,48 +147,36 @@ export default function TopBar() {
             </Box>
           </IconButton>
 
-          {/* User */}
-          {/* User */}
           <IconButton
             sx={{
               color: "white",
               display: "flex",
               alignItems: "center",
-              gap: 0.5,
+              gap: 0.3, // 👈 قربنا السهم من الأفاتار
             }}
             onClick={handleOpen}
           >
             {user?.avatar_url ? (
-              <Avatar
-                src={user.avatar_url}
-                sx={{
-                  width: 28,
-                  height: 28,
-                }}
-              />
+              <Avatar src={user.avatar_url} sx={{ width: 26, height: 26 }} />
             ) : (
-              <UserIcon size={26} />
+              <UserIcon size={24} />
             )}
+
             <KeyboardArrowDownIcon
               sx={{
-                fontSize: 20,
+                fontSize: 18,
                 transition: "0.2s",
                 transform: open ? "rotate(180deg)" : "rotate(0deg)",
               }}
             />
           </IconButton>
+
           <Menu
             anchorEl={anchorEl}
             open={open}
             onClose={handleClose}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            transformOrigin={{ vertical: "top", horizontal: "right" }}
           >
             <MenuItem
               onClick={() => {
@@ -202,13 +190,13 @@ export default function TopBar() {
           </Menu>
         </Box>
       </Toolbar>
+
+      {/* Drawer */}
       <Drawer
         anchor="left"
         open={mobileOpen}
         onClose={handleDrawerToggle}
-        sx={{
-          display: { xs: "block", md: "none" },
-        }}
+        sx={{ display: { xs: "block", md: "none" } }}
       >
         <Box sx={{ width: 250 }}>
           <List>
@@ -230,7 +218,6 @@ export default function TopBar() {
                       my: 0.5,
                       px: 2,
                       py: 1,
-
                       "&:hover": {
                         backgroundColor: isActive ? "#1A4D96" : "#f5f5f5",
                       },
