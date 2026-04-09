@@ -18,12 +18,12 @@ import AppleCircleIcon from "src/components/icons/AppleCircleIcon";
 import AndroidCircleIcon from "src/components/icons/AndroidCircleIcon";
 import onlineIcon1 from "src/assets/icon/onlineIcon.png";
 import { Helmet } from "react-helmet-async";
-import SiteLoader from "src/components/SiteLoade";
 import AccessMessage from "src/components/AccessMessage";
 import { useState } from "react";
 import axiosInstance from "../../../api/axios";
 import ENDPOINTS from "../../../api/endpoints";
 import { useGetStudentBook } from "../../../api/user_books";
+import CurveLoader from "../../../components/CurveLoader";
 
 export default function ViewStudentBook() {
   const { id } = useParams();
@@ -54,7 +54,7 @@ export default function ViewStudentBook() {
     }
   };
   if (loading) {
-    return <SiteLoader fullScreen text="Loading Books..." />;
+    return <CurveLoader/>;
   }
 
   if (error) {

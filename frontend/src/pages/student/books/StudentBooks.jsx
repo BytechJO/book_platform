@@ -18,7 +18,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import WelcomeBanner from "../WelcomeBanner";
 import { useGetMyBooks } from "../../../api/user_books";
 import { useNavigate } from "react-router-dom";
-import SiteLoader from "src/components/SiteLoade";
+import CurveLoader from "../../../components/CurveLoader";
 
 export default function StudentBooks() {
   const { books, loading } = useGetMyBooks();
@@ -101,7 +101,7 @@ export default function StudentBooks() {
     return sortedBooks.slice(startIndex, endIndex);
   }, [sortedBooks, page]);
   if (loading) {
-    return <SiteLoader fullScreen text="Loading Books..." />;
+    return <CurveLoader />;
   }
   return (
     <Box>

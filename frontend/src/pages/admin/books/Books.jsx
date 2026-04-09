@@ -26,7 +26,7 @@ import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "src/api/axios";
 import ENDPOINTS from "src/api/endpoints";
-import SiteLoader from "src/components/SiteLoade";
+import CurveLoader from "../../../components/CurveLoader";
 
 export default function Books() {
   const { books = [], refetch, loading } = useGetBooks();
@@ -60,7 +60,7 @@ export default function Books() {
     }
   };
   if (loading) {
-    return <SiteLoader fullScreen text="Loading Books..." />;
+    return <CurveLoader />;
   }
   return (
     <Box sx={{ py: 3 }}>

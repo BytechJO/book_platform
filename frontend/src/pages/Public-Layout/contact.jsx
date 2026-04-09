@@ -83,7 +83,8 @@ export default function Contact() {
             <Button
               variant="contained"
               sx={{
-                mt: 3,
+                mt: {xs:0,md:3},
+                mb: {xs:2},
                 width: 180,
                 height: 48,
                 alignSelf: "center",

@@ -30,7 +30,7 @@ import BlockUserIcon from "../../components/icons/BlockUserIcon";
 import axiosInstance from "../../api/axios";
 import ENDPOINTS from "../../api/endpoints";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import SiteLoader from "../../components/SiteLoade";
+import CurveLoader from "../../components/CurveLoader";
 
 function roleLabel(role) {
   if (!role) return "—";
@@ -202,7 +202,7 @@ export default function Users() {
   };
 
   if (loading) {
-    return <SiteLoader fullScreen text="Loading Users..." />;
+    return <CurveLoader/>;
   }
 
   const EmptyState = ({ message }) => (

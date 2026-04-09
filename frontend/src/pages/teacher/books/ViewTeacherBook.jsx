@@ -20,11 +20,11 @@ import AndroidCircleIcon from "src/components/icons/AndroidCircleIcon";
 import onlineIcon1 from "src/assets/icon/onlineIcon.png";
 import { useGetMyOneBook } from "src/api/user_books";
 import { Helmet } from "react-helmet-async";
-import SiteLoader from "src/components/SiteLoade";
 import AccessMessage from "src/components/AccessMessage";
 import { useState } from "react";
 import axiosInstance from "../../../api/axios";
 import ENDPOINTS from "../../../api/endpoints";
+import CurveLoader from "../../../components/CurveLoader";
 
 export default function ViewTeacherBook() {
   const { id } = useParams();
@@ -37,7 +37,7 @@ export default function ViewTeacherBook() {
   const [expanded, setExpanded] = useState(false);
   const shortText = book.description?.slice(0, 200) || "";
   if (loading) {
-    return <SiteLoader fullScreen text="Loading Books..." />;
+    return <CurveLoader />;
   }
   const generateClassName = (classes = [], id) => {
     const safeClasses = classes || []; // 👈 الحل

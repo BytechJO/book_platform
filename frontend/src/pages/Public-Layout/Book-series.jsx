@@ -14,9 +14,9 @@ import SearchIcon from "@mui/icons-material/Search";
 import { useState, useMemo, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
-import SiteLoader from "src/components/SiteLoade";
 import { useGetPuplicBooks } from "../../api";
 import "animate.css";
+import CurveLoader from "../../components/CurveLoader";
 
 export default function BookSeries() {
   const isArabic = (text) => /[\u0600-\u06FF]/.test(text || "");
@@ -42,8 +42,9 @@ export default function BookSeries() {
   const navigate = useNavigate();
 
   if (loading) {
-    return <SiteLoader fullScreen text="Loading Books..." />;
+    return <CurveLoader />;
   }
+
   return (
     <Box sx={{ py: 3 }}>
       <Helmet>

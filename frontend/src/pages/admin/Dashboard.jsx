@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useGetUsers } from "../../api/users";
 import { useGetCodes } from "../../api";
 import { Helmet } from "react-helmet-async";
-import SiteLoader from "../../components/SiteLoade";
+import CurveLoader from "../../components/CurveLoader";
 
 export default function Dashboard() {
   const { books = [], loading: booksLoading } = useGetBooks();
@@ -14,7 +14,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   if (booksLoading || usersLoading || codesLoading) {
-    return <SiteLoader fullScreen text="Loading Dashboard..." />;
+    return <CurveLoader />;
   }
 
   const cards = [

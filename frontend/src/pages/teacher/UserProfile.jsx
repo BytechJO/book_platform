@@ -20,8 +20,8 @@ import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import PersonIcon from "@mui/icons-material/Person";
 import EmailIcon from "@mui/icons-material/Email";
 import SaveIcon from "@mui/icons-material/Save";
-import SiteLoader from "src/components/SiteLoade";
 import { Helmet } from "react-helmet-async";
+import CurveLoader from "../../components/CurveLoader";
 
 export default function UserProfile() {
   const { user, loading, refetch } = useAuthMe();
@@ -121,7 +121,7 @@ export default function UserProfile() {
   };
 
   if (loading) {
-    return <SiteLoader fullScreen text="Loading Books..." />;
+    return <CurveLoader />;
   }
 
   return (

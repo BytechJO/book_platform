@@ -1,5 +1,5 @@
 import PublicTopBar from "../../components/layout/PublicTopBar";
-import AuthBar from "../../components/layout/AuthBar"; // 👈 اعمل هذا
+import PublicTopBar2 from "../../components/layout/HomeBar2"; 
 import { Outlet, useLocation } from "react-router-dom";
 import { Box } from "@mui/material";
 
@@ -14,7 +14,7 @@ export default function PublicLayout() {
   const showhome = location.pathname === "/";
   return (
     <>
-      {showSecondaryBar && <AuthBar />}
+      {showSecondaryBar && <PublicTopBar2 />}
       {showhome && <PublicTopBar />}
       <Box sx={{ mt: "50px" }}>
         <Outlet />

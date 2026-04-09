@@ -38,9 +38,9 @@ import ENDPOINTS from "src/api/endpoints";
 import DownloadButtonIcon from "src/components/icons/DownloadButtonIcon";
 import { useRef } from "react";
 import { LoadingButton } from "@mui/lab";
-import SiteLoader from "../../components/SiteLoade";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CurveLoader from "../../components/CurveLoader";
 function formatDate(iso) {
   if (!iso) return "—";
   const d = new Date(iso);
@@ -318,7 +318,7 @@ export default function Codes() {
       });
     }
   };
-  if (loading) return <SiteLoader fullScreen text="Loading Books..." />;
+  if (loading) return <CurveLoader />;
 
   return (
     <>
