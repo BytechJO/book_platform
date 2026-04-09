@@ -63,7 +63,7 @@ export default function TopBar() {
             onClick={() => navigate("/admin/dashboard")}
             sx={{
               cursor: "pointer",
-              fontSize: { xs: 20, md: 28 },
+              fontSize: { xs: 16, md: 28 },
             }}
           >
             Publisher Platform

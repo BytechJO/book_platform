@@ -80,6 +80,7 @@ const getMyBooks = async (req, res) => {
         ub.id AS user_book_id,
         ub.activated_at,
         ub.expires_at,
+        ub.last_opened_at,
         ub.created_at AS enrolled_at,
         CASE 
           WHEN NOW() > ub.expires_at THEN false
@@ -102,7 +103,14 @@ const getMyBooks = async (req, res) => {
 const getMyBookById = async (req, res) => {
   const userId = req.user.id;
   const { bookId } = req.params;
-
+  await pool.query(
+    `
+  UPDATE user_books
+  SET last_opened_at = NOW()
+  WHERE user_id = $1 AND book_id = $2
+  `,
+    [userId, bookId],
+  );
   try {
     const result = await pool.query(
       `
@@ -146,7 +154,6 @@ const getMyBookById = async (req, res) => {
 const getStudentBookById = async (req, res) => {
   const userId = req.user.id;
   const { bookId } = req.params;
-
   try {
     const result = await pool.query(
       `
@@ -311,7 +318,7 @@ const activateClassCode = async (req, res) => {
 
     // 4) مش موجود أصلًا
     return res.status(404).json({
-      message: "Class code does not exist",
+      message: "Invalid class code",
     });
   } catch (err) {
     console.error("activateClassCode error:", err);

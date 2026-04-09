@@ -133,15 +133,18 @@ export default function Books() {
         {/* Grid */}
         <Box
           sx={{
-            maxWidth: 1200,
             mx: "auto",
             display: "grid",
             gridTemplateColumns: {
-              xs: "1fr",
+              xs: "repeat(2, 1fr)",
               sm: "repeat(2, 1fr)",
               md: "repeat(3, 1fr)",
             },
-            gap: 10,
+            gap: {
+              xs: 3,
+              sm: 4,
+              md: 10,
+            },
           }}
         >
           {filteredBooks.map((book) => {
@@ -216,7 +219,11 @@ export default function Books() {
                   <Typography
                     variant="body2"
                     sx={{ mt: 1, color: "#7a869a" }}
-                    fontSize={12}
+                    fontSize={{
+                      xs: 8,
+                      sm: 10,
+                      md: 12,
+                    }}
                   >
                     {book.description
                       ? book.description.slice(0, 30) +

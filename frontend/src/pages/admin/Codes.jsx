@@ -1,12 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import {
   Box,
   Typography,
-  TextField,
-  InputAdornment,
-  Select,
-  MenuItem,
-  FormControl,
   Button,
   IconButton,
   Table,
@@ -14,72 +9,54 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Paper,
+  TableContainer,
   Stack,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Snackbar,
   Alert,
-  CircularProgress,
-  Backdrop,
-  TableContainer,
   Card,
   CardContent,
   Chip,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import * as XLSX from "xlsx";
 import { useGetCodes, useGetBooks } from "src/api";
 import { Helmet } from "react-helmet-async";
-import axiosInstance from "src/api/axios";
-import ENDPOINTS from "src/api/endpoints";
 import DownloadButtonIcon from "src/components/icons/DownloadButtonIcon";
-import { useRef } from "react";
-import { LoadingButton } from "@mui/lab";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import CurveLoader from "../../components/CurveLoader";
-function formatDate(iso) {
-  if (!iso) return "—";
-  const d = new Date(iso);
-  const dd = String(d.getDate()).padStart(2, "0");
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const yyyy = d.getFullYear();
-  return `${dd}/${mm}/${yyyy}`;
-}
-
-function roleLabel(role) {
-  if (!role) return "—";
-  const r = role.toLowerCase();
-  if (r === "student") return "Student";
-  if (r === "teacher") return "Teacher";
-  if (r === "admin") return "Admin";
-  return role;
-}
+import CodesFilter from "./CodesFilter";
+import CodesDialogs from "./CodesDialogs";
+import { formatDate, roleLabel } from "src/utils/codesUtils";
 
 export default function Codes() {
   const { codes = [], loading, error, refetch } = useGetCodes();
   const { books = [] } = useGetBooks();
+
+  // Filters State
   const [search, setSearch] = useState("");
   const [bookId, setBookId] = useState("all");
   const [status, setStatus] = useState("all");
   const [role, setRole] = useState("all");
+  const currentYear = new Date().getFullYear().toString();
+  const [year, setYear] = useState(currentYear);
+
+  // Dialogs State
   const [openDialog, setOpenDialog] = useState(false);
   const [generateLoading, setGenerateLoading] = useState(false);
+  const [generatedCodes, setGeneratedCodes] = useState([]);
+
   const fileInputRef = useRef(null);
   const [importLoading, setImportLoading] = useState(false);
   const [importedCodes, setImportedCodes] = useState([]);
-  const [generatedCodes, setGeneratedCodes] = useState([]);
   const [importPreviewOpen, setImportPreviewOpen] = useState(false);
+
   const [editOpen, setEditOpen] = useState(false);
   const [selectedCode, setSelectedCode] = useState(null);
   const [newValidity, setNewValidity] = useState("");
+
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-  const currentYear = new Date().getFullYear().toString();
-  const [year, setYear] = useState(currentYear);
+
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -140,31 +117,6 @@ export default function Codes() {
     XLSX.writeFile(workbook, "codes.xlsx");
   };
 
-  const handleGenerateCodes = async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const number_of_codes = Number(formData.get("number_of_codes")) || 1;
-    const allowed_role = formData.get("allowed_role");
-    const validity_months = Number(formData.get("validity_months"));
-    const book_id = formData.get("book_id");
-
-    try {
-      setGenerateLoading(true);
-      const res = await axiosInstance.post(ENDPOINTS.Codes.Create, {
-        number_of_codes,
-        allowed_role,
-        validity_months,
-        book_id,
-      });
-      setGeneratedCodes(res.data.codes);
-      await refetch();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setGenerateLoading(false);
-    }
-  };
-
   const handleImportExcel = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -219,105 +171,17 @@ export default function Codes() {
     reader.readAsArrayBuffer(file);
   };
 
-  const handleChangeImportedBook = (index, bookId) => {
-    const updated = [...importedCodes];
-    updated[index].book_id = bookId;
-    setImportedCodes(updated);
-  };
-
-  const handleConfirmImport = async () => {
-    try {
-      setImportLoading(true);
-      await axiosInstance.post(ENDPOINTS.Codes.Import, {
-        codes: importedCodes,
-      });
-      await refetch();
-      setImportPreviewOpen(false);
-      setSnackbar({
-        open: true,
-        message: "Codes imported successfully",
-        severity: "success",
-      });
-    } catch (error) {
-      setSnackbar({
-        open: true,
-        message: error.response?.data?.message || "Failed to import codes",
-        severity: "error",
-      });
-    } finally {
-      setImportLoading(false);
-    }
-  };
-
-  const handleDownloadGenerated = () => {
-    if (!generatedCodes.length) return;
-    const data = generatedCodes.map((c) => {
-      const book = books.find((b) => b.id === c.book_id);
-      return {
-        "Book Name": book?.title || "—",
-        Code: c.code,
-        "Validity (Months)": c.validity_months,
-        Role: roleLabel(c.allowed_role),
-        Status: c.is_used ? "Used" : "Unused",
-        Created: formatDate(c.created_at),
-      };
-    });
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Generated Codes");
-    XLSX.writeFile(workbook, "generated_codes.xlsx");
-  };
   const handleEdit = (code) => {
     setSelectedCode(code);
     setNewValidity(code.validity_months);
     setEditOpen(true);
   };
-  const handleUpdate = async () => {
-    try {
-      await axiosInstance.put(ENDPOINTS.Codes.UPDATE(selectedCode.id), {
-        validity_months: Number(newValidity),
-      });
 
-      await refetch();
-      setEditOpen(false);
-
-      setSnackbar({
-        open: true,
-        message: "Code updated successfully",
-        severity: "success",
-      });
-    } catch (error) {
-      setSnackbar({
-        open: true,
-        message: "Failed to update code",
-        severity: "error",
-      });
-    }
-  };
   const handleDelete = (id) => {
     setDeleteId(id);
     setDeleteOpen(true);
   };
-  const confirmDelete = async () => {
-    try {
-      await axiosInstance.delete(ENDPOINTS.Codes.DELETE(deleteId));
 
-      await refetch();
-      setDeleteOpen(false);
-
-      setSnackbar({
-        open: true,
-        message: "Code deleted successfully",
-        severity: "success",
-      });
-    } catch (error) {
-      setSnackbar({
-        open: true,
-        message: "Failed to delete code",
-        severity: "error",
-      });
-    }
-  };
   if (loading) return <CurveLoader />;
 
   return (
@@ -330,7 +194,7 @@ export default function Codes() {
         <Box
           sx={{
             display: "flex",
-            flexDirection: { xs: "column", sm: "row" }, // عمودي على الموبايل، أفقي على التابلت
+            flexDirection: { xs: "column", sm: "row" },
             alignItems: { xs: "flex-start", sm: "center" },
             justifyContent: "space-between",
             gap: 2,
@@ -402,102 +266,23 @@ export default function Codes() {
           </Stack>
         </Box>
 
-        {/* Filters */}
-        <Box
-          sx={{
-            display: "grid",
-            // تعديل الشبكة: 1 عمود في الموبايل، 2 في التابلت الصغير، 3 في المتوسط، 5 في الكبير
-            gridTemplateColumns: {
-              xs: "1fr",
-              sm: "1fr 1fr",
-              md: "1fr 1fr 1fr",
-              lg: "1fr 1fr 1fr 1fr 1fr",
-            },
-            gap: 2,
-            mb: 2.5,
-            alignItems: "end",
-          }}
-        >
-          <Box>
-            <Typography variant="caption" sx={{ color: "#7a869a" }}>
-              Search:
-            </Typography>
-            <TextField
-              fullWidth
-              size="small"
-              placeholder="Search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon fontSize="small" />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Box>
-          <Box>
-            <Typography variant="caption" sx={{ color: "#7a869a" }}>
-              Book
-            </Typography>
-            <FormControl fullWidth size="small">
-              <Select
-                value={bookId}
-                onChange={(e) => setBookId(e.target.value)}
-              >
-                <MenuItem value="all">All</MenuItem>
-                {books.map((b) => (
-                  <MenuItem key={b.id} value={b.id}>
-                    {b.title}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
-          <Box>
-            <Typography variant="caption" sx={{ color: "#7a869a" }}>
-              Status
-            </Typography>
-            <FormControl fullWidth size="small">
-              <Select
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-              >
-                <MenuItem value="all">All</MenuItem>
-                <MenuItem value="used">Used</MenuItem>
-                <MenuItem value="unused">Unused</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-          <Box>
-            <Typography variant="caption" sx={{ color: "#7a869a" }}>
-              Role
-            </Typography>
-            <FormControl fullWidth size="small">
-              <Select value={role} onChange={(e) => setRole(e.target.value)}>
-                <MenuItem value="all">All</MenuItem>
-                <MenuItem value="student">Students</MenuItem>
-                <MenuItem value="teacher">Teachers</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-          <Box>
-            <Typography variant="caption" sx={{ color: "#7a869a" }}>
-              Year
-            </Typography>
-            <FormControl fullWidth size="small">
-              <Select value={year} onChange={(e) => setYear(e.target.value)}>
-                <MenuItem value="all">All</MenuItem>
-                <MenuItem value="2024">2024</MenuItem>
-                <MenuItem value="2025">2025</MenuItem>
-                <MenuItem value="2026">2026</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-        </Box>
+        {/* Filters Component (Desktop & Mobile) */}
+        <CodesFilter
+          search={search}
+          setSearch={setSearch}
+          bookId={bookId}
+          setBookId={setBookId}
+          status={status}
+          setStatus={setStatus}
+          role={role}
+          setRole={setRole}
+          year={year}
+          setYear={setYear}
+          books={books}
+          currentYear={currentYear}
+        />
 
-        {/* ================= DESKTOP TABLE (يختفي على الموبايل والتابلت) ================= */}
+        {/* ================= DESKTOP TABLE ================= */}
         <Box sx={{ display: { xs: "none", md: "block" } }}>
           <TableContainer
             sx={{ backgroundColor: "transparent", boxShadow: "none" }}
@@ -579,20 +364,10 @@ export default function Codes() {
                     key={c.id}
                     sx={{ "&:hover": { backgroundColor: "#f9fafc" } }}
                   >
-                    <TableCell
-                      sx={{
-                        fontSize: 16,
-                        color: "#333333",
-                      }}
-                    >
+                    <TableCell sx={{ fontSize: 16, color: "#333333" }}>
                       {c.book_title || "—"}
                     </TableCell>
-                    <TableCell
-                      sx={{
-                        fontSize: 16,
-                        color: "#333333",
-                      }}
-                    >
+                    <TableCell sx={{ fontSize: 16, color: "#333333" }}>
                       {c.code}
                     </TableCell>
                     <TableCell
@@ -632,7 +407,6 @@ export default function Codes() {
                         >
                           <EditIcon />
                         </IconButton>
-
                         <IconButton
                           onClick={() => handleDelete(c.id)}
                           color="error"
@@ -648,7 +422,7 @@ export default function Codes() {
           </TableContainer>
         </Box>
 
-        {/* ================= MOBILE CARDS (يظهر فقط على الموبايل والتابلت) ================= */}
+        {/* ================= MOBILE CARDS ================= */}
         <Box sx={{ display: { xs: "block", md: "none" } }}>
           {error && (
             <Typography sx={{ p: 4, textAlign: "center", color: "red" }}>
@@ -669,7 +443,6 @@ export default function Codes() {
                 sx={{ borderRadius: 2, p: 1 }}
               >
                 <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
-                  {/* Top Row: Book & Status */}
                   <Box
                     sx={{
                       display: "flex",
@@ -701,14 +474,12 @@ export default function Codes() {
                       }}
                     />
                   </Box>
-                  {/* Code */}
                   <Typography
                     variant="body2"
                     sx={{ fontWeight: 500, mb: 2, letterSpacing: 1 }}
                   >
                     {c.code}
                   </Typography>
-                  {/* Details Grid */}
                   <Box
                     sx={{
                       display: "grid",
@@ -754,7 +525,7 @@ export default function Codes() {
                         {c.used_at ? formatDate(c.used_at) : "—"}
                       </Typography>
                     </Box>
-                  </Box>{" "}
+                  </Box>
                   <Box
                     sx={{
                       display: "flex",
@@ -770,7 +541,6 @@ export default function Codes() {
                     >
                       <EditIcon fontSize="small" />
                     </IconButton>
-
                     <IconButton
                       size="small"
                       color="error"
@@ -784,371 +554,34 @@ export default function Codes() {
             ))}
           </Stack>
         </Box>
-
-        {/* ================= DIALOGS ================= */}
-
-        {/* Generate Dialog */}
-        <Dialog
-          open={openDialog}
-          onClose={() => setOpenDialog(false)}
-          maxWidth={false}
-          fullWidth
-          PaperProps={{
-            component: "form",
-            onSubmit: handleGenerateCodes,
-            sx: {
-              width: 540,
-              borderRadius: "30px",
-              p: 3,
-            },
-          }}
-        >
-          <DialogTitle
-            sx={{
-              textAlign: "center",
-              fontWeight: 600,
-              color: "#2d5aa7",
-              fontSize: 20,
-            }}
-          >
-            Generate Activation Codes
-          </DialogTitle>
-
-          <DialogContent sx={{ mt: 2 }}>
-            <Stack spacing={3}>
-              {/* Number of Codes */}
-              <Box>
-                <Typography
-                  sx={{
-                    fontSize: 16,
-                    fontWeight: 500,
-                    mb: 1,
-                    color: "#7A869A",
-                  }}
-                >
-                  Number of Codes *
-                </Typography>
-
-                <TextField
-                  name="number_of_codes"
-                  fullWidth
-                  placeholder="Enter number of codes"
-                  InputProps={{
-                    sx: {
-                      height: 56,
-                      borderRadius: "12px",
-                      backgroundColor: "#F9FBFF",
-                    },
-                  }}
-                />
-              </Box>
-              <Box>
-                <Typography
-                  sx={{
-                    fontSize: 16,
-                    fontWeight: 500,
-                    mb: 1,
-                    color: "#7A869A",
-                  }}
-                >
-                  Book name *
-                </Typography>
-
-                <FormControl fullWidth>
-                  <Select
-                    name="book_id"
-                    required
-                    defaultValue=""
-                    displayEmpty
-                    sx={{
-                      height: 56,
-                      borderRadius: "12px",
-                      backgroundColor: "#F9FBFF",
-                    }}
-                  >
-                    <MenuItem value="" disabled>
-                      Select book
-                    </MenuItem>
-
-                    {books.map((b) => (
-                      <MenuItem key={b.id} value={b.id}>
-                        {b.title}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Box>
-              {/* Role */}
-              <Box>
-                <Typography
-                  sx={{
-                    fontSize: 16,
-                    fontWeight: 500,
-                    mb: 1,
-                    color: "#7A869A",
-                  }}
-                >
-                  Role *
-                </Typography>
-
-                <FormControl fullWidth>
-                  <Select
-                    name="allowed_role"
-                    defaultValue="teacher"
-                    displayEmpty
-                    sx={{
-                      height: 56,
-                      borderRadius: "12px",
-                      backgroundColor: "#F9FBFF",
-                    }}
-                  >
-                    <MenuItem value="teacher">Teacher</MenuItem>
-                    <MenuItem value="student">Student</MenuItem>
-                  </Select>
-                </FormControl>
-              </Box>
-
-              {/* Validity */}
-              <Box>
-                <Typography
-                  sx={{
-                    fontSize: 16,
-                    fontWeight: 500,
-                    mb: 1,
-                    color: "#7A869A",
-                  }}
-                >
-                  Validity Duration (Months) *
-                </Typography>
-
-                <TextField
-                  name="validity_months"
-                  type="number"
-                  required
-                  fullWidth
-                  placeholder="Enter number of months"
-                  inputProps={{ min: 1 }}
-                  InputProps={{
-                    sx: {
-                      height: 56,
-                      borderRadius: "12px",
-                      backgroundColor: "#F9FBFF",
-                    },
-                  }}
-                />
-              </Box>
-            </Stack>
-          </DialogContent>
-          <DialogActions
-            sx={{
-              justifyContent: "center",
-              gap: 3,
-              pb: 5,
-            }}
-          >
-            {/* Generate */}
-            <LoadingButton
-              type="submit"
-              loading={generateLoading}
-              loadingPosition="center"
-              variant="contained"
-              sx={{
-                width: 126,
-                height: 59,
-                borderRadius: "10px",
-                textTransform: "none",
-                fontWeight: 600,
-                fontSize: 16,
-                backgroundColor: "#ECECEC",
-                color: "#2B5A9E",
-                boxShadow: "none",
-                "&:hover": {
-                  backgroundColor: "#DCDCDC",
-                  boxShadow: "none",
-                },
-              }}
-              disabled={generatedCodes.length > 0}
-            >
-              Generate
-            </LoadingButton>
-
-            {/* Cancel */}
-            <Button
-              onClick={() => setOpenDialog(false)}
-              variant="contained"
-              sx={{
-                width: 126,
-                height: 59,
-                borderRadius: "10px",
-                textTransform: "none",
-                fontWeight: 600,
-                fontSize: 16,
-                backgroundColor: "#466FAA",
-                color: "#FFFFFF",
-                boxShadow: "none",
-                "&:hover": {
-                  backgroundColor: "#3D6399",
-                  boxShadow: "none",
-                },
-              }}
-            >
-              Cancel
-            </Button>
-          </DialogActions>
-          {generatedCodes.length > 0 && (
-            <Box sx={{ mt: 3, textAlign: "center" }}>
-              <Typography sx={{ mb: 1, color: "#7A869A" }}>
-                Codes generated successfully. If you want, you can download
-                them.
-              </Typography>
-
-              <Button
-                variant="outlined"
-                onClick={handleDownloadGenerated}
-                disabled={generateLoading}
-              >
-                Download Generated Codes
-              </Button>
-            </Box>
-          )}
-        </Dialog>
-        {/* Import Preview Dialog */}
-        <Dialog
-          open={importPreviewOpen}
-          onClose={() => setImportPreviewOpen(false)}
-          maxWidth="lg"
-          fullWidth
-        >
-          <DialogTitle>Review Imported Codes</DialogTitle>
-          <DialogContent>
-            {/* تم إضافة TableContainer لمنع كسر التصميم عند وجود أعمدة كبيرة */}
-            <TableContainer>
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Code</TableCell>
-                    <TableCell>Book</TableCell>
-                    <TableCell>Validity</TableCell>
-                    <TableCell>Role</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {importedCodes.map((c, index) => (
-                    <TableRow
-                      key={index}
-                      sx={{
-                        backgroundColor: c.isDuplicate ? "#ffe6e6" : "inherit",
-                      }}
-                    >
-                      <TableCell>
-                        <Typography
-                          sx={{
-                            color: c.isDuplicate ? "red" : "inherit",
-                            fontWeight: c.isDuplicate ? 600 : 400,
-                            fontSize: 14,
-                          }}
-                        >
-                          {c.code}
-                        </Typography>
-                        {c.isDuplicate && (
-                          <Typography variant="caption" sx={{ color: "red" }}>
-                            Duplicate
-                          </Typography>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {c.book_id ? (
-                          books.find((b) => b.id === c.book_id)?.title
-                        ) : (
-                          <FormControl fullWidth size="small">
-                            <Select
-                              value={c.book_id || ""}
-                              onChange={(e) =>
-                                handleChangeImportedBook(index, e.target.value)
-                              }
-                              displayEmpty
-                            >
-                              <MenuItem value="" disabled>
-                                Select Book
-                              </MenuItem>
-                              {books.map((b) => (
-                                <MenuItem key={b.id} value={b.id}>
-                                  {b.title}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                        )}
-                      </TableCell>
-                      <TableCell>{c.validity_months}</TableCell>
-                      <TableCell>{c.allowed_role}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </DialogContent>
-          <DialogActions
-            sx={{ p: 2, flexDirection: { xs: "column", sm: "row" }, gap: 1 }}
-          >
-            <Button onClick={() => setImportPreviewOpen(false)} fullWidth>
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              onClick={handleConfirmImport}
-              disabled={importedCodes.some((c) => !c.book_id)}
-              fullWidth
-            >
-              Confirm Import
-            </Button>
-          </DialogActions>
-        </Dialog>
-        <Dialog open={editOpen} onClose={() => setEditOpen(false)}>
-          <DialogTitle>Edit Code</DialogTitle>
-
-          <DialogContent>
-            <Typography sx={{ mb: 2 }}>Code: {selectedCode?.code}</Typography>
-
-            <TextField
-              fullWidth
-              type="number"
-              label="Validity (Months)"
-              value={newValidity}
-              onChange={(e) => setNewValidity(e.target.value)}
-              inputProps={{ min: 1 }}
-            />
-          </DialogContent>
-
-          <DialogActions>
-            <Button onClick={() => setEditOpen(false)}>Cancel</Button>
-            <Button variant="contained" onClick={handleUpdate}>
-              Save
-            </Button>
-          </DialogActions>
-        </Dialog>
-        <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)}>
-          <DialogTitle>Confirm Delete</DialogTitle>
-
-          <DialogContent>
-            <Typography>Are you sure you want to delete this code?</Typography>
-          </DialogContent>
-
-          <DialogActions>
-            <Button onClick={() => setDeleteOpen(false)}>Cancel</Button>
-            <Button color="error" variant="contained" onClick={confirmDelete}>
-              Delete
-            </Button>
-          </DialogActions>
-        </Dialog>
       </Box>
 
-      <Backdrop
-        open={importLoading}
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 999 }}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
+      {/* All Dialogs Component */}
+      <CodesDialogs
+        books={books}
+        refetch={refetch}
+        setSnackbar={setSnackbar}
+        openDialog={openDialog}
+        setOpenDialog={setOpenDialog}
+        generateLoading={generateLoading}
+        setGenerateLoading={setGenerateLoading}
+        generatedCodes={generatedCodes}
+        setGeneratedCodes={setGeneratedCodes}
+        importPreviewOpen={importPreviewOpen}
+        setImportPreviewOpen={setImportPreviewOpen}
+        importLoading={importLoading}
+        setImportLoading={setImportLoading}
+        importedCodes={importedCodes}
+        setImportedCodes={setImportedCodes}
+        editOpen={editOpen}
+        setEditOpen={setEditOpen}
+        selectedCode={selectedCode}
+        newValidity={newValidity}
+        setNewValidity={setNewValidity}
+        deleteOpen={deleteOpen}
+        setDeleteOpen={setDeleteOpen}
+        deleteId={deleteId}
+      />
 
       <Snackbar
         open={snackbar.open}

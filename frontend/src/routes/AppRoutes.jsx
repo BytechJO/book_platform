@@ -29,7 +29,6 @@ import NotFound from "../pages/NotFound";
 import StudentLayout from "../pages/student/StudentLayout";
 import StudentBooks from "../pages/student/books/StudentBooks";
 import ViewStudentBook from "../pages/student/books/ViewStudentBook";
-import StudentHome from "../pages/student/StudentHome";
 import HelpStudent from "../pages/student/Help";
 import UserProfile from "../pages/admin/UserProfile";
 import UserProfileStudent from "../pages/student/UserProfile";
@@ -94,7 +93,6 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       >
-        <Route index element={<StudentHome />} />
         <Route path="books" element={<StudentBooks />} />
         <Route path="books/:id" element={<ViewStudentBook />} />
         <Route path="help" element={<HelpStudent />} />

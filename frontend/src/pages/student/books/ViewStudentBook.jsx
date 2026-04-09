@@ -33,10 +33,13 @@ export default function ViewStudentBook() {
   const isArabic = (text) => /[\u0600-\u06FF]/.test(text);
   const { book, loading, error, refetch } = useGetStudentBook(id);
   const [expanded, setExpanded] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
   const shortText = book.description?.slice(0, 200) || "";
   const handleActivateClass = async () => {
     try {
       setLoadingClass(true);
+      setErrorMsg(""); // reset
 
       await axiosInstance.post(
         ENDPOINTS.User_book.activateClassCode(book.user_book_id),
@@ -44,17 +47,22 @@ export default function ViewStudentBook() {
           class_code: classCode,
         },
       );
+
       refetch();
       setOpen(false);
       setClassCode("");
     } catch (err) {
       console.error(err);
+
+      const message = err?.response?.data?.message || "Something went wrong";
+
+      setErrorMsg(message);
     } finally {
       setLoadingClass(false);
     }
   };
   if (loading) {
-    return <CurveLoader/>;
+    return <CurveLoader />;
   }
 
   if (error) {
@@ -478,8 +486,9 @@ export default function ViewStudentBook() {
               value={classCode}
               onChange={(e) => setClassCode(e.target.value)}
               sx={{ mt: 2 }}
+              error={!!errorMsg}
+              helperText={errorMsg}
             />
-
             <Button
               sx={{ mt: 2 }}
               variant="contained"

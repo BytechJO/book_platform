@@ -115,20 +115,27 @@ export default function TeacherBooks() {
         sx={{
           maxWidth: 1400,
           mx: "auto",
-          px: 4,
+          px: { xs: 2, sm: 4 }, 
           mb: 4,
         }}
       >
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: { xs: "1fr", md: "2fr 1fr 1fr " },
+            gridTemplateColumns: {
+              xs: "repeat(2, 1fr)",
+              md: "2fr 1fr 1fr",
+            },
             gap: 2,
             alignItems: "end",
           }}
         >
           {/* Search */}
-          <Box>
+          <Box
+            sx={{
+              gridColumn: { xs: "1 / -1", md: "auto" },
+            }}
+          >
             <Typography variant="caption" sx={{ color: "#7a869a" }}>
               Search:
             </Typography>
@@ -184,7 +191,6 @@ export default function TeacherBooks() {
           </Box>
         </Box>
       </Box>
-
       {/* 🔹 Books Grid */}
       <Box
         sx={{
@@ -198,17 +204,20 @@ export default function TeacherBooks() {
           sx={{
             display: "grid",
             gridTemplateColumns: {
-              xs: "1fr",
+              xs: "repeat(2, 1fr)",
               sm: "repeat(2, 1fr)",
               md: "repeat(4, 1fr)",
             },
-            gap: 6,
+            gap: {
+              xs: 3,
+              sm: 4,
+              md: 6,
+            },
           }}
         >
           {paginatedBooks.length > 0 ? (
             paginatedBooks.map((book) => {
-              const isDescRTL = isArabic(book.description);
-
+              const isRTL = isArabic(book.title || book.description);
               return (
                 <Card
                   key={book.id}
@@ -244,14 +253,39 @@ export default function TeacherBooks() {
                   />
 
                   <CardContent>
-                    <Typography fontSize={18} color="#535353" noWrap>
-                      {book.title}
-                    </Typography>
-
+                    <Stack
+                      direction="row"
+                      justifyContent="space-between"
+                      alignItems="center"
+                      sx={{
+                        direction: isRTL ? "rtl" : "ltr",
+                        textAlign: isRTL ? "right" : "left",
+                      }}
+                    >
+                      <Typography
+                        fontWeight={500}
+                        fontSize={{
+                          xs: 14,
+                          sm: 16,
+                          md: 18,
+                        }}
+                        color="#535353"
+                        sx={{
+                          display: "-webkit-box",
+                          WebkitLineClamp: 1,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                          direction: isRTL ? "rtl" : "ltr",
+                          textAlign: isRTL ? "right" : "left",
+                        }}
+                      >
+                        {book.title}
+                      </Typography>
+                    </Stack>
                     <Typography
                       variant="body2"
-                      dir={isDescRTL ? "rtl" : "ltr"}
-                      textAlign={isDescRTL ? "right" : "left"}
+                      dir={isRTL ? "rtl" : "ltr"}
+                      textAlign={isRTL ? "right" : "left"}
                       sx={{
                         mt: 1,
                         color: "#7a869a",

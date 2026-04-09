@@ -72,6 +72,7 @@ export default function HomeBar2() {
               sx={{
                 height: { xs: 18, sm: 22, md: 30, lg: 35 },
                 cursor: "pointer",
+                mr: 2,
               }}
             />
 

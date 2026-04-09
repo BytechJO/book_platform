@@ -122,23 +122,25 @@ export default function TeachBar() {
             }}
           >
             {/* Home */}
-            <Box
-              onClick={() => navigate(`/${role}`)}
-              sx={{
-                px: 3,
-                py: 0.8,
-                borderRadius: "20px",
-                backgroundColor: isExactActive(`/${role}`)
-                  ? "#2f4f8f"
-                  : "transparent",
-                color: isExactActive(`/${role}`) ? "#fff" : "#535353",
-                fontWeight: 400,
-                cursor: "pointer",
-                transition: "0.2s",
-              }}
-            >
-              Home
-            </Box>
+            {role === "teacher" && (
+              <Box
+                onClick={() => navigate(`/${role}`)}
+                sx={{
+                  px: 3,
+                  py: 0.8,
+                  borderRadius: "20px",
+                  backgroundColor: isExactActive(`/${role}`)
+                    ? "#2f4f8f"
+                    : "transparent",
+                  color: isExactActive(`/${role}`) ? "#fff" : "#535353",
+                  fontWeight: 400,
+                  cursor: "pointer",
+                  transition: "0.2s",
+                }}
+              >
+                Home
+              </Box>
+            )}
 
             {/* Books */}
             <Box
@@ -407,10 +409,42 @@ export default function TeachBar() {
           }}
         >
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <Button onClick={() => navigate(`/${role}`)}>Home</Button>
-            <Button onClick={() => navigate(`/${role}/books`)}>Books</Button>
-            <Button onClick={() => navigate(`/${role}/help`)}>Help</Button>
-            <Button onClick={() => setOpenDialog(true)}>Activate Code</Button>
+            {role === "teacher" && (
+              <Button
+                onClick={() => {
+                  navigate(`/${role}`);
+                  setMobileOpen(false); // 👈 سكر الدراور
+                }}
+              >
+                Home
+              </Button>
+            )}
+            <Button
+              onClick={() => {
+                navigate(`/${role}/books`);
+                setMobileOpen(false);
+              }}
+            >
+              Books
+            </Button>
+
+            <Button
+              onClick={() => {
+                navigate(`/${role}/help`);
+                setMobileOpen(false);
+              }}
+            >
+              Help
+            </Button>
+
+            <Button
+              onClick={() => {
+                setOpenDialog(true);
+                setMobileOpen(false);
+              }}
+            >
+              Activate Code
+            </Button>
           </Box>
         </Drawer>
       </Toolbar>

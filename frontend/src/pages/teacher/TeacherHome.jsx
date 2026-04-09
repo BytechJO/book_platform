@@ -7,6 +7,10 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import { LineChart } from "@mui/x-charts/LineChart";
 
 import WelcomeBanner from "./WelcomeBanner";
+import { useGetMyBooks } from "../../api/user_books";
+import CurveLoader from "../../components/CurveLoader";
+import { useNavigate } from "react-router-dom";
+
 const margin = { right: 24 };
 
 const data = [24, 10, 35, 15, 34, 18, 36, 11, 24];
@@ -14,21 +18,17 @@ const data = [24, 10, 35, 15, 34, 18, 36, 11, 24];
 const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"];
 
 export default function Dashboard() {
-  const documents = [
-    {
-      title: "Class A 1st semester result",
-      date: "04 May, 09:20AM",
-    },
-    {
-      title: "Arabic college application",
-      date: "01 Aug, 04:20PM",
-    },
-    {
-      title: "Class E attendance sheet",
-      date: "01 Oct, 08:20AM",
-    },
-  ];
+  const navigate = useNavigate();
 
+  const { books, loading } = useGetMyBooks();
+  const recentBooks = [...(books || [])]
+    .filter((b) => b.last_opened_at || b.activated_at)
+    .sort((a, b) => {
+      const dateA = new Date(a.last_opened_at || a.activated_at);
+      const dateB = new Date(b.last_opened_at || b.activated_at);
+      return dateB - dateA;
+    })
+    .slice(0, 3);
   const staff = [
     {
       name: "Mohammed saleh",
@@ -49,7 +49,9 @@ export default function Dashboard() {
       initials: "SM",
     },
   ];
-
+  if (loading) {
+    return <CurveLoader />;
+  }
   return (
     <Box sx={{ width: "100%" }}>
       <WelcomeBanner />
@@ -65,8 +67,8 @@ export default function Dashboard() {
             md: 5,
           },
           mr: {
-            xs: 0, // 👈 شيل اليمين على الموبايل
-            md: 5, // 👈 خليه طبيعي على الديسكتوب
+            xs: 0,
+            md: 5,
           },
         }}
       >
@@ -75,33 +77,59 @@ export default function Dashboard() {
           sx={{
             display: "flex",
             flexDirection: {
-              xs: "column", // موبايل
-              md: "row", // ديسكتوب
+              xs: "column",
+              md: "row",
             },
             gap: 3,
             width: "100%",
           }}
         >
-          {/* Documents */}
+          {/* books */}
           <Box sx={{ flex: 1, marginRight: 2 }}>
-            <Header title="Documents" />
+            <Header title="Books" />
 
-            {documents.map((doc, i) => (
-              <Row key={i} last={i === documents.length - 1}>
-                <IconBox>
-                  <DescriptionIcon sx={{ color: "#1A73E8" }} />
-                </IconBox>
+            {recentBooks.length > 0 ? (
+              recentBooks.map((book, i) => (
+                <Row key={i} last={i === recentBooks.length - 1}>
+                  <IconBox>
+                    <DescriptionIcon sx={{ color: "#1A73E8" }} />
+                  </IconBox>
 
-                <Box>
-                  <Typography fontSize={14} fontWeight={500}>
-                    {doc.title}
-                  </Typography>
-                  <Typography fontSize={12} color="#9e9e9e">
-                    {doc.date}
-                  </Typography>
-                </Box>
-              </Row>
-            ))}
+                  <Box
+                    sx={{ cursor: "pointer" }}
+                    onClick={() => {
+                      navigate(`/teacher/books/${book.id}`);
+                    }}
+                  >
+                    <Typography fontSize={14} fontWeight={500}>
+                      {book.title}
+                    </Typography>
+                    <Typography fontSize={12} color="#9e9e9e">
+                      {dayjs(book.last_opened_at || book.activated_at).format(
+                        "DD MMM, hh:mm A",
+                      )}
+                    </Typography>
+                  </Box>
+                </Row>
+              ))
+            ) : (
+              <Box
+                sx={{
+                  height: 120,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                  color: "#9e9e9e",
+                }}
+              >
+                <DescriptionIcon sx={{ fontSize: 40, mb: 1, opacity: 0.5 }} />
+                <Typography fontSize={14}>No recent books yet</Typography>
+                <Typography fontSize={12}>
+                  Start reading to see your activity
+                </Typography>
+              </Box>
+            )}
           </Box>
           {/* Staff */}
           <Box sx={{ flex: 1 }}>
@@ -183,18 +211,27 @@ export default function Dashboard() {
 
 /* ===== Components ===== */
 
-const Header = ({ title }) => (
-  <Box display="flex" justifyContent="space-between">
-    <Typography fontWeight={600}>{title}</Typography>
-    <Typography
-      color="#1A73E8"
-      fontSize={14}
-      sx={{ cursor: "pointer", "&:hover": { textDecoration: "underline" } }}
-    >
-      See all
-    </Typography>
-  </Box>
-);
+const Header = ({ title }) => {
+  const navigate = useNavigate();
+
+  return (
+    <Box display="flex" justifyContent="space-between">
+      <Typography fontWeight={600}>{title}</Typography>
+      <Typography
+        color="#1A73E8"
+        fontSize={14}
+        sx={{ cursor: "pointer", "&:hover": { textDecoration: "underline" } }}
+        onClick={() => {
+          if (title === "Books") {
+            navigate(`/teacher/books`);
+          }
+        }}
+      >
+        See all
+      </Typography>
+    </Box>
+  );
+};
 
 const Row = ({ children, last }) => (
   <Box

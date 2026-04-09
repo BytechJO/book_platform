@@ -1,42 +1,109 @@
-import React from "react";
-import { Box, Typography, Container, Button } from "@mui/material";
+import { Box, Grid, Typography, TextField, Button } from "@mui/material";
+import Img from "../../assets/Shape Mask 13.svg";
 
 export default function Help() {
   return (
-    <Container maxWidth="md">
+    <Box
+      sx={{
+        width: "100%",
+        display: "flex",
+        flexDirection: { xs: "column", md: "row" },
+        alignItems: "flex-start", // 🔥 هون الحل
+        justifyContent: "space-between",
+        gap: 4,
+        px: { xs: 2, md: 8 },
+        pt:{md:5},
+        fontFamily: "Inter, sans-serif",
+      }}
+    >
+      {/* LEFT VIDEO */}
       <Box
         sx={{
-          mt: 20,
-          p: 5,
-          borderRadius: 4,
-          boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
-          textAlign: "center",
+          flex: 1,
+          width: "100%",
         }}
       >
-        <Typography variant="h4" sx={{ mb: 2, fontWeight: 600 }}>
-          Help Center
-        </Typography>
-
-        <Typography sx={{ color: "#6b6b6b", mb: 4 }}>
-          If you’re experiencing any issues or have questions about using the
-          platform, feel free to contact our support team.
-        </Typography>
-
-        <Button
-          variant="contained"
+        <Typography
           sx={{
-            backgroundColor: "#2f4f8f",
-            borderRadius: "20px",
-            px: 4,
-            textTransform: "none",
-            "&:hover": {
-              backgroundColor: "#243c6e",
-            },
+            fontSize: { xs: "18px", md: "22px" },
+            fontWeight: 600,
+            mb: 2,
+            textAlign: "left",
           }}
         >
-          Contact Support
-        </Button>
+          Watch how to use the platform
+        </Typography>
+
+        <Box
+          sx={{
+            width: "100%",
+            position: "relative",
+            paddingTop: "56.25%",
+          }}
+        >
+          <iframe
+            src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
+            title="YouTube video"
+            frameBorder="0"
+            allowFullScreen
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              borderRadius: "12px",
+            }}
+          />
+        </Box>
       </Box>
-    </Container>
+      {/* RIGHT FORM */}
+      <Box
+        sx={{
+          flex: 1.2,
+          width: "100%",
+        }}
+      >
+        <Typography
+          sx={{
+            fontSize: { xs: "20px", md: "28px" },
+            fontWeight: 700,
+            mb: 2,
+          }}
+        >
+          Fill out the form and we’ll contact you soon
+        </Typography>
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 3,
+          }}
+        >
+          <TextField label="Full Name" fullWidth />
+          <TextField label="Mobile" fullWidth />
+          <TextField label="E-mail" fullWidth />
+          <TextField label="Message" multiline rows={5} fullWidth />
+
+          <Button
+            variant="contained"
+            sx={{
+              mb: { xs: 3, md: 3 },
+              width: 180,
+              height: 48,
+              alignSelf: "center",
+              borderRadius: "14px",
+              backgroundColor: "#9e9e9e",
+              textTransform: "none",
+              fontSize: "18px",
+              fontWeight: 600,
+            }}
+          >
+            Send
+          </Button>
+        </Box>
+      </Box>
+    </Box>
   );
 }
