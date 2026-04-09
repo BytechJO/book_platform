@@ -189,7 +189,7 @@ export default function Codes() {
       <Helmet>
         <title>Codes - Admin Dashboard</title>
       </Helmet>
-      <Box sx={{ px: { xs: 2, md: 4 }, py: 3 }}>
+      <Box sx={{ px: { md: 4 }, py: 3, overflowX: "hidden" }}>
         {/* Header */}
         <Box
           sx={{
