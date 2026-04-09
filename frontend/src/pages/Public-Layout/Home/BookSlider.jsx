@@ -7,12 +7,11 @@ import {
   CardContent,
   Stack,
   Pagination,
-  keyframes, // 1. استيراد keyframes
+  keyframes,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useGetPuplicBooks } from "../../../api";
 
-// 2. تعريف الأنيميشن (ظهور من الأسفل للأعلى)
 const fadeInUp = keyframes`
   0% {
     opacity: 0;
@@ -31,7 +30,6 @@ export default function BookSlider() {
 
   const [page, setPage] = useState(1);
 
-  // 3. State لتفعيل الأنيميشن عند الوصول بالسكرول
   const [isVisible, setIsVisible] = useState(false);
   const containerRef = useRef(null);
 
@@ -44,16 +42,15 @@ export default function BookSlider() {
     return books.slice(startIndex, endIndex);
   }, [page, books]);
 
-  // 4. Intersection Observer: يكتشف متى وصل السكرول للعنصر
   useEffect(() => {
     const currentRef = containerRef.current;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setIsVisible(true); // دخل السيكشن
+          setIsVisible(true);
         } else {
-          setIsVisible(false); // طلع من السيكشن 👈 هون السر
+          setIsVisible(false);
         }
       },
       {
@@ -92,17 +89,19 @@ export default function BookSlider() {
           sx={{
             display: "grid",
             gridTemplateColumns: {
-              xs: "1fr",
+              xs: "repeat(2, 1fr)",
               sm: "repeat(2, 1fr)",
               md: "repeat(4, 1fr)",
             },
-            gap: 6,
+            gap: {
+              xs: 3,
+              sm: 4,
+              md: 6,
+            },
           }}
         >
           {paginatedBooks.map((book, index) => {
-            const isTitleRTL = isArabic(book.title);
-            const isDescRTL = isArabic(book.description);
-
+            const isRTL = isArabic(book.title || book.description);
             return (
               <Card
                 key={book.id}
@@ -112,7 +111,11 @@ export default function BookSlider() {
                   boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
                   transition: "0.3s ease",
                   cursor: "pointer",
-
+                  transform: {
+                    xs: "scale(0.92)",
+                    sm: "scale(1)",
+                  },
+                  transformOrigin: "top center",
                   opacity: 0,
 
                   animation: isVisible
@@ -132,14 +135,14 @@ export default function BookSlider() {
               >
                 <CardMedia
                   component="img"
-                  className="book-cover" // كلاس للتحكم بالصورة
+                  className="book-cover"
                   image={book.cover_image_url_short}
                   alt={book.title}
                   sx={{
                     width: "100%",
                     aspectRatio: "3 / 4",
                     objectFit: "cover",
-                    transition: "transform 0.4s ease", // حركة سلسة للصورة
+                    transition: "transform 0.4s ease",
                   }}
                 />
 
@@ -148,15 +151,22 @@ export default function BookSlider() {
                     direction="row"
                     justifyContent="space-between"
                     alignItems="center"
+                    sx={{
+                      flexDirection: isRTL ? "row-reverse" : "row",
+                    }}
                   >
                     <Typography
-                      fontSize={18}
+                      fontSize={{
+                        xs: 12,
+                        sm: 16,
+                        md: 18,
+                      }}
                       color="#535353"
                       noWrap
                       fontWeight={600}
                       sx={{
-                        direction: isTitleRTL ? "rtl" : "ltr",
-                        textAlign: isTitleRTL ? "right" : "left",
+                        direction: isRTL ? "rtl" : "ltr",
+                        textAlign: isRTL ? "right" : "left",
                       }}
                     >
                       {book.title}
@@ -166,6 +176,10 @@ export default function BookSlider() {
                   <Typography
                     variant="body2"
                     sx={{
+                      fontSize: {
+                        xs: 11,
+                        sm: 14,
+                      },
                       mt: 1,
                       color: "#7a869a",
                       display: "-webkit-box",
@@ -173,8 +187,8 @@ export default function BookSlider() {
                       WebkitBoxOrient: "vertical",
                       overflow: "hidden",
                       fontWeight: 400,
-                      direction: isDescRTL ? "rtl" : "ltr",
-                      textAlign: isDescRTL ? "right" : "left",
+                      direction: isRTL ? "rtl" : "ltr",
+                      textAlign: isRTL ? "right" : "left",
                     }}
                   >
                     {book.description || "No description available."}

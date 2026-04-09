@@ -11,7 +11,7 @@ import {
   Button,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useNavigate, NavLink } from "react-router-dom";
+import { useNavigate, NavLink, useLocation } from "react-router-dom";
 
 import FacebookIcon from "@mui/icons-material/Facebook";
 import TwitterIcon from "@mui/icons-material/Twitter";
@@ -22,7 +22,13 @@ import logo from "../../assets/logo_white.svg";
 export default function AuthBar() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-
+  const location = useLocation();
+  const menuItems = [
+    { label: "Home", path: "/" },
+    { label: "About Us", path: "/about" },
+    { label: "Book series", path: "/book-series" },
+    { label: "Contact", path: "/contact" },
+  ];
   const handleNavigate = (path) => {
     navigate(path);
     setOpen(false);
@@ -114,21 +120,36 @@ export default function AuthBar() {
       >
         <Box sx={{ width: 250, pt: 2 }}>
           <List>
-            <ListItemButton onClick={() => handleNavigate("/")}>
-              <ListItemText primary="Home" />
-            </ListItemButton>
+            {menuItems.map((item) => {
+              const isActive =
+                item.path === "/"
+                  ? location.pathname === "/"
+                  : item.path === "/book-series"
+                    ? location.pathname.startsWith("/book-series") ||
+                      location.pathname.startsWith("/book")
+                    : location.pathname.includes(item.path);
 
-            <ListItemButton onClick={() => handleNavigate("/about")}>
-              <ListItemText primary="About Us" />
-            </ListItemButton>
-
-            <ListItemButton onClick={() => handleNavigate("/book-series")}>
-              <ListItemText primary="Book series" />
-            </ListItemButton>
-
-            <ListItemButton onClick={() => handleNavigate("/contact")}>
-              <ListItemText primary="Contact" />
-            </ListItemButton>
+              return (
+                <ListItemButton
+                  key={item.path}
+                  onClick={() => handleNavigate(item.path)}
+                  sx={{
+                    backgroundColor: isActive ? "#1A4D96" : "transparent",
+                    color: isActive ? "white" : "#333",
+                    borderRadius: "12px",
+                    mx: 1,
+                    my: 0.5,
+                    px: 2,
+                    py: 1,
+                    "&:hover": {
+                      backgroundColor: isActive ? "#1A4D96" : "#f5f5f5",
+                    },
+                  }}
+                >
+                  <ListItemText primary={item.label} />
+                </ListItemButton>
+              );
+            })}
           </List>
         </Box>
       </Drawer>

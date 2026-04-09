@@ -166,10 +166,22 @@ export default function Home() {
           <Box
             sx={{
               mb: 3,
-              animation: `${fadeInDown} 0.8s ease-out`, // إضافة الأنيميشن
+              animation: `${fadeInDown} 0.8s ease-out`,
             }}
           >
-            <img src={Logo} alt="Logo" style={{ height: 60 }} />
+            <Box
+              component="img"
+              src={Logo}
+              alt="Logo"
+              sx={{
+                height: {
+                  xs: 55,
+                  sm: 50,
+                  md: 75,
+                },
+                width: "auto",
+              }}
+            />
           </Box>
 
           {/* Title Animation */}
@@ -179,7 +191,7 @@ export default function Home() {
             fontSize="36px"
             sx={{
               mb: 2,
-              animation: `${fadeInUp} 0.8s ease-out 0.2s backwards`, // تأخير 0.2s
+              animation: `${fadeInUp} 0.8s ease-out 0.2s backwards`,
             }}
           >
             Innovative Learning <br />
@@ -194,7 +206,7 @@ export default function Home() {
             fontWeight={400}
             sx={{
               mb: 2,
-              animation: `${fadeInUp} 0.8s ease-out 0.4s backwards`, // تأخير 0.4s
+              animation: `${fadeInUp} 0.8s ease-out 0.4s backwards`,
             }}
           >
             Smart, accessible educational content for <br />
@@ -207,7 +219,7 @@ export default function Home() {
               display: "flex",
               justifyContent: "center",
               gap: 3,
-              animation: `${fadeInUp} 0.8s ease-out 0.6s backwards`, // تأخير 0.6s
+              animation: `${fadeInUp} 0.8s ease-out 0.6s backwards`,
             }}
           >
             <Button
@@ -254,7 +266,11 @@ export default function Home() {
           ref={containerRef}
           sx={{
             position: "relative",
-            height: { xs: "250px", md: "400px" },
+            height: {
+              xs: "180px",
+              sm: "250px",
+              md: "400px",
+            },
             mt: 4,
           }}
         >
@@ -271,7 +287,6 @@ export default function Home() {
                 top: circle.top,
                 left: circle.left,
                 opacity: circle.opacity,
-                // تم تعديل الـ transition ليشمل الموقع أيضاً
                 transition:
                   "top 2s ease-in-out, left 2s ease-in-out, opacity 1s ease",
                 boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
@@ -303,7 +318,6 @@ export default function Home() {
                     index === 0 || index === 3
                       ? { xs: "translateY(-30px)", md: "translateY(-80px)" }
                       : { xs: "translateY(10px)", md: "translateY(30px)" },
-                  // أنيميشن ظهور الصور
                   animation: `${scaleIn} 0.6s ease-out ${0.8 + index * 0.15}s backwards`,
                 }}
               >
@@ -325,12 +339,16 @@ export default function Home() {
       {/* Categories Section Animation */}
       <Box
         sx={{
-          mt: 8,
+          mt: {
+            xs: 1,
+            sm: 4,
+            md: 8,
+          },
           backgroundColor: "#eef2f7",
-          animation: `${fadeInUp} 1s ease-out 1.5s backwards`, // ظهور متأخر عند النزول
+          animation: `${fadeInUp} 1s ease-out 1.5s backwards`,
         }}
       >
-        <Container maxWidth="lg">
+        <Container maxWidth="lg" sx={{ pt: 5 }}>
           <Typography
             variant="h4"
             fontWeight="700"
@@ -350,7 +368,6 @@ export default function Home() {
             empowers every mind to grow.
           </Typography>
         </Container>
-
         <BookSlider />
       </Box>
     </>

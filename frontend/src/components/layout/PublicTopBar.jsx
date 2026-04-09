@@ -42,7 +42,7 @@ export default function PublicTopBar() {
             sx={{
               display: "flex",
               alignItems: "center",
-              gap: { xs: 0.2, sm: 0.5, md: 1.2, lg: 2 },
+              gap: { xs: 1, sm: 0.5, md: 1.2, lg: 2 },
               flexWrap: "nowrap",
               overflowX: "auto",
               scrollbarWidth: "none",
@@ -111,10 +111,10 @@ function NavItem({ to, label }) {
           px: { xs: 0.7, sm: 1, md: 1.8, lg: 2.2 },
           py: { xs: 0.3, sm: 0.45, md: 0.6 },
           fontSize: {
-            xs: "8px",
-            sm: "10px",
-            md: "13px",
-            lg: "15px",
+            xs: "12px",
+            sm: "14px",
+            md: "17px",
+            lg: "17px",
             xl: "16px",
           },
 

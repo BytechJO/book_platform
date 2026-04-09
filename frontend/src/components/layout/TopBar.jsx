@@ -74,7 +74,7 @@ export default function TopBar() {
         <Box
           sx={{
             display: { xs: "none", md: "flex" },
-            gap: 2, // 👈 قللنا المسافة
+            gap: 2,
             ml: 4,
           }}
         >
@@ -112,8 +112,8 @@ export default function TopBar() {
           sx={{
             display: "flex",
             alignItems: "center",
-            gap: 1, // 👈 قربنا العناصر من بعض
-            ml: "auto", // 👈 هذا المهم
+            gap: 1, 
+            ml: "auto", 
           }}
         >
           <IconButton
@@ -152,7 +152,7 @@ export default function TopBar() {
               color: "white",
               display: "flex",
               alignItems: "center",
-              gap: 0.3, // 👈 قربنا السهم من الأفاتار
+              gap: 0.3, 
             }}
             onClick={handleOpen}
           >

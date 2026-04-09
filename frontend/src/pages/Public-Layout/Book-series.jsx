@@ -19,6 +19,8 @@ import { useGetPuplicBooks } from "../../api";
 import "animate.css";
 
 export default function BookSeries() {
+  const isArabic = (text) => /[\u0600-\u06FF]/.test(text || "");
+
   const { books, loading } = useGetPuplicBooks();
   const [search, setSearch] = useState("");
   const [visibleIndex, setVisibleIndex] = useState(0);
@@ -98,15 +100,20 @@ export default function BookSeries() {
             mx: "auto",
             display: "grid",
             gridTemplateColumns: {
-              xs: "1fr",
+              xs: "repeat(2, 1fr)",
               sm: "repeat(2, 1fr)",
               md: "repeat(3, 1fr)",
             },
-            gap: 10,
+            gap: {
+              xs: 3,
+              sm: 4,
+              md: 10,
+            },
           }}
         >
           {filteredBooks.map((book, index) => {
             const isVisible = index <= visibleIndex;
+            const isRTL = isArabic(book.title || book.description);
 
             return (
               <Card
@@ -141,42 +148,47 @@ export default function BookSeries() {
                     direction="row"
                     justifyContent="space-between"
                     alignItems="center"
+                    sx={{
+                      direction: isRTL ? "rtl" : "ltr",
+                      textAlign: isRTL ? "right" : "left",
+                    }}
                   >
                     <Typography
-                      fontWeight={400}
-                      fontSize={20}
+                      fontWeight={500}
+                      fontSize={{
+                        xs: 14,
+                        sm: 16,
+                        md: 18,
+                      }}
                       color="#535353"
                       sx={{
                         display: "-webkit-box",
                         WebkitLineClamp: 1,
                         WebkitBoxOrient: "vertical",
                         overflow: "hidden",
+                        direction: isRTL ? "rtl" : "ltr",
+                        textAlign: isRTL ? "right" : "left",
                       }}
                     >
                       {book.title}
                     </Typography>
-
-                    <Chip
-                      label="WEB"
-                      size="small"
-                      sx={{
-                        backgroundColor: "#2B5A9E73",
-                        color: "#2B5A9E",
-                        fontWeight: 400,
-                        borderRadius: "3px",
-                      }}
-                    />
                   </Stack>
 
                   <Typography
                     variant="body2"
-                    sx={{ mt: 1, color: "#7a869a" }}
+                    sx={{
+                      mt: 1,
+                      color: "#7a869a",
+                      direction: isRTL ? "rtl" : "ltr",
+                      textAlign: isRTL ? "right" : "left",
+                      display: "-webkit-box",
+                      WebkitLineClamp: 1,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
+                    }}
                     fontSize={12}
                   >
-                    {book.description
-                      ? book.description.slice(0, 30) +
-                        (book.description.length > 30 ? "..." : "")
-                      : "No description available."}
+                    {book.description || "No description available."}
                   </Typography>
                   <Typography
                     variant="caption"
