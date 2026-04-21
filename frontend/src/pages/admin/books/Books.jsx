@@ -392,17 +392,31 @@ export default function Books() {
                   }}
                   onClick={() => navigate(`/admin/books/${book.id}`)}
                 >
-                  <CardMedia
+                  <Box
+                  sx={{
+                    width: "100%",
+                    height: 240, // 👈 ثبّت الارتفاع
+                    backgroundColor: "#739ebd",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: 2, // 👈 هذا المهم عشان يبين الفراغ من كل الجهات
+                    boxSizing: "border-box",
+                  }}
+                >
+                  <Box
                     component="img"
-                    image={book.cover_image_url_short}
+                    src={book.cover_image_url_short}
                     alt={book.title}
+                    className="book-cover"
                     sx={{
-                      width: "100%",
-                      aspectRatio: "3 / 4",
-                      objectFit: "cover",
-                      display: "block",
+                      maxWidth: "100%",
+                      maxHeight: "100%",
+                      objectFit: "contain",
+                      transition: "transform 0.4s ease",
                     }}
                   />
+                </Box>
                   <CardContent
                     sx={{
                       flexGrow: 1,

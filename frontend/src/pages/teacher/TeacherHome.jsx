@@ -10,6 +10,8 @@ import WelcomeBanner from "./WelcomeBanner";
 import { useGetMyBooks } from "../../api/user_books";
 import CurveLoader from "../../components/CurveLoader";
 import { useNavigate } from "react-router-dom";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 
 const margin = { right: 24 };
 
@@ -20,6 +22,8 @@ const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"];
 export default function Dashboard() {
   const navigate = useNavigate();
 
+  dayjs.extend(utc);
+  dayjs.extend(timezone);
   const { books, loading } = useGetMyBooks();
   const recentBooks = [...(books || [])]
     .filter((b) => b.last_opened_at || b.activated_at)
@@ -99,9 +103,10 @@ export default function Dashboard() {
                       {book.title}
                     </Typography>
                     <Typography fontSize={12} color="#9e9e9e">
-                      {dayjs(book.last_opened_at || book.activated_at).format(
-                        "DD MMM, hh:mm A",
-                      )}
+                      {dayjs
+                        .utc(book.last_opened_at || book.activated_at)
+                        .tz("Asia/Amman")
+                        .format("DD MMM, hh:mm A")}
                     </Typography>
                   </Box>
                 </Row>

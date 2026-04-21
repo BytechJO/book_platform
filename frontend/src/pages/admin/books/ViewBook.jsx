@@ -36,7 +36,6 @@ export default function ViewBook() {
       </Helmet>
       <Box
         sx={{
-          backgroundColor: "#f3f5f9",
           display: "flex",
           justifyContent: "center",
         }}
@@ -128,7 +127,7 @@ export default function ViewBook() {
                 >
                   <PrinterIcon size={20} />
                   <Typography sx={{ color: "#1A4D96", fontSize: 14 }}>
-                     Al-Rowad for Publishing & Distribution
+                    Al-Rowad for Publishing & Distribution
                   </Typography>
                 </Box>
 
@@ -227,13 +226,13 @@ export default function ViewBook() {
                   sx={{
                     width: "100%",
                     maxWidth: "100%",
-                    fontSize: 15,
                     lineHeight: 2,
-                    color: "#1A4D96",
                     whiteSpace: "pre-line",
                     wordBreak: "break-word",
                     overflowWrap: "anywhere",
                     minHeight: "150px",
+                    fontSize: 16,
+                    color: "#5d5d5d",
                   }}
                 >
                   {book.description?.trim() || "\u00A0"}

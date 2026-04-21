@@ -129,13 +129,6 @@ export default function UserProfile() {
       <Helmet>
         <title>User Profile - Student Dashboard</title>
       </Helmet>
-      <Divider
-        sx={{
-          width: "100%",
-          borderColor: "#1A4D965C",
-          mb: 2,
-        }}
-      />
       <Box
         sx={{
           p: { xs: 2, md: 4 },

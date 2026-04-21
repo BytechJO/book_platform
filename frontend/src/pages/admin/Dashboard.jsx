@@ -62,16 +62,6 @@ export default function Dashboard() {
         >
           <Typography
             sx={{
-              fontSize: { xs: 14, md: 16 },
-              fontWeight: 400,
-              opacity: 0.8,
-            }}
-          >
-            Publisher Platform
-          </Typography>
-
-          <Typography
-            sx={{
               mb: { xs: 2, md: 6 },
               fontSize: { xs: 26, md: 34 },
               fontWeight: 700,

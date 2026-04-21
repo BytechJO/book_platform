@@ -195,9 +195,9 @@ export default function ViewPuplicBook() {
                         fontFamily: isArabic(book.description)
                           ? "Tajawal, sans-serif"
                           : "Inter, sans-serif",
-                        fontSize: 15,
+                        fontSize: 16,
                         lineHeight: 2,
-                        color: "#1A4D96",
+                        color: "#5d5d5d",
                         direction: isArabic(book.description) ? "rtl" : "ltr",
                         textAlign: isArabic(book.description)
                           ? "right"

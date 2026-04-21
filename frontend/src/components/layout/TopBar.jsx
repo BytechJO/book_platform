@@ -21,6 +21,7 @@ import SettingsIcon from "../icons/SettingsIcon";
 import BellIcon from "../icons/BellIcon";
 import UserIcon from "../icons/UserIcon";
 import { useAuthMe } from "src/api";
+import logo from "../../assets/logo_white.svg";
 
 export default function TopBar() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -59,15 +60,18 @@ export default function TopBar() {
             <MenuIcon />
           </IconButton>
 
-          <Typography
+          <Box
+            component="img"
+            src={logo}
+            alt="logo"
             onClick={() => navigate("/admin/dashboard")}
             sx={{
+              height: { xs: 18, sm: 22, md: 30, lg: 35 },
               cursor: "pointer",
-              fontSize: { xs: 16, md: 28 },
+              mr: 6,
+              ml: 6,
             }}
-          >
-            Publisher Platform
-          </Typography>
+          />
         </Box>
 
         {/* NAV */}
@@ -112,8 +116,8 @@ export default function TopBar() {
           sx={{
             display: "flex",
             alignItems: "center",
-            gap: 1, 
-            ml: "auto", 
+            gap: 1,
+            ml: "auto",
           }}
         >
           <IconButton
@@ -152,7 +156,7 @@ export default function TopBar() {
               color: "white",
               display: "flex",
               alignItems: "center",
-              gap: 0.3, 
+              gap: 0.3,
             }}
             onClick={handleOpen}
           >

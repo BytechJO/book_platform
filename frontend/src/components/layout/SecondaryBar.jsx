@@ -8,7 +8,7 @@ import {
   List,
   ListItem,
 } from "@mui/material";
-import { useNavigate, NavLink, useLocation } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
 import { useState } from "react";
 
 import FacebookIcon from "@mui/icons-material/Facebook";

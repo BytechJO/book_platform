@@ -113,11 +113,11 @@ export default function TeacherBooks() {
       {/* 🔹 Filters Section */}
       <Box
         sx={{
-          width:"90%",
+          width: "90%",
           mx: "auto",
           px: { xs: 2, sm: 4 },
           mb: 4,
-          mt: 3,
+          mt: 2,
         }}
       >
         <Box
@@ -195,7 +195,7 @@ export default function TeacherBooks() {
       {/* 🔹 Books Grid */}
       <Box
         sx={{
-          width:"90%",
+          width: "90%",
           mx: "auto",
           px: 4,
           pb: 6,
@@ -242,16 +242,31 @@ export default function TeacherBooks() {
                     navigate(`/teacher/books/${book.id}`);
                   }}
                 >
-                  <CardMedia
-                    component="img"
-                    image={book.cover_image_url_short}
-                    alt={book.title}
+                  <Box
                     sx={{
                       width: "100%",
-                      aspectRatio: "3 / 4",
-                      objectFit: "cover",
+                      height: 240, // 👈 ثبّت الارتفاع
+                      backgroundColor: "#739ebd",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: 2, // 👈 هذا المهم عشان يبين الفراغ من كل الجهات
+                      boxSizing: "border-box",
                     }}
-                  />
+                  >
+                    <Box
+                      component="img"
+                      src={book.cover_image_url_short}
+                      alt={book.title}
+                      className="book-cover"
+                      sx={{
+                        maxWidth: "100%",
+                        maxHeight: "100%",
+                        objectFit: "contain",
+                        transition: "transform 0.4s ease",
+                      }}
+                    />
+                  </Box>
 
                   <CardContent>
                     <Stack

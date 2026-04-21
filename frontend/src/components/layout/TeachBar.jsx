@@ -16,7 +16,7 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import logo from "../../assets/logo.svg";
+import logo from "../../assets/logo_white.svg";
 import SettingsIcon from "../icons/SettingsIcon";
 import BellIcon from "../icons/BellIcon";
 import UserIcon from "../icons/UserIcon";
@@ -81,14 +81,18 @@ export default function TeachBar() {
     }
   };
   return (
-    <AppBar position="fixed" color="inherit" elevation={0}>
+    <AppBar
+      position="fixed"
+      sx={{
+        backgroundColor: "#1A4D96",
+        boxShadow: "none",
+      }}
+    >
       <Toolbar
         sx={{
           justifyContent: "space-between",
-          minHeight: isMobile ? 70 : 150,
-          px: isMobile ? 2 : 4,
-          alignItems: "center",
-          pt: isMobile ? 2 : 4,
+          height: { xs: 50, md: 60 },
+          px: { xs: 2, md: 4 },
         }}
       >
         <Box
@@ -99,7 +103,10 @@ export default function TeachBar() {
           }}
         >
           {isMobile && (
-            <IconButton onClick={() => setMobileOpen(true)}>
+            <IconButton
+              onClick={() => setMobileOpen(true)}
+              sx={{ color: "white" }}
+            >
               <MenuIcon />
             </IconButton>
           )}
@@ -118,6 +125,7 @@ export default function TeachBar() {
               width: isMobile ? 150 : 250,
               cursor: "pointer",
               marginRight: isMobile ? 10 : 20,
+              marginLeft: isMobile ? 0 : 60,
             }}
           />
           <Box
@@ -133,17 +141,22 @@ export default function TeachBar() {
               <Box
                 onClick={() => navigate(`/${role}`)}
                 sx={{
-                  px: 3,
-                  py: 0.8,
+                  px: 2,
+                  py: 0.5,
                   borderRadius: "20px",
                   backgroundColor: isExactActive(`/${role}`)
-                    ? "#2f4f8f"
+                    ? "white"
                     : "transparent",
-                  color: isExactActive(`/${role}`) ? "#fff" : "#535353",
-                  fontWeight: 400,
+                  color: isExactActive(`/${role}`) ? "#1A4D96" : "white",
+                  fontWeight: 500,
+                  fontSize: 13,
+                  "&:hover": {
+                    backgroundColor: isExactActive(`/${role}`)
+                      ? "white"
+                      : "rgba(255,255,255,0.1)",
+                  },
                   cursor: "pointer",
                   transition: "0.2s",
-                  fontSize: 14,
                 }}
               >
                 Home
@@ -154,15 +167,20 @@ export default function TeachBar() {
             <Box
               onClick={() => navigate(`/${role}/books`)}
               sx={{
-                px: 3,
-                py: 0.8,
+                px: 2,
+                py: 0.5,
                 borderRadius: "20px",
                 backgroundColor: isStartsWithActive(`/${role}/books`)
-                  ? "#2f4f8f"
+                  ? "white"
                   : "transparent",
                 color: isStartsWithActive(`/${role}/books`)
-                  ? "#fff"
-                  : "#535353",
+                  ? "#1A4D96"
+                  : "white",
+                "&:hover": {
+                  backgroundColor: isStartsWithActive(`/${role}/books`)
+                    ? "white"
+                    : "rgba(255,255,255,0.1)",
+                },
                 fontWeight: 400,
                 cursor: "pointer",
                 transition: "0.2s",
@@ -176,17 +194,24 @@ export default function TeachBar() {
             <Box
               onClick={() => navigate(`/${role}/help`)}
               sx={{
-                px: 3,
-                py: 0.8,
+                px: 2,
+                py: 0.5,
                 borderRadius: "20px",
                 backgroundColor: isStartsWithActive(`/${role}/help`)
-                  ? "#2f4f8f"
+                  ? "white"
                   : "transparent",
-                color: isStartsWithActive(`/${role}/help`) ? "#fff" : "#535353",
-                fontWeight: 400,
+                color: isStartsWithActive(`/${role}/help`)
+                  ? "#1A4D96"
+                  : "white",
+                fontWeight: 500,
                 cursor: "pointer",
                 transition: "0.2s",
-                fontSize: 14,
+                fontSize: 13,
+                "&:hover": {
+                  backgroundColor: isStartsWithActive(`/${role}/help`)
+                    ? "white"
+                    : "rgba(255,255,255,0.1)",
+                },
               }}
             >
               Help
@@ -194,11 +219,14 @@ export default function TeachBar() {
             <Box
               onClick={() => setOpenDialog(true)}
               sx={{
-                px: 3,
-                py: 0.8,
+                px: 2,
+                py: 0.5,
                 borderRadius: "20px",
                 backgroundColor: "transparent",
-                color: "#535353",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "rgba(255,255,255,0.1)",
+                },
                 fontWeight: 400,
                 cursor: "pointer",
                 transition: "0.2s",
@@ -214,13 +242,13 @@ export default function TeachBar() {
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
           {/* Settings */}
           <IconButton
-            sx={{ color: "black" }}
+            sx={{ color: "white" }}
             onClick={() => navigate(`/${role}/profile`)}
           >
             <SettingsIcon size={26} />
           </IconButton>
           {/* Notifications */}
-          <IconButton sx={{ color: "black", position: "relative" }}>
+          <IconButton sx={{ color: "white", position: "relative" }}>
             <BellIcon size={26} />
 
             <Box
@@ -250,6 +278,7 @@ export default function TeachBar() {
               display: "flex",
               alignItems: "center",
               gap: 0.5,
+              color: "white",
             }}
             onClick={handleOpen}
           >

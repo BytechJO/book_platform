@@ -90,13 +90,6 @@ export default function ViewTeacherBook() {
       <Helmet>
         <title>Book details - Teacher Dashboard</title>
       </Helmet>
-      <Divider
-        sx={{
-          width: "100%",
-          borderColor: "#1A4D965C",
-          mb: 2,
-        }}
-      />
       <Box
         sx={{
           backgroundColor: "#ffffff",
@@ -338,10 +331,10 @@ export default function ViewTeacherBook() {
 
                 <Typography
                   sx={{
-                    fontSize: 15,
                     lineHeight: 1.9,
-                    color: "#4a5568",
                     textAlign: "justify",
+                    fontSize: 16,
+                    color: "#5d5d5d",
                   }}
                 >
                   {expanded

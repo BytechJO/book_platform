@@ -18,9 +18,9 @@ export default function WelcomeBanner() {
       sx={{
         width: "100%",
         px: { xs: 2, sm: 4, md: 8, lg: 14 }, // 👈 ريسبونسف
-        py: { xs: 2, md: 3 },
         display: "flex",
         alignItems: "center",
+        marginBottom:2,
         gap: 3,
       }}
     >

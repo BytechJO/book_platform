@@ -244,16 +244,31 @@ export default function StudentBooks() {
                     navigate(`/student/books/${book.id}`);
                   }}
                 >
-                  <CardMedia
-                    component="img"
-                    image={book.cover_image_url_short}
-                    alt={book.title}
+                  <Box
                     sx={{
                       width: "100%",
-                      aspectRatio: "3 / 4",
-                      objectFit: "cover",
+                      height: 240, // 👈 ثبّت الارتفاع
+                      backgroundColor: "#739ebd",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: 2, // 👈 هذا المهم عشان يبين الفراغ من كل الجهات
+                      boxSizing: "border-box",
                     }}
-                  />
+                  >
+                    <Box
+                      component="img"
+                      src={book.cover_image_url_short}
+                      alt={book.title}
+                      className="book-cover"
+                      sx={{
+                        maxWidth: "100%",
+                        maxHeight: "100%",
+                        objectFit: "contain",
+                        transition: "transform 0.4s ease",
+                      }}
+                    />
+                  </Box>
 
                   <CardContent>
                     <Stack

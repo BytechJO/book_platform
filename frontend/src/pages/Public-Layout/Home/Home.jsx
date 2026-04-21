@@ -9,17 +9,6 @@ import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import BookSlider from "./BookSlider";
 
-// 2. تعريف الأنيميشنز (Keyframes)
-const fadeInDown = keyframes`
-  0% {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
 
 const fadeInUp = keyframes`
   0% {
@@ -162,28 +151,6 @@ export default function Home() {
         </Helmet>
 
         <Container sx={{ textAlign: "center", py: 2 }}>
-          {/* Logo Animation */}
-          <Box
-            sx={{
-              mb: 3,
-              animation: `${fadeInDown} 0.8s ease-out`,
-            }}
-          >
-            <Box
-              component="img"
-              src={Logo}
-              alt="Logo"
-              sx={{
-                height: {
-                  xs: 55,
-                  sm: 50,
-                  md: 75,
-                },
-                width: "auto",
-              }}
-            />
-          </Box>
-
           {/* Title Animation */}
           <Typography
             variant="h3"
@@ -201,7 +168,7 @@ export default function Home() {
           {/* Subtitle Animation */}
           <Typography
             variant="body1"
-            fontSize="18px"
+            fontSize="17.5px"
             color="#504D4E"
             fontWeight={400}
             sx={{

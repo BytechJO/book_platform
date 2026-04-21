@@ -48,7 +48,7 @@ export default function HomeBar2() {
         <Toolbar
           sx={{
             justifyContent: "space-between",
-            pl: { xs: 1, md: 16 },
+            pl: { xs: 1, md: 10 },
             pr: { xs: 1, md: 4 },
             minHeight: "unset",
           }}
@@ -72,7 +72,7 @@ export default function HomeBar2() {
               sx={{
                 height: { xs: 18, sm: 22, md: 30, lg: 35 },
                 cursor: "pointer",
-                mr: 2,
+                mr: 6,
               }}
             />
 
@@ -183,6 +183,7 @@ function NavItem({ to, label }) {
         py: 0.5,
         textTransform: "none",
         fontWeight: 500,
+        fontSize:"13px",
         "&:hover": {
           backgroundColor: isActive ? "white" : "rgba(255,255,255,0.1)",
         },

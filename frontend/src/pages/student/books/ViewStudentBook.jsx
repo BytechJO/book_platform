@@ -87,16 +87,8 @@ export default function ViewStudentBook() {
       <Helmet>
         <title>Book details - Student Dashboard</title>
       </Helmet>
-      <Divider
-        sx={{
-          width: "100%",
-          borderColor: "#1A4D965C",
-          mb: 2,
-        }}
-      />
       <Box
         sx={{
-          backgroundColor: "#ffffff",
           display: "flex",
           justifyContent: "center",
         }}
@@ -120,7 +112,7 @@ export default function ViewStudentBook() {
                 sx={{
                   position: "relative",
                   zIndex: 2,
-                   borderTopLeftRadius: "24px",
+                  borderTopLeftRadius: "24px",
                   borderTopRightRadius: "24px",
                   overflow: "hidden",
                   boxShadow: "0px 10px 15px -5px rgba(0,0,0,0.35)",
@@ -190,7 +182,7 @@ export default function ViewStudentBook() {
                   }}
                 >
                   <PrinterIcon size={20} />
-                  <Typography sx={{  fontSize: 12 }}>
+                  <Typography sx={{ fontSize: 12 }}>
                     {book.publisher || "Al-Rowad for Publishing & Distribution"}
                   </Typography>
                 </Box>
@@ -204,7 +196,7 @@ export default function ViewStudentBook() {
                   }}
                 >
                   <Box component="img" src={Icon} sx={{ width: 20 }} />
-                  <Typography sx={{  fontSize: 12 }}>
+                  <Typography sx={{ fontSize: 12 }}>
                     Published: {new Date(book.created_at).getFullYear()}
                   </Typography>
                 </Box>
@@ -331,10 +323,10 @@ export default function ViewStudentBook() {
 
                 <Typography
                   sx={{
-                    fontSize: 15,
                     lineHeight: 2,
-                    color: "#1A4D96",
                     textAlign: "justify",
+                    fontSize: 16,
+                    color: "#5d5d5d",
                   }}
                 >
                   {expanded
