@@ -1,5 +1,4 @@
-import { Box, Grid, Typography, TextField, Button } from "@mui/material";
-import Img from "../../assets/Shape Mask 13.svg";
+import { Box,  Typography, TextField, Button } from "@mui/material";
 
 export default function Help() {
   return (
@@ -7,8 +6,8 @@ export default function Help() {
       sx={{
         width: "100%",
         display: "flex",
-        flexDirection: { xs: "column", md: "row" },
-        alignItems: "flex-start", // 🔥 هون الحل
+        flexDirection: { xs: "column-reverse", md: "row-reverse" },
+        alignItems: "flex-start",
         justifyContent: "space-between",
         gap: 4,
         px: { xs: 2, md: 8 },
@@ -25,8 +24,8 @@ export default function Help() {
       >
         <Typography
           sx={{
-            fontSize: { xs: "18px", md: "22px" },
-            fontWeight: 600,
+            fontSize: { xs: "20px", md: "28px" },
+            fontWeight: 700,
             mb: 2,
             textAlign: "left",
           }}

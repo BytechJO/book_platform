@@ -128,7 +128,7 @@ export default function ViewBook() {
                 >
                   <PrinterIcon size={20} />
                   <Typography sx={{ color: "#1A4D96", fontSize: 14 }}>
-                    {book.publisher || "Al-Rowad for Publishing & Distribution"}
+                     Al-Rowad for Publishing & Distribution
                   </Typography>
                 </Box>
 
@@ -227,7 +227,6 @@ export default function ViewBook() {
                   sx={{
                     width: "100%",
                     maxWidth: "100%",
-                    fontFamily: "Poppins",
                     fontSize: 15,
                     lineHeight: 2,
                     color: "#1A4D96",
@@ -247,7 +246,6 @@ export default function ViewBook() {
           <Typography
             sx={{
               textAlign: "center",
-              fontFamily: "Poppins",
               fontWeight: 500,
               fontSize: 14,
               color: "#2d5aa7",

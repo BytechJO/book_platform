@@ -8,7 +8,7 @@ export default function EditIconButton({ size = 32 }) {
       xmlns="http://www.w3.org/2000/svg"
     >
       {/* Background */}
-      <rect width="32" height="31" rx="4" fill="#FFCC00" />
+      <rect width="32" height="31" rx="4" fill="#2B5A9E" />
 
       {/* Edit Icon */}
       <g transform="translate(6,5) scale(1)">

@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Avatar } from "@mui/material";
 import { useAuthMe } from "../../api/auth";
 
 export default function WelcomeBanner() {
@@ -7,51 +7,65 @@ export default function WelcomeBanner() {
     month: "long",
     day: "numeric",
   });
+
   const { user } = useAuthMe();
-  const firstName = user?.full_name.split(" ")[0];
+
+  const firstName = user?.full_name?.split(" ")[0];
+  const firstLetter = user?.full_name?.charAt(0)?.toUpperCase();
+
   return (
     <Box
       sx={{
         width: "100%",
-        backgroundColor: "#1A4D96",
-        color: "white",
-        px: 6,
-        height:"150px"
+        px: { xs: 2, sm: 4, md: 8, lg: 14 }, // 👈 ريسبونسف
+        py: { xs: 2, md: 3 },
+        display: "flex",
+        alignItems: "center",
+        gap: 3,
       }}
     >
-      {/* Date */}
-      <Typography
-        sx={{
-          opacity: 0.9,
-          pt:1,
-          mb: 3,
-          fontWeight: 400,
-          fontSize: "16px",
+      {/* Avatar */}
+      <Avatar
+        src={user?.avatar_url || undefined}
+        imgProps={{
+          style: {
+            objectFit: "cover",
+          },
         }}
-      >
-        {today}
-      </Typography>
-
-      {/* Title */}
-      <Typography
-        variant="h4"
         sx={{
+          width: 110,
+          height: 110,
+          border: "4px solid #7e9fcd",
+          backgroundColor: user?.avatar_url ? "transparent" : "#1A4D96",
+          fontSize: 32,
           fontWeight: 600,
-          mb: 1,
         }}
       >
-        Welcome back, Student {firstName} !
-      </Typography>
+        {!user?.avatar_url && firstLetter}
+      </Avatar>
 
-      {/* Subtitle */}
-      <Typography
-        variant="body1"
-        sx={{
-          opacity: 0.9,
-        }}
-      >
-        Always stay updated in your portal
-      </Typography>
+      {/* Text */}
+      <Box>
+        <Typography
+          sx={{
+            color: "#6B7280",
+            fontSize: "14px",
+            mb: 0.5,
+          }}
+        >
+          {today}
+        </Typography>
+
+        <Typography
+          sx={{
+            color: "#1A4D96",
+            fontSize: { xs: "16px", md: "20px", lg: "22px" },
+            fontWeight: 700,
+          }}
+        >
+          Welcome back, Student {firstName} !
+        </Typography>
+      </Box>
     </Box>
   );
 }

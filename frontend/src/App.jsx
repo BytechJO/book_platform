@@ -8,6 +8,9 @@ const theme = createTheme({
       main: "#1f3c88",
     },
   },
+  typography: {
+    fontFamily: '"Inter", sans-serif', // 🔥 هون الحل
+  },
   components: {
     MuiCssBaseline: {
       styleOverrides: {

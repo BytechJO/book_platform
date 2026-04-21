@@ -49,7 +49,7 @@ export default function TopBar() {
     >
       <Toolbar>
         {/* LEFT */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <IconButton
             color="inherit"
             edge="start"

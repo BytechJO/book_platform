@@ -58,18 +58,12 @@ export default function Dashboard() {
 
       <Box
         sx={{
-          p: {
-            xs: 2,
-            md: 3,
-          },
-          m: {
-            xs: 1,
-            md: 5,
-          },
-          mr: {
-            xs: 0,
-            md: 5,
-          },
+          p: { xs: 2, md: 1 },
+
+          mt: { xs: 1, md: 2 },
+
+          width: "87%",
+          mx: "auto", // تمركز
         }}
       >
         {/* ===== TOP SECTION ===== */}
@@ -215,12 +209,30 @@ const Header = ({ title }) => {
   const navigate = useNavigate();
 
   return (
-    <Box display="flex" justifyContent="space-between">
-      <Typography fontWeight={600}>{title}</Typography>
+    <Box
+      display="flex"
+      justifyContent="space-between"
+      alignItems="center"
+      borderTop="1px solid #d0cacaac"
+    >
       <Typography
-        color="#1A73E8"
-        fontSize={14}
-        sx={{ cursor: "pointer", "&:hover": { textDecoration: "underline" } }}
+        sx={{
+          fontWeight: 700,
+          fontSize: { xs: 16, md: 20 }, // 🔥 أكبر
+          color: "#333333",
+          marginTop: 1,
+        }}
+      >
+        {title}
+      </Typography>
+
+      <Typography
+        sx={{
+          color: "#1A73E8",
+          fontSize: 14,
+          cursor: "pointer",
+          "&:hover": { textDecoration: "underline" },
+        }}
         onClick={() => {
           if (title === "Books") {
             navigate(`/teacher/books`);

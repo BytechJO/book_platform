@@ -113,7 +113,7 @@ export default function StudentBooks() {
       {/* 🔹 Filters Section */}
       <Box
         sx={{
-          maxWidth: 1400,
+          width: "90%",
           mx: "auto",
           px: { xs: 2, sm: 4 },
           mb: 4,
@@ -195,7 +195,7 @@ export default function StudentBooks() {
       {/* 🔹 Books Grid */}
       <Box
         sx={{
-          maxWidth: 1200,
+          width: "90%",
           mx: "auto",
           px: 4,
           pb: 6,

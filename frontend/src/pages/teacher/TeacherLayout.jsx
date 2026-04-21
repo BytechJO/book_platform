@@ -20,7 +20,7 @@ export default function TeacherLayout() {
         sx={{
           width: "100%",
           flex: 1,
-          mt: "100px",
+          mt: "90px",
         }}
       >
         <Outlet />

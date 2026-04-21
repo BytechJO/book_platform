@@ -120,7 +120,7 @@ export default function CreateBook() {
     const formData = new FormData();
 
     Object.keys(data).forEach((key) => {
-      formData.append(key, data[key]);
+      formData.append(key, data[key]?.trim?.() ?? data[key]);
     });
 
     if (shortImage) formData.append("cover_short", shortImage);

@@ -21,6 +21,9 @@ import {
   CardContent,
   Stack,
   Chip,
+  FormControl,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { Helmet } from "react-helmet-async";
@@ -31,6 +34,7 @@ import axiosInstance from "../../api/axios";
 import ENDPOINTS from "../../api/endpoints";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CurveLoader from "../../components/CurveLoader";
+import Avatar from "@mui/material/Avatar";
 
 function roleLabel(role) {
   if (!role) return "—";
@@ -65,33 +69,44 @@ function UserCard({ user, onToggle }) {
           alignItems="flex-start"
           mb={1.5}
         >
-          <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography
-              variant="subtitle1"
-              sx={{
-                fontWeight: 600,
-                color: "#333",
-                fontSize: 16,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {user.full_name}
-            </Typography>
-            <Typography
-              sx={{
-                color: "#0073D8",
-                fontSize: 13,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-                mt: 0.25,
-              }}
-            >
-              {user.email}
-            </Typography>
-          </Box>
+          <Stack
+            direction="row"
+            spacing={1}
+            alignItems="center"
+            sx={{ flex: 1 }}
+          >
+            <Avatar src={user.avatar_url || ""} sx={{ width: 36, height: 36 }}>
+              {!user.avatar_url && user.full_name?.charAt(0)}
+            </Avatar>
+
+            <Box sx={{ minWidth: 0 }}>
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  fontWeight: 600,
+                  color: "#333",
+                  fontSize: 16,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {user.full_name}
+              </Typography>
+
+              <Typography
+                sx={{
+                  color: "#555",
+                  fontSize: 13,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {user.email}
+              </Typography>
+            </Box>
+          </Stack>
 
           <IconButton
             size="small"
@@ -163,7 +178,8 @@ function UserCard({ user, onToggle }) {
 export default function Users() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [roleFilter, setRoleFilter] = useState("all");
   const { users = [], loading, error, refetch } = useGetUsers();
   const [search, setSearch] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
@@ -171,16 +187,30 @@ export default function Users() {
   const [updating, setUpdating] = useState(false);
 
   const filtered = useMemo(() => {
-    if (!search) return users;
+    let result = [...users];
 
-    return users.filter(
-      (u) =>
-        u.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-        u.email?.toLowerCase().includes(search.toLowerCase()) ||
-        u.role?.toLowerCase().includes(search.toLowerCase()),
-    );
-  }, [search, users]);
+    // 🔍 Search
+    if (search) {
+      result = result.filter(
+        (u) =>
+          u.full_name?.toLowerCase().includes(search.toLowerCase()) ||
+          u.email?.toLowerCase().includes(search.toLowerCase()) ||
+          u.role?.toLowerCase().includes(search.toLowerCase()),
+      );
+    }
 
+    // 👤 Role filter
+    if (roleFilter !== "all") {
+      result = result.filter((u) => u.role?.toLowerCase() === roleFilter);
+    }
+
+    // 🟢 Status filter
+    if (statusFilter !== "all") {
+      result = result.filter((u) => u.status?.toLowerCase() === statusFilter);
+    }
+
+    return result;
+  }, [search, users, roleFilter, statusFilter]);
   const handleToggleStatus = async () => {
     if (!selectedUser) return;
 
@@ -202,7 +232,7 @@ export default function Users() {
   };
 
   if (loading) {
-    return <CurveLoader/>;
+    return <CurveLoader />;
   }
 
   const EmptyState = ({ message }) => (
@@ -225,51 +255,105 @@ export default function Users() {
           py: { xs: 2, md: 3 },
           pl: { md: 8 },
           minHeight: "100vh",
+          width: "85%",
+          mx: "auto",
         }}
       >
         {/* Header */}
-        <Typography
+        <Box
           sx={{
-            fontSize: { xs: 22, sm: 26, md: 28 },
-            fontWeight: 500,
-            color: "#2d5aa7",
-            mb: { xs: 2, md: 3 },
+            display: "flex",
+            flexDirection: "column",
+            mb: 4,
+            pb: 2,
+            borderBottom: "2px solid #e3ecf8",
           }}
         >
-          All Users
-        </Typography>
-
-        {/* Search */}
-        <Box sx={{ mb: { xs: 2, md: 4 }, maxWidth: { xs: "100%", sm: 400 } }}>
           <Typography
-            variant="caption"
-            sx={{ color: "#7a869a", mb: 0.5, display: "block" }}
+            sx={{
+              fontSize: { xs: 26, md: 34 },
+              fontWeight: 700,
+              color: "#2B5A9E",
+            }}
           >
-            Search:
+            All Users
           </Typography>
 
-          <TextField
-            fullWidth
-            size="small"
-            placeholder="Search by name, email, or role"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon fontSize="small" />
-                </InputAdornment>
-              ),
-              sx: {
-                borderRadius: 1.5,
-                "& .MuiOutlinedInput-notchedOutline": {
-                  borderRadius: 1.5,
-                },
-              },
-            }}
-          />
+          <Typography sx={{ fontSize: 14, color: "#7a869a" }}>
+            Manage and explore your users
+          </Typography>
         </Box>
 
+        <Box
+          sx={{
+         
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr", // موبايل تحت بعض
+              sm: "1fr 1fr", // تابلت
+              md: "2fr 1fr 1fr", // 🔥 ديسكتوب: search أكبر
+            },
+            gap: 2,
+            mb: 3,
+            alignItems: "end",
+          }}
+        >
+          {/* Search */}
+          <Box>
+            <Typography variant="caption" sx={{ color: "#7a869a" }}>
+              Search
+            </Typography>
+            <TextField
+              fullWidth
+              size="small"
+              placeholder="Search by name, email, or role"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon fontSize="small" />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Box>
+
+          {/* Role */}
+          <Box>
+            <Typography variant="caption" sx={{ color: "#7a869a" }}>
+              Role
+            </Typography>
+            <FormControl fullWidth size="small">
+              <Select
+                value={roleFilter}
+                onChange={(e) => setRoleFilter(e.target.value)}
+              >
+                <MenuItem value="all">All</MenuItem>
+                <MenuItem value="student">Student</MenuItem>
+                <MenuItem value="teacher">Teacher</MenuItem>
+                <MenuItem value="admin">Admin</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+
+          {/* Status */}
+          <Box>
+            <Typography variant="caption" sx={{ color: "#7a869a" }}>
+              Status
+            </Typography>
+            <FormControl fullWidth size="small">
+              <Select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <MenuItem value="all">All</MenuItem>
+                <MenuItem value="active">Active</MenuItem>
+                <MenuItem value="inactive">Inactive</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        </Box>
         {/* Results count */}
         {!loading && !error && filtered.length > 0 && (
           <Typography
@@ -285,7 +369,7 @@ export default function Users() {
           <Paper
             elevation={0}
             sx={{
-              width: "100%",
+           
               backgroundColor: "transparent",
               boxShadow: "none",
               overflowX: "auto",
@@ -306,11 +390,11 @@ export default function Users() {
               }}
             >
               <colgroup>
-                <col style={{ width: "34%" }} />
-                <col style={{ width: "34%" }} />
-                <col style={{ width: "10.66%" }} />
-                <col style={{ width: "10.66%" }} />
-                <col style={{ width: "10.66%" }} />
+                <col style={{ width: "30%" }} />
+                <col style={{ width: "24%" }} />
+                <col style={{ width: "17.26%" }} />
+                <col style={{ width: "17.26%" }} />
+                <col style={{ width: "17.26%" }} />
               </colgroup>
 
               <TableHead>
@@ -327,10 +411,7 @@ export default function Users() {
                   <TableCell sx={{ color: "#7a869a", fontSize: 15 }}>
                     Status
                   </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ color: "#7a869a", fontSize: 15 }}
-                  >
+                  <TableCell sx={{ color: "#7a869a", fontSize: 15 }}>
                     Action
                   </TableCell>
                 </TableRow>
@@ -352,10 +433,25 @@ export default function Users() {
                           "&:hover": { backgroundColor: "#f9fafc" },
                         }}
                       >
-                        <TableCell sx={{ color: "#333", fontSize: 14 }}>
-                          {c.full_name}
+                        <TableCell>
+                          <Stack
+                            direction="row"
+                            spacing={1}
+                            alignItems="center"
+                          >
+                            <Avatar
+                              src={c.avatar_url || ""}
+                              sx={{ width: 32, height: 32 }}
+                            >
+                              {!c.avatar_url && c.full_name?.charAt(0)}
+                            </Avatar>
+
+                            <Typography sx={{ fontSize: 14 }}>
+                              {c.full_name}
+                            </Typography>
+                          </Stack>
                         </TableCell>
-                        <TableCell sx={{ color: "#0073D8", fontSize: 14 }}>
+                        <TableCell sx={{ color: "#555", fontSize: 14 }}>
                           {c.email}
                         </TableCell>
                         <TableCell sx={{ fontSize: 14 }}>
@@ -363,10 +459,20 @@ export default function Users() {
                         </TableCell>
                         <TableCell>
                           <Typography sx={{ fontWeight: 500, fontSize: 14 }}>
-                            {isActive ? "Active" : "Inactive"}
+                            <Chip
+                              label={isActive ? "Active" : "Inactive"}
+                              size="small"
+                              sx={{
+                                fontWeight: 500,
+                                backgroundColor: isActive
+                                  ? "rgba(46,125,50,0.1)"
+                                  : "rgba(0,0,0,0.06)",
+                                color: isActive ? "#2e7d32" : "#888",
+                              }}
+                            />
                           </Typography>
                         </TableCell>
-                        <TableCell align="center">
+                        <TableCell>
                           <IconButton
                             size="small"
                             sx={{

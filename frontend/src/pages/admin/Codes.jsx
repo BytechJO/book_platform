@@ -27,6 +27,9 @@ import CurveLoader from "../../components/CurveLoader";
 import CodesFilter from "./CodesFilter";
 import CodesDialogs from "./CodesDialogs";
 import { formatDate, roleLabel } from "src/utils/codesUtils";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import DownloadIcon from "@mui/icons-material/Download";
 
 export default function Codes() {
   const { codes = [], loading, error, refetch } = useGetCodes();
@@ -189,7 +192,15 @@ export default function Codes() {
       <Helmet>
         <title>Codes - Admin Dashboard</title>
       </Helmet>
-      <Box sx={{ px: { md: 4 }, py: 3, overflowX: "hidden" }}>
+      <Box
+        sx={{
+          width: "90%",
+          mx: "auto",
+          px: { md: 4 },
+          py: 3,
+          overflowX: "hidden",
+        }}
+      >
         {/* Header */}
         <Box
           sx={{
@@ -199,17 +210,25 @@ export default function Codes() {
             justifyContent: "space-between",
             gap: 2,
             mb: 2.5,
+            pb: 2,
+            borderBottom: "2px solid #e3ecf8",
           }}
         >
-          <Typography
-            sx={{
-              fontSize: { xs: 22, md: 28 },
-              fontWeight: 500,
-              color: "#2d5aa7",
-            }}
-          >
-            All codes
-          </Typography>
+          <Box>
+            <Typography
+              sx={{
+                fontSize: { xs: 26, md: 34 },
+                fontWeight: 700,
+                color: "#2B5A9E",
+              }}
+            >
+              All Codes
+            </Typography>
+
+            <Typography sx={{ fontSize: 14, color: "#7a869a" }}>
+              Manage and explore your codes
+            </Typography>
+          </Box>
 
           <Stack
             direction="row"
@@ -218,17 +237,23 @@ export default function Codes() {
             sx={{ width: { xs: "100%", sm: "auto" } }}
           >
             <Button
-              variant="contained"
-              fullWidth={false}
+              variant="outlined"
+              startIcon={<UploadFileIcon />} // 🔥
               sx={{
                 height: 36,
                 px: 2,
-                borderRadius: "4px",
+                borderRadius: "6px",
                 textTransform: "none",
                 fontWeight: 500,
                 fontSize: { xs: 13, md: 15 },
-                backgroundColor: "#FFFFFF",
+                borderColor: "#2B5A9E",
+                transition: "all 0.4s ease",
                 color: "#2B5A9E",
+                "&:hover": {
+                  backgroundColor: "#2B5A9E", // 👈 يرجع أزرق
+                  color: "#fff", // 👈 النص أبيض
+                  borderColor: "#2B5A9E",
+                },
               }}
               onClick={() => fileInputRef.current.click()}
             >
@@ -243,15 +268,24 @@ export default function Codes() {
             />
 
             <Button
-              variant="contained"
+              variant="outlined"
+              startIcon={<AutoAwesomeIcon />}
               sx={{
                 height: 36,
                 px: 2,
-                borderRadius: "4px",
+                borderRadius: "6px",
                 textTransform: "none",
                 fontWeight: 500,
                 fontSize: { xs: 13, md: 15 },
-                backgroundColor: "#2B5A9E",
+                borderColor: "#2B5A9E",
+                color: "#2B5A9E",
+                transition: "all 0.4s ease",
+
+                "&:hover": {
+                  backgroundColor: "#2B5A9E", // 👈 يرجع أزرق
+                  color: "#fff", // 👈 النص أبيض
+                  borderColor: "#2B5A9E",
+                },
               }}
               onClick={() => {
                 setGeneratedCodes([]);
@@ -260,9 +294,29 @@ export default function Codes() {
             >
               Generate
             </Button>
-            <IconButton onClick={handleExportExcel} sx={{ p: 0 }}>
-              <DownloadButtonIcon size={36} />
-            </IconButton>
+            <Button
+              variant="outlined"
+              startIcon={<DownloadIcon />} // 🔥
+              sx={{
+                height: 36,
+                px: 2,
+                borderRadius: "6px",
+                textTransform: "none",
+                fontWeight: 500,
+                fontSize: { xs: 13, md: 15 },
+                borderColor: "#2B5A9E",
+                color: "#2B5A9E",
+                transition: "all 0.4s ease",
+                "&:hover": {
+                  backgroundColor: "#2B5A9E", // 👈 يرجع أزرق
+                  color: "#fff", // 👈 النص أبيض
+                  borderColor: "#2B5A9E",
+                },
+              }}
+              onClick={handleExportExcel}
+            >
+              Export
+            </Button>
           </Stack>
         </Box>
 
@@ -292,8 +346,8 @@ export default function Codes() {
                 width: "100%",
                 "& .MuiTableCell-root": {
                   borderBottom: "none",
-                  paddingTop: "18px",
-                  paddingBottom: "18px",
+                  paddingTop: "10px",
+                  paddingBottom: "10px",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",

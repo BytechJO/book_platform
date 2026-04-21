@@ -120,7 +120,8 @@ export default function ViewStudentBook() {
                 sx={{
                   position: "relative",
                   zIndex: 2,
-                  borderRadius: "24px",
+                   borderTopLeftRadius: "24px",
+                  borderTopRightRadius: "24px",
                   overflow: "hidden",
                   boxShadow: "0px 10px 15px -5px rgba(0,0,0,0.35)",
                 }}
@@ -175,7 +176,7 @@ export default function ViewStudentBook() {
                   }}
                 >
                   <ISPNIconButton size={20} />
-                  <Typography sx={{ color: "#1A4D96", fontSize: 14 }}>
+                  <Typography sx={{ fontSize: 12 }}>
                     ISBN: {book.isbn || "—"}
                   </Typography>
                 </Box>
@@ -189,7 +190,7 @@ export default function ViewStudentBook() {
                   }}
                 >
                   <PrinterIcon size={20} />
-                  <Typography sx={{ color: "#1A4D96", fontSize: 14 }}>
+                  <Typography sx={{  fontSize: 12 }}>
                     {book.publisher || "Al-Rowad for Publishing & Distribution"}
                   </Typography>
                 </Box>
@@ -203,7 +204,7 @@ export default function ViewStudentBook() {
                   }}
                 >
                   <Box component="img" src={Icon} sx={{ width: 20 }} />
-                  <Typography sx={{ color: "#1A4D96", fontSize: 14 }}>
+                  <Typography sx={{  fontSize: 12 }}>
                     Published: {new Date(book.created_at).getFullYear()}
                   </Typography>
                 </Box>

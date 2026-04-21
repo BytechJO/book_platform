@@ -104,6 +104,13 @@ export default function TeachBar() {
             </IconButton>
           )}
           <img
+            onClick={() => {
+              if (role === "teacher") {
+                navigate(`/${role}`);
+              } else if (role === "student") {
+                navigate(`/${role}/books`);
+              }
+            }}
             src={logo}
             alt="logo"
             style={{
@@ -136,6 +143,7 @@ export default function TeachBar() {
                   fontWeight: 400,
                   cursor: "pointer",
                   transition: "0.2s",
+                  fontSize: 14,
                 }}
               >
                 Home
@@ -158,6 +166,7 @@ export default function TeachBar() {
                 fontWeight: 400,
                 cursor: "pointer",
                 transition: "0.2s",
+                fontSize: 14,
               }}
             >
               Books
@@ -177,6 +186,7 @@ export default function TeachBar() {
                 fontWeight: 400,
                 cursor: "pointer",
                 transition: "0.2s",
+                fontSize: 14,
               }}
             >
               Help
@@ -192,6 +202,7 @@ export default function TeachBar() {
                 fontWeight: 400,
                 cursor: "pointer",
                 transition: "0.2s",
+                fontSize: 14,
               }}
             >
               Activate Code
@@ -204,7 +215,7 @@ export default function TeachBar() {
           {/* Settings */}
           <IconButton
             sx={{ color: "black" }}
-            onClick={() => navigate("/student/profile")}
+            onClick={() => navigate(`/${role}/profile`)}
           >
             <SettingsIcon size={26} />
           </IconButton>

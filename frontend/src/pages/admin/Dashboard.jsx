@@ -55,17 +55,16 @@ export default function Dashboard() {
             backgroundColor: "#1A4D96",
             color: "white",
             textAlign: "center",
-            pt: { xs: 1.5, sm: 2, md: 3 },
-            pb: { xs: 3, sm: 3.5, md: 4 },
+            pt: { xs: 1.5, sm: 2, md: 1 },
+            // pb: { xs: 3, sm: 3.5, md: 1 },
             px: 2,
           }}
         >
           <Typography
-            mb={1.5}
             sx={{
-              fontSize: { xs: "20px", sm: "24px", md: "30px" },
+              fontSize: { xs: 14, md: 16 },
               fontWeight: 400,
-              color: "#fff",
+              opacity: 0.8,
             }}
           >
             Publisher Platform
@@ -73,10 +72,9 @@ export default function Dashboard() {
 
           <Typography
             sx={{
-              mt: 0.5,
-              mb: { xs: 2, md: 4 },
-              fontSize: { xs: "24px", sm: "26px", md: "30px" },
-              fontWeight: 600,
+              mb: { xs: 2, md: 6 },
+              fontSize: { xs: 26, md: 34 },
+              fontWeight: 700,
             }}
           >
             Admin Dashboard
@@ -139,7 +137,7 @@ export default function Dashboard() {
                 >
                   <Typography
                     sx={{
-                      color: "#6b8cc9",
+                      color: "#2F5DA0",
                       fontWeight: 500,
                       fontSize: { xs: "16px", sm: "18px", md: "22px" },
                     }}
@@ -151,7 +149,7 @@ export default function Dashboard() {
                     sx={{
                       mt: 1.5,
                       fontWeight: "bold",
-                      color: "#355ea8",
+                      color: "#2F5DA0",
                       fontSize: { xs: "36px", sm: "42px", md: "48px" },
                     }}
                   >
@@ -168,8 +166,8 @@ export default function Dashboard() {
               src={dashboard}
               alt="dashboard"
               style={{
-                width: "100%",
-                maxWidth: { xs: "200px", sm: "250px", md: "300px" },
+                width: "60%",
+                maxWidth: { xs: "200px", sm: "200px", md: "300px" },
               }}
             />
           </Box>
@@ -178,7 +176,7 @@ export default function Dashboard() {
           <Typography
             variant="body2"
             sx={{
-              color: "#355ea8",
+              color: "#2A2A2A",
               mb: 1,
               fontSize: { xs: "12px", sm: "14px" },
             }}

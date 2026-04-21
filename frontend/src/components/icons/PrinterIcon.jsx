@@ -1,6 +1,6 @@
 import React from "react";
 
-const PrinterIcon = ({ size = 35, color = "#1A4D96", ...props }) => {
+const PrinterIcon = ({ size = 35, color = "#000000", ...props }) => {
   return (
     <svg
       width={size}

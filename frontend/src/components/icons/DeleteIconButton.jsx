@@ -8,7 +8,7 @@ export default function DeleteIconButton({ size = 32 }) {
       xmlns="http://www.w3.org/2000/svg"
     >
       {/* Background */}
-      <rect width="32" height="31" rx="4" fill="#E74C3C" />
+      <rect width="32" height="31" rx="4" fill="#2B5A9E" />
 
       {/* Delete Icon */}
       <g transform="translate(8,6)">
