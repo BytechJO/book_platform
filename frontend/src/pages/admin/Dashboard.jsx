@@ -1,11 +1,15 @@
-import { Box, Typography, Card, CardContent } from "@mui/material";
-import dashboard from "../../assets/dashboard.svg";
+import { Box, Typography, Card } from "@mui/material";
 import { useGetBooks } from "../../api/books";
 import { useNavigate } from "react-router-dom";
 import { useGetUsers } from "../../api/users";
 import { useGetCodes } from "../../api";
 import { Helmet } from "react-helmet-async";
 import CurveLoader from "../../components/CurveLoader";
+import PersonIcon from "../../assets/icon/userIcone.svg";
+import MenuBookIcon from "../../assets/icon/bookIcone.svg";
+import CodeIcon from "../../assets/icon/codeIcone.svg";
+import ArrowForwardIosIcon from "../../assets/icon/arrowIcone.svg";
+import rectangle from "../../assets/icon/rectangle.png";
 
 export default function Dashboard() {
   const { books = [], loading: booksLoading } = useGetBooks();
@@ -16,21 +20,62 @@ export default function Dashboard() {
   if (booksLoading || usersLoading || codesLoading) {
     return <CurveLoader />;
   }
+  const getMonthlyGrowth = (data) => {
+    const now = new Date();
 
+    const currentMonth = now.getUTCMonth();
+    const currentYear = now.getUTCFullYear();
+
+    const lastMonthDate = new Date(Date.UTC(currentYear, currentMonth - 1));
+    const lastMonth = lastMonthDate.getUTCMonth();
+    const lastMonthYear = lastMonthDate.getUTCFullYear();
+
+    const current = data.filter((item) => {
+      const d = new Date(item.created_at);
+      return (
+        d.getUTCMonth() === currentMonth && d.getUTCFullYear() === currentYear
+      );
+    }).length;
+
+    const previous = data.filter((item) => {
+      const d = new Date(item.created_at);
+      return (
+        d.getUTCMonth() === lastMonth && d.getUTCFullYear() === lastMonthYear
+      );
+    }).length;
+
+    if (previous === 0) {
+      return current === 0 ? 0 : 100;
+    }
+
+    return Math.round(((current - previous) / previous) * 100);
+  };
+  const usersPercent = getMonthlyGrowth(users);
+  const booksPercent = getMonthlyGrowth(books);
+  const codesPercent = getMonthlyGrowth(codes);
   const cards = [
     {
       title: "TOTAL USERS",
-      value: users?.length || 0,
+      value: users.length,
+      icon: <img src={PersonIcon} style={{ width: 50, height: 50 }} />,
+      percent: `${usersPercent > 0 ? "+" : ""}${usersPercent}%`,
+      color: usersPercent >= 0 ? "#4CAF50" : "#F44336",
       path: "/admin/users",
     },
     {
-      title: "TOTAL BOOKS",
-      value: books?.length || 0,
+      title: "TOTAL BOOK",
+      value: books.length,
+      icon: <img src={MenuBookIcon} style={{ width: 50, height: 50 }} />,
+      percent: `${booksPercent > 0 ? "+" : ""}${booksPercent}%`,
+      color: booksPercent >= 0 ? "#4CAF50" : "#F44336",
       path: "/admin/books",
     },
     {
-      title: "TOTAL CODES",
-      value: codes?.length || 0,
+      title: "TOTAL CODE",
+      value: codes.length,
+      icon: <img src={CodeIcon} style={{ width: 50, height: 50 }} />,
+      percent: `${codesPercent > 0 ? "+" : ""}${codesPercent}%`,
+      color: codesPercent >= 0 ? "#4CAF50" : "#F44336",
       path: "/admin/codes",
     },
   ];
@@ -41,133 +86,188 @@ export default function Dashboard() {
         <title>Dashboard - Admin Panel</title>
       </Helmet>
 
+      {/* الحاوية الرئيسية للصفحة كلها */}
       <Box
         sx={{
           flex: 1,
-          overflow: "hidden",
           display: "flex",
           flexDirection: "column",
+          overflow: "hidden",
         }}
       >
-        {/* 🔵 HEADER */}
-        <Box
-          sx={{
-            backgroundColor: "#1A4D96",
-            color: "white",
-            textAlign: "center",
-            pt: { xs: 1.5, sm: 2, md: 1 },
-            // pb: { xs: 3, sm: 3.5, md: 1 },
-            px: 2,
-          }}
-        >
+        {/* 1. العنوان (أعلى الصفحة) */}
+        <Box sx={{ textAlign: "center", mt: 6, mb: 10 }}>
           <Typography
             sx={{
-              mb: { xs: 2, md: 6 },
-              fontSize: { xs: 26, md: 34 },
+              fontSize: 32,
               fontWeight: 700,
+              color: "#2F5DA0",
             }}
           >
             Admin Dashboard
           </Typography>
         </Box>
 
-        {/* 🟦 CONTENT */}
+        {/* 2. منطقة الكروت (النص) - تأخذ كل المساحة المتاحة وتدفع الفوتر للأسفل */}
         <Box
           sx={{
-            flex: 1,
-            mt: { xs: -2.5, sm: -3, md: -4 },
+            flex: 1, // 🔥 السر هنا: يأخذ كل المساحة الفاضلة
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            justifyContent: "space-between",
-            px: { xs: 2, sm: 3, md: 6 },
-            pb: 2,
+            justifyContent: "center", // 🔥 يوسط الكروت بشكل عمودي في هذه المساحة
           }}
         >
-          {/* 📊 CARDS */}
           <Box
             sx={{
-              width: "100%",
-              maxWidth: "1600px",
               display: "flex",
+              gap: 14,
               flexWrap: "wrap",
               justifyContent: "center",
-              alignItems: "center",
-              gap: { xs: "16px", sm: "24px", md: "40px", lg: "60px" },
-              mx: "auto",
+              alignItems: "stretch",
             }}
           >
             {cards.map((item, index) => (
               <Card
                 key={index}
                 sx={{
-                  width: {
-                    xs: "100%",
-                    sm: "calc(50% - 12px)",
-                    md: "390px",
-                  },
-                  height: { xs: "180px", sm: "200px", md: "250px" },
-                  borderRadius: { xs: "16px", sm: "20px", md: "25px" },
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  width: { xs: "100%", sm: "350px" },
+                  borderRadius: "20px",
+                  overflow: "hidden",
                   cursor: "pointer",
-                  background:
-                    "linear-gradient(135deg, #e0e0e0 0%, #ffffff 100%)",
-                  boxShadow: "0 25px 45px rgba(0,0,0,0.12)",
-                  transition: "transform 0.2s",
-                  "&:hover": {
-                    transform: "translateY(-6px)",
-                  },
+                  backgroundColor: "transparent",
+                  boxShadow: "0 5px 3px rgba(0,0,0,0.08)",
+                  display: "flex",
+                  flexDirection: "column",
                 }}
                 onClick={() => navigate(item.path)}
               >
-                <CardContent
-                  sx={{ textAlign: "center", p: { xs: 1.5, md: 2 } }}
+                {/* هيدر الكرت */}
+                <Box
+                  sx={{
+                    backgroundImage: `url(${rectangle})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                    color: "white",
+                    textAlign: "center",
+                    py: 3,
+                  }}
                 >
-                  <Typography
-                    sx={{
-                      color: "#2F5DA0",
-                      fontWeight: 500,
-                      fontSize: { xs: "16px", sm: "18px", md: "22px" },
-                    }}
-                  >
-                    {item.title}
-                  </Typography>
+                  <Typography sx={{ fontSize: 20 }}>{item.title}</Typography>
+                  <Box mt={1}>{item.icon}</Box>
+                </Box>
 
-                  <Typography
+                {/* body الكرت */}
+                <Box
+                  sx={{
+                    position: "relative",
+                    backgroundColor: "#fff",
+                    borderBottomLeftRadius: "20px",
+                    borderBottomRightRadius: "20px",
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  {/* التدرج */}
+                  <Box
                     sx={{
-                      mt: 1.5,
-                      fontWeight: "bold",
-                      color: "#2F5DA0",
-                      fontSize: { xs: "36px", sm: "42px", md: "48px" },
+                      position: "absolute",
+                      inset: 0,
+                      background: `linear-gradient(41deg, rgba(255,255,255,0) 40%, rgba(210,210,210,0.6) 100%)`,
+                      pointerEvents: "none",
+                    }}
+                  />
+
+                  {/* محتوى الكرت */}
+                  <Box
+                    sx={{
+                      position: "relative",
+                      zIndex: 1,
+                      flex: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
                     }}
                   >
-                    {item.value}
-                  </Typography>
-                </CardContent>
+                    <Box sx={{ textAlign: "center", py: 2 }}>
+                      <Typography
+                        sx={{
+                          fontSize: 32,
+                          fontWeight: "bold",
+                          color: "#2F5DA0",
+                        }}
+                      >
+                        {item.value}
+                      </Typography>
+                      <Typography sx={{ fontSize: 11, color: "#999", mt: 0.5 }}>
+                        {item.title === "TOTAL USERS" && "users Published"}
+                        {item.title === "TOTAL BOOK" && "Books Published"}
+                        {item.title === "TOTAL CODE" && "Codes Generated"}
+                      </Typography>
+                    </Box>
+
+                    <Box
+                      sx={{ height: "1px", backgroundColor: "#eee", mx: 2 }}
+                    />
+
+                    {/* فوتر الكرت */}
+                    <Box
+                      sx={{
+                        position: "relative",
+                        display: "flex",
+                        alignItems: "center",
+                        px: 2,
+                        py: 1.5,
+                      }}
+                    >
+                      {/* 🔥 CENTER */}
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          left: "50%",
+                          transform: "translateX(-50%)",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            backgroundColor: item.color + "20",
+                            color: item.color,
+                            px: 1,
+                            borderRadius: "12px",
+                            fontSize: 13,
+                          }}
+                        >
+                          {item.percent}
+                        </Box>
+
+                        <Typography sx={{ fontSize: 14, color: "#777" }}>
+                          From last month
+                        </Typography>
+                      </Box>
+
+                      {/* 🔥 RIGHT */}
+                      <Box sx={{ marginLeft: "auto" }}>
+                        <img src={ArrowForwardIosIcon} style={{ width: 40 }} />
+                      </Box>
+                    </Box>
+                  </Box>
+                </Box>
               </Card>
             ))}
           </Box>
+        </Box>
 
-          {/* 🖼 IMAGE */}
-          <Box textAlign="center" sx={{ mt: { xs: 2, md: 0 } }}>
-            <img
-              src={dashboard}
-              alt="dashboard"
-              style={{
-                width: "60%",
-                maxWidth: { xs: "200px", sm: "200px", md: "300px" },
-              }}
-            />
-          </Box>
-
-          {/* 🔹 FOOTER */}
+        {/* 3. الفوتر (آخر الصفحة تحت تحت) */}
+        <Box sx={{ textAlign: "center", pb: 2, pt: 12 }}>
           <Typography
             variant="body2"
             sx={{
               color: "#2A2A2A",
-              mb: 1,
               fontSize: { xs: "12px", sm: "14px" },
             }}
           >

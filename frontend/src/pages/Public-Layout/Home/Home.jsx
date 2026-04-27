@@ -9,7 +9,6 @@ import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import BookSlider from "./BookSlider";
 
-
 const fadeInUp = keyframes`
   0% {
     opacity: 0;
@@ -150,7 +149,7 @@ export default function Home() {
           />
         </Helmet>
 
-        <Container sx={{ textAlign: "center", py: 2 }}>
+        <Container sx={{ textAlign: "center", py: 4 }}>
           {/* Title Animation */}
           <Typography
             variant="h3"
@@ -195,6 +194,7 @@ export default function Home() {
                 backgroundColor: "#234a8b",
                 px: 4,
                 borderRadius: "30px",
+                width: "140px",
                 "&:hover": { backgroundColor: "#1b3766" },
               }}
               onClick={() => {
@@ -217,6 +217,7 @@ export default function Home() {
               variant="contained"
               sx={{
                 backgroundColor: "#2f6ad9",
+                width: "140px",
                 px: 4,
                 borderRadius: "30px",
                 "&:hover": { backgroundColor: "#2557c7" },

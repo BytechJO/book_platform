@@ -12,7 +12,6 @@ export default function AdminLayout() {
       sx={{
         width: "100%",
         minHeight: "100vh",
-        backgroundColor: "#ffffff",
         display: "flex",
         flexDirection: "column",
       }}

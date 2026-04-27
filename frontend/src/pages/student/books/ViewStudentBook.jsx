@@ -140,7 +140,7 @@ export default function ViewStudentBook() {
                   mt: "-60px",
                   pt: 8,
                   px: 4,
-                  pb: 4,
+                  pb: 2,
                   borderRadius: "28px",
                   backgroundColor: "#ffffff",
                   boxShadow: "0 20px 45px rgba(0,0,0,0.08)",
@@ -192,13 +192,10 @@ export default function ViewStudentBook() {
                     display: "flex",
                     alignItems: "center",
                     gap: 1.5,
-                    mb: 3,
+                    mb: 1,
                   }}
                 >
-                  <Box component="img" src={Icon} sx={{ width: 20 }} />
-                  <Typography sx={{ fontSize: 12 }}>
-                    Published: {new Date(book.created_at).getFullYear()}
-                  </Typography>
+                
                 </Box>
 
                 <Divider sx={{ my: 1 }} />

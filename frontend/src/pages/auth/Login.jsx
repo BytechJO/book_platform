@@ -59,12 +59,11 @@ const fadeInRight = keyframes`
     transform: translateX(0);
   }
 `;
-
 export default function Login() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [showPassword, setShowPassword] = useState(false);
-
+  const isLaptop = useMediaQuery("(max-width:1286px)");
   const schema = yup.object().shape({
     email: yup
       .string()
@@ -91,8 +90,7 @@ export default function Login() {
     const role = localStorage.getItem("role");
     if (token) {
       if (role === "admin") navigate("/admin/dashboard", { replace: true });
-      else if (role === "teacher")
-        navigate("/teacher", { replace: true });
+      else if (role === "teacher") navigate("/teacher", { replace: true });
       else if (role === "student")
         navigate("/student/books", { replace: true });
       else navigate("/", { replace: true });
@@ -119,8 +117,7 @@ export default function Login() {
 
       if (user.role === "admin")
         navigate("/admin/dashboard", { replace: true });
-      else if (user.role === "teacher")
-        navigate("/teacher", { replace: true });
+      else if (user.role === "teacher") navigate("/teacher", { replace: true });
       else if (user.role === "student")
         navigate("/student/books", { replace: true });
       else navigate("/", { replace: true });
@@ -325,7 +322,7 @@ export default function Login() {
                 <Box
                   sx={{
                     width: "100%",
-                    maxWidth: 520,
+                    maxWidth: isLaptop ? 350 : 550,
                     alignItems: "center",
                     justifyContent: "center",
                     display: "flex",

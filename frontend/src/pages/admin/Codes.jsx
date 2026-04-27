@@ -426,7 +426,7 @@ export default function Codes() {
                     </TableCell>
                     <TableCell
                       align="center"
-                      sx={{ color: "#0073D8", fontWeight: 400, fontSize: 16 }}
+                      sx={{  fontWeight: 400, fontSize: 16 }}
                     >
                       {c.validity_months}
                     </TableCell>

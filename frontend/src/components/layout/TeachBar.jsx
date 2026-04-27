@@ -328,12 +328,19 @@ export default function TeachBar() {
         <Dialog
           open={openDialog}
           onClose={() => setOpenDialog(false)}
-          maxWidth="sm"
+          maxWidth="md"
           fullWidth
+          BackdropProps={{
+            sx: {
+              backgroundColor: "rgba(0,0,0,0.8)",
+            },
+          }}
           PaperProps={{
             component: "form",
             onSubmit: handleActivateCode,
             sx: {
+              width: "700px",
+              maxWidth: "100%",
               borderRadius: "30px",
               p: 3,
             },

@@ -34,16 +34,12 @@ export default function DashBar() {
   return (
     <AppBar
       position="static"
-      sx={{
-        backgroundColor: "#1A4D96",
-        boxShadow: "none",
-        borderBottom: "1px solid #1A4D96",
-      }}
+      sx={{ backgroundColor: "#1A4D96", boxShadow: "none" }}
     >
       <Toolbar
         sx={{
           justifyContent: "space-between",
-          minHeight: { xs: 60, md: 70 }, // 👈 أصغر على الموبايل
+          height: { xs: 18, sm: 22, md: 30, lg: 35 },
           px: { xs: 1.5, md: 2 },
         }}
       >
@@ -52,7 +48,7 @@ export default function DashBar() {
             src={logoWhite}
             alt="logo"
             style={{
-              height: window.innerWidth < 600 ? 32 : 40, // 👈 responsive
+              height: window.innerWidth < 600 ? 28 : 32, // 👈 responsive
               cursor: "pointer",
             }}
             onClick={() => navigate("/admin/dashboard")}
@@ -72,12 +68,12 @@ export default function DashBar() {
             sx={{ color: "white" }}
             onClick={() => navigate("/admin/profile")}
           >
-            <SettingsIcon size={26} />
+            <SettingsIcon size={24} />
           </IconButton>
 
           {/* Notifications */}
           <IconButton sx={{ color: "white", position: "relative" }}>
-            <BellIcon size={26} />
+            <BellIcon size={24} />
 
             <Box
               sx={{

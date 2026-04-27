@@ -49,7 +49,7 @@ export default function ViewBook() {
             {/* LEFT SIDE */}
             <Box
               sx={{
-                width: { xs: "100%", md: 450 },
+                width: { xs: "100%", md: 370 },
                 position: "relative",
                 height: "auto",
               }}
@@ -136,13 +136,9 @@ export default function ViewBook() {
                     display: "flex",
                     alignItems: "center",
                     gap: 1.5,
-                    mb: 3,
+                    mb: 1,
                   }}
                 >
-                  <Box component="img" src={Icon} sx={{ width: 20 }} />
-                  <Typography sx={{ color: "#1A4D96", fontSize: 14 }}>
-                    Published: {new Date(book.created_at).getFullYear()}
-                  </Typography>
                 </Box>
 
                 <Divider sx={{ my: 1 }} />
@@ -247,7 +243,6 @@ export default function ViewBook() {
               textAlign: "center",
               fontWeight: 500,
               fontSize: 14,
-              color: "#2d5aa7",
             }}
           >
             alrowadpub.com
