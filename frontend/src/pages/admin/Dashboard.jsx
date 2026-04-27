@@ -9,7 +9,7 @@ import PersonIcon from "../../assets/icon/userIcone.svg";
 import MenuBookIcon from "../../assets/icon/bookIcone.svg";
 import CodeIcon from "../../assets/icon/codeIcone.svg";
 import ArrowForwardIosIcon from "../../assets/icon/arrowIcone.svg";
-import rectangle from "../../assets/icon/rectangle.png";
+import rectangle from "../../assets/icon/Rectangle.png";
 
 export default function Dashboard() {
   const { books = [], loading: booksLoading } = useGetBooks();
