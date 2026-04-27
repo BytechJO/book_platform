@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability */
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
@@ -13,7 +14,7 @@ import {
   InputAdornment,
   IconButton,
   CircularProgress,
-  keyframes, // 1. استيراد keyframes
+  keyframes,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import Logo2 from "../../assets/logo2.svg";
@@ -24,46 +25,26 @@ import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { useTheme, useMediaQuery } from "@mui/material";
 
-// 2. تعريف الأنيميشنز
+// تعريف الأنيميشنز
 const fadeInUp = keyframes`
-  0% {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
 `;
 
 const fadeInLeft = keyframes`
-  0% {
-    opacity: 0;
-    transform: translateX(-50px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  0% { opacity: 0; transform: translateX(-50px); }
+  100% { opacity: 1; transform: translateX(0); }
 `;
 
 const fadeInRight = keyframes`
-  0% {
-    opacity: 0;
-    transform: translateX(50px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  0% { opacity: 0; transform: translateX(50px); }
+  100% { opacity: 1; transform: translateX(0); }
 `;
+
 export default function Login() {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [showPassword, setShowPassword] = useState(false);
-  const isLaptop = useMediaQuery("(max-width:1286px)");
+
   const schema = yup.object().shape({
     email: yup
       .string()
@@ -80,9 +61,8 @@ export default function Login() {
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm({
-    resolver: yupResolver(schema),
-  });
+  } = useForm({ resolver: yupResolver(schema) });
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -111,7 +91,6 @@ export default function Login() {
       const { token, user } = response.data;
       localStorage.setItem("token", token);
       localStorage.setItem("role", user.role);
-      // eslint-disable-next-line react-hooks/immutability
       axiosInstance.defaults.headers.common["Authorization"] =
         `Bearer ${token}`;
 
@@ -138,303 +117,197 @@ export default function Login() {
       <Helmet>
         <title>Login</title>
       </Helmet>
+
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
-          minHeight: "90vh",
+          minHeight: "100vh", // استخدام 100vh لملء الشاشة بالكامل
           backgroundColor: "#fff",
         }}
       >
-        <Box sx={{ flex: 1, display: "flex", alignItems: "center" }}>
-          {isMobile ? (
-            // 📱 MOBILE VIEW
-            <Box sx={{ width: "100%" }}>
-              {/* --- IMAGE WITH ANIMATION --- */}
+        {/* استخدام Container لمنع التمدد الزائد على الشاشات الكبيرة جداً وحل مشكلة الفراغ الأبيض */}
+        <Container
+          maxWidth="lg"
+          sx={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            py: { xs: 4, md: 0 },
+          }}
+        >
+          <Grid container spacing={4} alignItems="center">
+            <Grid
+              item
+              xs={12}
+              md={6} 
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                animation: {
+                  xs: `${fadeInUp} 0.8s ease-out`,
+                  md: `${fadeInLeft} 0.8s ease-out`,
+                },
+              }}
+            >
               <Box
                 sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  mt: 4,
-                  animation: `${fadeInUp} 0.8s ease-out`, // أنيميشن الصورة
+                  width: "100%",
+                  maxWidth: { xs: 250, sm: 270, md: 350, lg: 550 },
                 }}
               >
                 <img
                   src={login}
                   alt="login"
-                  style={{ width: "100%", maxWidth: "300px" }}
+                  style={{ width: "100%", height: "auto" }}
                 />
               </Box>
+            </Grid>
 
-              {/* --- FORM WITH ANIMATION (Delayed) --- */}
+            <Grid
+              item
+              xs={12}
+              md={6}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                animation: {
+                  xs: `${fadeInUp} 0.8s ease-out 0.2s backwards`,
+                  md: `${fadeInRight} 0.8s ease-out`,
+                },
+              }}
+            >
               <Box
                 sx={{
-                  px: 2,
-                  mt: 4,
-                  animation: `${fadeInUp} 0.8s ease-out 0.2s backwards`, // تأخير 0.2s
-                }}
-              >
-                <Box
-                  sx={{
-                    width: "100%",
-                    maxWidth: 520,
-                    margin: "0 auto",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography
-                    variant="h5"
-                    fontWeight="700"
-                    mb={1}
-                    color="#535353"
-                  >
-                    LOGIN
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" mb={3}>
-                    Al-Rowad for Publishing & Distribution
-                  </Typography>
-
-                  <form onSubmit={handleSubmit(onSubmit)} autoComplete="on">
-                    <TextField
-                      fullWidth
-                      variant="standard"
-                      label="Email"
-                      {...register("email")}
-                      error={!!errors.email}
-                      helperText={errors.email?.message}
-                      sx={{ mb: 5 }}
-                    />
-                    <TextField
-                      fullWidth
-                      variant="standard"
-                      type={showPassword ? "text" : "password"}
-                      label="Password"
-                      {...register("password")}
-                      error={!!errors.password}
-                      helperText={errors.password?.message}
-                      sx={{ mb: 3 }}
-                      slotProps={{
-                        input: {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <IconButton
-                                onClick={() => setShowPassword(!showPassword)}
-                              >
-                                {showPassword ? (
-                                  <VisibilityOff />
-                                ) : (
-                                  <Visibility />
-                                )}
-                              </IconButton>
-                            </InputAdornment>
-                          ),
-                        },
-                      }}
-                    />
-                    <FormControlLabel
-                      control={<Checkbox size="small" />}
-                      label="Remember username"
-                      sx={{ mb: 2 }}
-                    />
-                    <Typography variant="body2" sx={{ mb: 5 }}>
-                      Forgotten your{" "}
-                      <span style={{ color: "#2f6ad9" }}>username</span> or{" "}
-                      <span style={{ color: "#2f6ad9" }}>password?</span>
-                    </Typography>
-                    <Button
-                      fullWidth
-                      type="submit"
-                      variant="contained"
-                      disabled={isSubmitting}
-                      sx={{
-                        backgroundColor: "#234a8b",
-                        py: 1.8,
-                        borderRadius: "6px",
-                        fontWeight: "bold",
-                        transition: "transform 0.2s",
-                        "&:hover": { transform: "scale(1.02)" },
-                      }}
-                    >
-                      {isSubmitting ? (
-                        <CircularProgress size={22} sx={{ color: "white" }} />
-                      ) : (
-                        "CONTINUE"
-                      )}
-                    </Button>
-                    <Typography variant="body2" sx={{ mt: 2 }} align="center">
-                      Already have an account?{" "}
-                      <span
-                        style={{ color: "#2f6ad9", cursor: "pointer" }}
-                        onClick={() => navigate("/register")}
-                      >
-                        Sign Up here
-                      </span>
-                    </Typography>
-                  </form>
-                </Box>
-              </Box>
-            </Box>
-          ) : (
-            // 💻 DESKTOP VIEW
-            <Grid
-              container
-              spacing={{ xs: 2, md: 6 }}
-              sx={{ px: { xs: 2, md: 6 } }}
-            >
-              {/* ---------- LEFT SIDE (Image from Left) ---------- */}
-              <Grid
-                item
-                xs={12}
-                md={6}
-                sx={{
+                  width: "100%",
+                  maxWidth: { xs: 400, sm: 400, md: 450, lg: 500 },
                   display: "flex",
+                  flexDirection: "column",
                   alignItems: "center",
-                  justifyContent: "center", // 👈 بدل flex-start
-                  px: { md: 4 },
-                  animation: `${fadeInLeft} 1s ease-out`, // أنيميشن من اليسار
+                  px: { xs: 2, md: 0 }, 
                 }}
               >
-                <Box sx={{ width: { xs: 300, md: 550 }, maxWidth: "100%" }}>
-                  <img
-                    src={login}
-                    alt="login"
-                    style={{ width: "100%", height: "auto" }}
+                <Typography
+                  variant="h5"
+                  fontWeight="700"
+                  mb={1}
+                  color="#535353"
+                >
+                  LOGIN
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  mb={3}
+                  textAlign="center"
+                >
+                  Al-Rowad for Publishing & Distribution
+                </Typography>
+
+                <form
+                  onSubmit={handleSubmit(onSubmit)}
+                  autoComplete="on"
+                  style={{ width: "100%" }}
+                >
+                  <TextField
+                    fullWidth
+                    variant="standard"
+                    label="Email"
+                    type="email"
+                    autoComplete="email"
+                    {...register("email")}
+                    error={!!errors.email}
+                    helperText={errors.email?.message}
+                    sx={{ mb: 4 }}
                   />
-                </Box>
-              </Grid>
+                  <TextField
+                    fullWidth
+                    variant="standard"
+                    type={showPassword ? "text" : "password"}
+                    label="Password"
+                    autoComplete="current-password"
+                    {...register("password")}
+                    error={!!errors.password}
+                    helperText={errors.password?.message}
+                    sx={{ mb: 2 }}
+                    slotProps={{
+                      input: {
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={() => setShowPassword(!showPassword)}
+                              edge="end"
+                            >
+                              {showPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      },
+                    }}
+                  />
+                  <FormControlLabel
+                    control={<Checkbox size="small" />}
+                    label="Remember username"
+                    sx={{ mb: 2 }}
+                  />
+                  <Typography variant="body2" sx={{ mb: 4 }}>
+                    Forgotten your{" "}
+                    <span style={{ color: "#2f6ad9", cursor: "pointer" }}>
+                      username
+                    </span>{" "}
+                    or{" "}
+                    <span style={{ color: "#2f6ad9", cursor: "pointer" }}>
+                      password?
+                    </span>
+                  </Typography>
 
-              {/* ---------- RIGHT SIDE (Form from Right) ---------- */}
-              <Grid
-                item
-                xs={12}
-                md={6}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "flex-start",
-                  pl: { md: 14 },
-                  pr: { md: 6 },
-                  animation: `${fadeInRight} 1s ease-out`, // أنيميشن من اليمين
-                }}
-              >
-                <Box
-                  sx={{
-                    width: "100%",
-                    maxWidth: isLaptop ? 350 : 550,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  <Typography
-                    variant="h5"
-                    fontWeight="700"
-                    mb={1}
-                    color="#535353"
+                  <Button
+                    fullWidth
+                    type="submit"
+                    variant="contained"
+                    disabled={isSubmitting}
+                    sx={{
+                      backgroundColor: "#234a8b",
+                      py: 1.8,
+                      borderRadius: "6px",
+                      fontWeight: "bold",
+                      boxShadow: "0px 8px 20px rgba(0,0,0,0.15)",
+                      transition: "transform 0.2s, background-color 0.2s",
+                      "&:hover": {
+                        backgroundColor: "#1b3766",
+                        transform: "scale(1.02)",
+                      },
+                      "&:disabled": { backgroundColor: "#234a8b" },
+                    }}
                   >
-                    LOGIN
-                  </Typography>
+                    {isSubmitting ? (
+                      <CircularProgress size={22} sx={{ color: "white" }} />
+                    ) : (
+                      "CONTINUE"
+                    )}
+                  </Button>
 
-                  <Typography variant="body2" color="text.secondary" mb={3}>
-                    Al-Rowad for Publishing & Distribution
-                  </Typography>
-
-                  <form onSubmit={handleSubmit(onSubmit)} autoComplete="on">
-                    <TextField
-                      fullWidth
-                      variant="standard"
-                      label="Email"
-                      type="email"
-                      autoComplete="email"
-                      {...register("email")}
-                      error={!!errors.email}
-                      helperText={errors.email?.message}
-                      sx={{ mb: 5 }}
-                    />
-                    <TextField
-                      fullWidth
-                      variant="standard"
-                      type={showPassword ? "text" : "password"}
-                      label="Password"
-                      autoComplete="current-password"
-                      {...register("password")}
-                      error={!!errors.password}
-                      helperText={errors.password?.message}
-                      sx={{ mb: 3 }}
-                      slotProps={{
-                        input: {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <IconButton
-                                onClick={() => setShowPassword(!showPassword)}
-                              >
-                                {showPassword ? (
-                                  <VisibilityOff />
-                                ) : (
-                                  <Visibility />
-                                )}
-                              </IconButton>
-                            </InputAdornment>
-                          ),
-                        },
-                      }}
-                    />
-                    <FormControlLabel
-                      control={<Checkbox size="small" />}
-                      label="Remember username"
-                      sx={{ mb: 2 }}
-                    />
-                    <Typography variant="body2" sx={{ mb: 5 }}>
-                      Forgotten your{" "}
-                      <span style={{ color: "#2f6ad9" }}>username</span> or{" "}
-                      <span style={{ color: "#2f6ad9" }}>password?</span>
-                    </Typography>
-
-                    <Button
-                      fullWidth
-                      type="submit"
-                      variant="contained"
-                      disabled={isSubmitting}
-                      sx={{
-                        backgroundColor: "#234a8b",
-                        py: 1.8,
-                        borderRadius: "6px",
-                        fontWeight: "bold",
-                        boxShadow: "0px 8px 20px rgba(0,0,0,0.15)",
-                        transition: "transform 0.2s",
-                        "&:hover": {
-                          backgroundColor: "#1b3766",
-                          transform: "scale(1.02)",
-                        },
-                      }}
+                  <Typography variant="body2" sx={{ mt: 2 }} align="center">
+                    Already have an account?{" "}
+                    <span
+                      style={{ color: "#2f6ad9", cursor: "pointer" }}
+                      onClick={() => navigate("/register")}
                     >
-                      {isSubmitting ? (
-                        <CircularProgress size={22} sx={{ color: "white" }} />
-                      ) : (
-                        "CONTINUE"
-                      )}
-                    </Button>
-                    <Typography variant="body2" sx={{ mt: 2 }} align="center">
-                      Already have an account?{" "}
-                      <span
-                        style={{ color: "#2f6ad9", cursor: "pointer" }}
-                        onClick={() => navigate("/register")}
-                      >
-                        Sign Up here
-                      </span>
-                    </Typography>
-                  </form>
-                </Box>
-              </Grid>
+                      Sign Up here
+                    </span>
+                  </Typography>
+                </form>
+              </Box>
             </Grid>
-          )}
-        </Box>
+          </Grid>
+        </Container>
 
-        {/* ================= FOOTER ================= */}
-        <Box sx={{ textAlign: "center", pt: 3 }}>
+        {/* ================= الفوتر ================= */}
+        <Box sx={{ textAlign: "center", pb: 3 }}>
           <Typography
             variant="body2"
             sx={{ color: "#555", fontWeight: 500, letterSpacing: 1 }}
