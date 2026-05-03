@@ -100,7 +100,7 @@ export default function Register() {
       if (user.role === "admin")
         navigate("/admin/dashboard", { replace: true });
       else if (user.role === "teacher") navigate("/teacher", { replace: true });
-      else if (user.role === "student") navigate("/student", { replace: true });
+      else if (user.role === "student") navigate("/student/books", { replace: true });
       else navigate("/", { replace: true });
     } catch (error) {
       const message = error.response?.data?.message;

@@ -8,6 +8,8 @@ const {
   updateBook,
   getAllBooksPublic,
   getPuplicBookById,
+  getBooksGrowth,
+  getTopBooks,
 } = require("../controller/book");
 const { authenticate } = require("../middleware/authenticate");
 const authorize = require("../middleware/authorized");
@@ -24,7 +26,8 @@ router.post(
   ]),
   createBook,
 );
-
+router.get("/books-growth", authenticate, authorize("admin"), getBooksGrowth);
+router.get("/top-books", authenticate, authorize("admin"), getTopBooks);
 //http://localhost:5000/api/books/all(GET)
 router.get("/all-books-public", getAllBooksPublic);
 
@@ -51,5 +54,4 @@ router.put(
   authorize("admin"),
   updateBook,
 );
-
 module.exports = router;

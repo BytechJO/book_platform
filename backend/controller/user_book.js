@@ -111,6 +111,15 @@ const getMyBookById = async (req, res) => {
   `,
     [userId, bookId],
   );
+  await pool.query(
+    `
+  UPDATE books
+  SET views = views + 1
+  WHERE id = $1
+  `,
+    [bookId],
+  );
+  console.log("VIEW INCREMENT", bookId);
   try {
     const result = await pool.query(
       `
@@ -154,6 +163,15 @@ const getMyBookById = async (req, res) => {
 const getStudentBookById = async (req, res) => {
   const userId = req.user.id;
   const { bookId } = req.params;
+  await pool.query(
+    `
+  UPDATE books
+  SET views = views + 1
+  WHERE id = $1
+  `,
+    [bookId],
+  );
+  console.log("VIEW INCREMENT", bookId);
   try {
     const result = await pool.query(
       `

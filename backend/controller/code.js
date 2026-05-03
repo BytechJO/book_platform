@@ -1,7 +1,6 @@
 const pool = require("../database/connection");
 const generateCode = require("../utils/generateCode");
-const { v4: uuidv4 } = require("uuid");
-
+const logActivity = require("../utils/activityLogger");
 const createCode = async (req, res) => {
   try {
     const { book_id, allowed_role, validity_months, number_of_codes } =
@@ -50,6 +49,17 @@ const createCode = async (req, res) => {
       );
 
       createdCodes.push(result.rows[0]);
+    }
+
+    try {
+      await logActivity({
+        type: "code",
+        action: "created",
+        title: "New code generated",
+        description: `${createdCodes.length} code(s) created`,
+      });
+    } catch (err) {
+      console.error("Activity log failed:", err);
     }
 
     res.status(201).json({
@@ -210,6 +220,16 @@ const updateCodeValidity = async (req, res) => {
     );
 
     await client.query("COMMIT");
+    try {
+      await logActivity({
+        type: "code",
+        action: "updated",
+        title: "Code updated",
+        description: `Code validity updated`,
+      });
+    } catch (err) {
+      console.error("Activity log failed:", err);
+    }
 
     res.json({
       message: "Code and related subscriptions updated successfully",
@@ -243,6 +263,16 @@ const deleteCode = async (req, res) => {
     }
 
     await pool.query("DELETE FROM book_codes WHERE id = $1", [id]);
+    try {
+      await logActivity({
+        type: "code",
+        action: "deleted",
+        title: "Code deleted",
+        description: `Code removed`,
+      });
+    } catch (err) {
+      console.error("Activity log failed:", err);
+    }
 
     res.json({ message: "Code deleted successfully" });
   } catch (error) {

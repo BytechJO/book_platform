@@ -3,6 +3,8 @@ const pool = require("../database/connection");
 const jwt = require("jsonwebtoken");
 const cloudinary = require("../utils/cloudinary");
 const streamifier = require("streamifier");
+const logActivity = require("../utils/activityLogger");
+
 const uploadToCloudinary = (fileBuffer, folder) => {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
@@ -107,6 +109,16 @@ const register = async (req, res) => {
     );
 
     await client.query("COMMIT");
+    try {
+      await logActivity({
+        type: "user",
+        action: "created",
+        title: "New user registered",
+        description: `${user.full_name} joined the system`,
+      });
+    } catch (err) {
+      console.error("Activity log failed:", err);
+    }
     const token = jwt.sign(
       { id: user.id, role: user.role },
       process.env.JWT_SECRET,
@@ -282,4 +294,6 @@ const updateProfile = async (req, res) => {
     });
   }
 };
+
+
 module.exports = { register, login, me, updateProfile };

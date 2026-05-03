@@ -4,8 +4,7 @@ import useSWR, { mutate } from "swr";
 import axiosInstance from "./axios";
 import ENDPOINTS from "./endpoints";
 
-const fetcher = (url) =>
-  axiosInstance.get(url).then((res) => res.data);
+const fetcher = (url) => axiosInstance.get(url).then((res) => res.data);
 
 // =============================
 // GET ALL USERS (Admin only)
@@ -13,8 +12,7 @@ const fetcher = (url) =>
 export function useGetUsers() {
   const URL = ENDPOINTS.USERS.ALL;
 
-  const { data, isLoading, error, isValidating } =
-    useSWR(URL, fetcher);
+  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
 
   const memoizedValue = useMemo(
     () => ({
@@ -24,7 +22,7 @@ export function useGetUsers() {
       validating: isValidating,
       empty: !isLoading && !data?.length,
     }),
-    [data, error, isLoading, isValidating]
+    [data, error, isLoading, isValidating],
   );
 
   const refetch = async () => {
@@ -32,4 +30,41 @@ export function useGetUsers() {
   };
 
   return { ...memoizedValue, refetch };
+}
+export function useUsersGrowth(startDate) {
+  const URL = startDate ? ENDPOINTS.USERS.GROWTH(startDate) : null;
+
+  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      growth: data || [],
+      loading: isLoading,
+      error,
+      validating: isValidating,
+      empty: !isLoading && !data?.length,
+    }),
+    [data, error, isLoading, isValidating],
+  );
+
+  return memoizedValue;
+}
+
+export function useActivities() {
+  const URL = ENDPOINTS.USERS.activity;
+
+  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      activities: data || [],
+      loading: isLoading,
+      error,
+      validating: isValidating,
+      empty: !isLoading && !data?.length,
+    }),
+    [data, error, isLoading, isValidating],
+  );
+
+  return memoizedValue;
 }

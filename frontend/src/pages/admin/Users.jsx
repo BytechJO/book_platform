@@ -24,6 +24,7 @@ import {
   FormControl,
   Select,
   MenuItem,
+  Switch,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { Helmet } from "react-helmet-async";
@@ -35,7 +36,12 @@ import ENDPOINTS from "../../api/endpoints";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CurveLoader from "../../components/CurveLoader";
 import Avatar from "@mui/material/Avatar";
-
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import Menu from "@mui/material/Menu";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import EditIcon from "@mui/icons-material/Edit";
+import BlockIcon from "@mui/icons-material/Block";
+import DeleteIcon from "@mui/icons-material/Delete";
 function roleLabel(role) {
   if (!role) return "—";
   const r = role.toLowerCase();
@@ -185,7 +191,20 @@ export default function Users() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(6);
+  const open = Boolean(anchorEl);
 
+  const handleClick = (event, user) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedUser(user);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    setSelectedUser(null);
+  };
   const filtered = useMemo(() => {
     let result = [...users];
 
@@ -243,6 +262,9 @@ export default function Users() {
     </TableRow>
   );
 
+  const totalPages = Math.ceil(filtered.length / perPage);
+
+  const paginatedUsers = filtered.slice((page - 1) * perPage, page * perPage);
   return (
     <>
       <Helmet>
@@ -255,7 +277,7 @@ export default function Users() {
           py: { xs: 2, md: 3 },
           pl: { md: 8 },
           minHeight: "100vh",
-          width: "85%",
+          width: "95%",
           mx: "auto",
         }}
       >
@@ -266,7 +288,6 @@ export default function Users() {
             flexDirection: "column",
             mb: 4,
             pb: 2,
-            borderBottom: "2px solid #e3ecf8",
           }}
         >
           <Typography
@@ -286,12 +307,11 @@ export default function Users() {
 
         <Box
           sx={{
-         
             display: "grid",
             gridTemplateColumns: {
               xs: "1fr", // موبايل تحت بعض
               sm: "1fr 1fr", // تابلت
-              md: "2fr 1fr 1fr", // 🔥 ديسكتوب: search أكبر
+              md: "2fr 1fr 1fr 1fr",
             },
             gap: 2,
             mb: 3,
@@ -353,6 +373,30 @@ export default function Users() {
               </Select>
             </FormControl>
           </Box>
+          <Box sx={{ display: "flex", alignItems: "flex-end" }}>
+            <Button
+              fullWidth
+              variant="outlined"
+              onClick={() => {
+                setSearch("");
+                setRoleFilter("all");
+                setStatusFilter("all");
+              }}
+              sx={{
+                height: 40,
+                textTransform: "none",
+                borderRadius: "6px",
+                color: "#577DAE",
+                borderColor: "#dfe3e8",
+                "&:hover": {
+                  backgroundColor: "#eef3fb",
+                  borderColor: "#2B5A9E",
+                },
+              }}
+            >
+              ↻ Clear Filters
+            </Button>
+          </Box>
         </Box>
         {/* Results count */}
         {!loading && !error && filtered.length > 0 && (
@@ -369,10 +413,10 @@ export default function Users() {
           <Paper
             elevation={0}
             sx={{
-           
-              backgroundColor: "transparent",
-              boxShadow: "none",
-              overflowX: "auto",
+              backgroundColor: "#fff",
+              borderRadius: "12px",
+              p: 2,
+              boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
             }}
           >
             <Table
@@ -390,11 +434,12 @@ export default function Users() {
               }}
             >
               <colgroup>
-                <col style={{ width: "30%" }} />
-                <col style={{ width: "24%" }} />
-                <col style={{ width: "17.26%" }} />
-                <col style={{ width: "17.26%" }} />
-                <col style={{ width: "17.26%" }} />
+                <col style={{ width: "25%" }} />
+                <col style={{ width: "20%" }} />
+                <col style={{ width: "15%" }} />
+                <col style={{ width: "15%" }} />
+                <col style={{ width: "15%" }} />
+                <col style={{ width: "10%" }} />
               </colgroup>
 
               <TableHead>
@@ -412,6 +457,9 @@ export default function Users() {
                     Status
                   </TableCell>
                   <TableCell sx={{ color: "#7a869a", fontSize: 15 }}>
+                    Joined On
+                  </TableCell>
+                  <TableCell sx={{ color: "#7a869a", fontSize: 15 }}>
                     Action
                   </TableCell>
                 </TableRow>
@@ -424,7 +472,7 @@ export default function Users() {
                 )}
 
                 {!error &&
-                  filtered.map((c) => {
+                  paginatedUsers.map((c) => {
                     const isActive = c.status === "active";
                     return (
                       <TableRow
@@ -454,58 +502,166 @@ export default function Users() {
                         <TableCell sx={{ color: "#555", fontSize: 14 }}>
                           {c.email}
                         </TableCell>
-                        <TableCell sx={{ fontSize: 14 }}>
-                          {roleLabel(c.role)}
+                        <TableCell>
+                          <Chip
+                            label={roleLabel(c.role)}
+                            size="small"
+                            sx={{
+                              fontWeight: 500,
+                              fontSize: 12,
+                              borderRadius: "20px",
+                              px: 1,
+                              backgroundColor:
+                                c.role === "student"
+                                  ? "rgba(33,150,243,0.1)"
+                                  : c.role === "teacher"
+                                    ? "rgba(156,39,176,0.1)"
+                                    : "rgba(76,175,80,0.1)",
+                              color:
+                                c.role === "student"
+                                  ? "#2196F3"
+                                  : c.role === "teacher"
+                                    ? "#9C27B0"
+                                    : "#4CAF50",
+                            }}
+                          />
                         </TableCell>
                         <TableCell>
-                          <Typography sx={{ fontWeight: 500, fontSize: 14 }}>
-                            <Chip
-                              label={isActive ? "Active" : "Inactive"}
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
+                            }}
+                          >
+                            <Switch
+                              checked={c.status === "active"}
                               size="small"
                               sx={{
-                                fontWeight: 500,
-                                backgroundColor: isActive
-                                  ? "rgba(46,125,50,0.1)"
-                                  : "rgba(0,0,0,0.06)",
-                                color: isActive ? "#2e7d32" : "#888",
+                                "& .MuiSwitch-switchBase.Mui-checked": {
+                                  color: "#2e7d32",
+                                },
+                                "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
+                                  {
+                                    backgroundColor: "#2e7d32",
+                                  },
                               }}
                             />
-                          </Typography>
+
+                            <Typography
+                              sx={{
+                                fontSize: 13,
+                                fontWeight: 500,
+                                color:
+                                  c.status === "active" ? "#2e7d32" : "#888",
+                              }}
+                            >
+                              {c.status === "active" ? "Active" : "Inactive"}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell sx={{ fontSize: 14, color: "#555" }}>
+                          {new Date(c.created_at).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })}
                         </TableCell>
                         <TableCell>
                           <IconButton
                             size="small"
-                            sx={{
-                              color: isActive ? "#C72100" : "#2e7d32",
-                              "&:hover": {
-                                backgroundColor: isActive
-                                  ? "rgba(199,33,0,0.08)"
-                                  : "rgba(46,125,50,0.08)",
-                              },
-                            }}
-                            onClick={() => openConfirm(c)}
+                            onClick={(e) => handleClick(e, c)}
                           >
-                            {isActive ? (
-                              <BlockUserIcon fontSize="small" />
-                            ) : (
-                              <CheckCircleOutlineIcon fontSize="small" />
-                            )}
+                            <MoreHorizIcon />
                           </IconButton>
-                          <Typography
-                            sx={{
-                              fontSize: 11,
-                              fontWeight: 500,
-                              color: isActive ? "#C72100" : "#2e7d32",
-                            }}
-                          >
-                            {isActive ? "Block" : "Activate"}
-                          </Typography>
                         </TableCell>
                       </TableRow>
                     );
                   })}
               </TableBody>
             </Table>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mt: 2,
+                pt: 2,
+                borderTop: "1px solid #eee",
+              }}
+            >
+              {/* Left */}
+              <Typography sx={{ fontSize: 12, color: "#777" }}>
+                Showing {(page - 1) * perPage + 1} to{" "}
+                {Math.min(page * perPage, filtered.length)} of {filtered.length}{" "}
+                users
+              </Typography>
+
+              {/* Pagination */}
+              <Box sx={{ display: "flex", gap: 1 }}>
+                {/* Previous */}
+                <Button
+                  size="small"
+                  variant="outlined"
+                  disabled={page === 1}
+                  onClick={() => setPage(page - 1)}
+                  sx={{ minWidth: 32 }}
+                >
+                  {"<"}
+                </Button>
+
+                {/* Pages */}
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (p) => (
+                    <Button
+                      key={p}
+                      size="small"
+                      variant={p === page ? "contained" : "outlined"}
+                      onClick={() => setPage(p)}
+                      sx={{
+                        minWidth: 32,
+                        backgroundColor: p === page ? "#2B5A9E" : "transparent",
+                        color: p === page ? "#fff" : "#2B5A9E",
+                        borderColor: "#dfe3e8",
+                      }}
+                    >
+                      {p}
+                    </Button>
+                  ),
+                )}
+
+                {/* Next */}
+                <Button
+                  size="small"
+                  variant="outlined"
+                  disabled={page === totalPages}
+                  onClick={() => setPage(page + 1)}
+                  sx={{ minWidth: 32 }}
+                >
+                  {">"}
+                </Button>
+              </Box>
+
+              {/* Per Page */}
+              <FormControl size="small">
+                <Select
+                  value={perPage}
+                  onChange={(e) => {
+                    setPerPage(e.target.value);
+                    setPage(1); // 🔥 يرجع لأول صفحة
+                  }}
+                  sx={{
+                    fontSize: 12,
+                    borderRadius: "6px",
+                    height: 32,
+                  }}
+                >
+                  <MenuItem value={6}>6 per page</MenuItem>
+                  <MenuItem value={10}>10 per page</MenuItem>
+                  <MenuItem value={15}>15 per page</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
           </Paper>
         )}
 
@@ -596,6 +752,38 @@ export default function Users() {
             </Button>
           </DialogActions>
         </Dialog>
+        <Menu
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          PaperProps={{
+            sx: {
+              borderRadius: "10px",
+              minWidth: 180,
+              boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+            },
+          }}
+        >
+          <MenuItem onClick={handleClose}>
+            <VisibilityIcon sx={{ mr: 1, fontSize: 18 }} />
+            View Details
+          </MenuItem>
+
+          <MenuItem onClick={handleClose}>
+            <EditIcon sx={{ mr: 1, fontSize: 18 }} />
+            Edit User
+          </MenuItem>
+
+          <MenuItem onClick={handleClose} sx={{ color: "#EF6C00" }}>
+            <BlockIcon sx={{ mr: 1, fontSize: 18 }} />
+            Deactivate
+          </MenuItem>
+
+          <MenuItem onClick={handleClose} sx={{ color: "#D32F2F" }}>
+            <DeleteIcon sx={{ mr: 1, fontSize: 18 }} />
+            Delete User
+          </MenuItem>
+        </Menu>
       </Box>
     </>
   );

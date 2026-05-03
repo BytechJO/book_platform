@@ -4,16 +4,13 @@ import useSWR, { mutate } from "swr";
 import axiosInstance from "./axios";
 import ENDPOINTS from "./endpoints";
 
-const fetcher = (url) =>
-  axiosInstance.get(url).then((res) => res.data);
-
+const fetcher = (url) => axiosInstance.get(url).then((res) => res.data);
 
 // GET ALL BOOKS
 export function useGetBooks() {
   const URL = ENDPOINTS.BOOKS.ALL;
 
-  const { data, isLoading, error, isValidating } =
-    useSWR(URL, fetcher);
+  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
 
   const memoizedValue = useMemo(
     () => ({
@@ -23,7 +20,7 @@ export function useGetBooks() {
       validating: isValidating,
       empty: !isLoading && !data?.length,
     }),
-    [data, error, isLoading, isValidating]
+    [data, error, isLoading, isValidating],
   );
 
   const refetch = async () => {
@@ -33,13 +30,11 @@ export function useGetBooks() {
   return { ...memoizedValue, refetch };
 }
 
-
 // GET BOOK BY ID
 export function useGetBook(id) {
   const URL = id ? ENDPOINTS.BOOKS.BY_ID(id) : null;
 
-  const { data, isLoading, error } =
-    useSWR(URL, fetcher);
+  const { data, isLoading, error } = useSWR(URL, fetcher);
 
   return {
     book: data || null,
@@ -51,8 +46,7 @@ export function useGetBook(id) {
 export function useGetPuplicBooks() {
   const URL = ENDPOINTS.BOOKS.ALLPuplic;
 
-  const { data, isLoading, error, isValidating } =
-    useSWR(URL, fetcher);
+  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
 
   const memoizedValue = useMemo(
     () => ({
@@ -62,7 +56,7 @@ export function useGetPuplicBooks() {
       validating: isValidating,
       empty: !isLoading && !data?.length,
     }),
-    [data, error, isLoading, isValidating]
+    [data, error, isLoading, isValidating],
   );
 
   const refetch = async () => {
@@ -75,12 +69,32 @@ export function useGetPuplicBooks() {
 export function useGetOnePuplicBook(id) {
   const URL = id ? ENDPOINTS.BOOKS.ONEPuplic(id) : null;
 
-  const { data, isLoading, error } =
-    useSWR(URL, fetcher);
+  const { data, isLoading, error } = useSWR(URL, fetcher);
 
   return {
     book: data || null,
     loading: isLoading,
     error,
+  };
+}
+
+export function useBooksGrowth(startDate) {
+  const URL = startDate ? `/api/books/books-growth?start=${startDate}` : null;
+
+  const { data, isLoading } = useSWR(URL, fetcher);
+
+  return {
+    growth: data || [],
+    loading: isLoading,
+  };
+}
+export function useTopBooks() {
+  const URL = ENDPOINTS.BOOKS.TOP;
+
+  const { data, isLoading } = useSWR(URL, fetcher);
+
+  return {
+    books: data || [],
+    loading: isLoading,
   };
 }

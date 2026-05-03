@@ -1,7 +1,7 @@
 const pool = require("../database/connection");
 const cloudinary = require("../utils/cloudinary");
 const streamifier = require("streamifier");
-
+const logActivity = require("../utils/activityLogger");
 const uploadToCloudinary = (fileBuffer, folder) => {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
@@ -106,7 +106,20 @@ const createBook = async (req, res) => {
       ],
     );
 
-    res.status(201).json(result.rows[0]);
+    const createdBook = result.rows[0];
+
+    try {
+      await logActivity({
+        type: "book",
+        action: "created",
+        title: "New book published",
+        description: `Book "${createdBook.title}" added`,
+      });
+    } catch (err) {
+      console.error("Activity log failed:", err);
+    }
+
+    res.status(201).json(createdBook);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
@@ -223,6 +236,17 @@ const deleteBook = async (req, res) => {
 
     await pool.query("DELETE FROM books WHERE id = $1", [id]);
 
+    try {
+      await logActivity({
+        type: "book",
+        action: "deleted",
+        title: "Book deleted",
+        description: `Book "${book.title}" removed`,
+      });
+    } catch (err) {
+      console.error("Activity log failed:", err);
+    }
+
     res.json({ message: "Book deleted successfully" });
   } catch (error) {
     console.error("Delete book error:", error);
@@ -338,13 +362,76 @@ const updateBook = async (req, res) => {
       ],
     );
 
-    res.json(result.rows[0]);
+    const updatedBook = result.rows[0];
+
+    try {
+      await logActivity({
+        type: "book",
+        action: "updated",
+        title: "Book updated",
+        description: `Book "${updatedBook.title}" updated`,
+      });
+    } catch (err) {
+      console.error("Activity log failed:", err);
+    }
+
+    res.json(updatedBook);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
+const getBooksGrowth = async (req, res) => {
+  const { start } = req.query;
 
+  try {
+    const result = await pool.query(
+      `
+    SELECT
+  FLOOR(EXTRACT(EPOCH FROM (created_at - $1::timestamp)) / 86400 / 7)::int AS week_index,
+  COUNT(*)::int AS value
+FROM books
+WHERE created_at >= $1::timestamp
+AND created_at <= $1::timestamp + INTERVAL '35 days'
+GROUP BY week_index
+ORDER BY week_index;
+      `,
+      [start],
+    );
+
+    const counts = [0, 0, 0, 0, 0];
+    result.rows.forEach((row) => {
+      if (row.week_index >= 0 && row.week_index < 5) {
+        counts[row.week_index] = row.value;
+      }
+    });
+
+    const response = counts.map((value, index) => ({
+      value,
+    }));
+
+    res.json(response);
+  } catch (error) {
+    console.error("Books growth error:", error);
+    res.status(500).json({ message: "error" });
+  }
+};
+
+const getTopBooks = async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT id, title, created_at, views
+      FROM books
+      ORDER BY views DESC
+      LIMIT 5
+    `);
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Top books error:", error);
+    res.status(500).json({ message: "error" });
+  }
+};
 module.exports = {
   createBook,
   getAllBooks,
@@ -353,4 +440,6 @@ module.exports = {
   updateBook,
   getAllBooksPublic,
   getPuplicBookById,
+  getBooksGrowth,
+  getTopBooks,
 };

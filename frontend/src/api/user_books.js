@@ -29,6 +29,11 @@ export function useGetMyOneBook(bookId) {
   const { data, isLoading, error, isValidating } = useSWR(
     bookId ? URL : null,
     fetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      dedupingInterval: 60000, // 🔥 مهم
+    },
   );
 
   const memoizedValue = useMemo(
@@ -53,8 +58,12 @@ export function useGetStudentBook(bookId) {
   const { data, isLoading, error, isValidating } = useSWR(
     bookId ? URL : null,
     fetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      dedupingInterval: 60000, // 🔥 مهم
+    },
   );
-
   const memoizedValue = useMemo(
     () => ({
       book: data || [],

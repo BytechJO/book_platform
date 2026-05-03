@@ -7,12 +7,12 @@ import Home from "../pages/Public-Layout/Home/Home";
 import About from "../pages/Public-Layout/About";
 import Contact from "../pages/Public-Layout/contact";
 
-import Dashboard from "../pages/admin/Dashboard";
+import Dashboard from "../pages/admin/Dashboard/Dashboard";
 import BookSeries from "../pages/Public-Layout/Book-series";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import AuthLayout from "../pages/auth/AuthLayout";
-
+import Reports from "../pages/admin/Reports";
 import ProtectedRoute from "../utils/ProtectedRoute";
 import Users from "../pages/admin/Users";
 import Books from "../pages/admin/books/Books";
@@ -65,6 +65,7 @@ export default function AppRoutes() {
         <Route path="users" element={<Users />} />
         <Route path="books" element={<Books />} />
         <Route path="codes" element={<Codes />} />
+        <Route path="reports" element={<Reports />} />
         <Route path="books/create" element={<CreateBook />} />
         <Route path="books/:id/edit" element={<CreateBook />} />
         <Route path="books/:id" element={<ViewBook />} />

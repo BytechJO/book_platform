@@ -14,11 +14,15 @@ const ENDPOINTS = {
     UPDATE: (id) => `/api/books/${id}/update`,
     ALLPuplic: "/api/books/all-books-public",
     ONEPuplic: (id) => `/api/books/all-books-public/${id}`,
+    GROWTH: (start) => `/api/books/books-growth?start=${start}`,
+    TOP: "/api/books/top-books",
   },
 
   USERS: {
     ALL: "/api/users/all-users",
     Status: (id) => `/api/users/${id}/status`,
+    GROWTH: (start) => `/api/users/users-growth?start=${start}`,
+    activity: `/api/users/activities`,
   },
 
   Codes: {
@@ -26,7 +30,7 @@ const ENDPOINTS = {
     ALL: "/api/code/all-codes",
     Import: "/api/code/import",
     getBookCodes: (bookId) => `/api/code/book/${bookId}`,
-    DELETE: (codeId) => `/api/code/${codeId}`, 
+    DELETE: (codeId) => `/api/code/${codeId}`,
     UPDATE: (codeId) => `/api/code/${codeId}`,
   },
 
