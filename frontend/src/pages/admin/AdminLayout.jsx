@@ -11,7 +11,6 @@ export default function AdminLayout() {
     <Box
       sx={{
         width: "100%",
-        minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
       }}
@@ -24,7 +23,9 @@ export default function AdminLayout() {
         sx={{
           width: "100%",
           flex: 1,
-          p: isDashboard ? 0 : 4,
+          px: isDashboard ? 0 : 4, // يمين + يسار
+          pt: isDashboard ? 0 : 4, // فوق
+          pb: 0, // 🔥 تحت = صفر
         }}
       >
         <Outlet />

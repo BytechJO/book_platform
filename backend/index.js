@@ -30,6 +30,10 @@ app.use("/api/users", userRouter);
 const bookCodesRoutes = require("./router/user_book");
 app.use("/api/user-books", bookCodesRoutes);
 
+// Import and use categories routes
+const categoriesRoutes = require("./router/categories");
+app.use("/api/categories", categoriesRoutes);
+
 app.get("/", async (req, res) => {
   try {
     const result = await pool.query("SELECT NOW()");

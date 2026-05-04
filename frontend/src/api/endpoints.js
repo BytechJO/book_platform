@@ -16,6 +16,7 @@ const ENDPOINTS = {
     ONEPuplic: (id) => `/api/books/all-books-public/${id}`,
     GROWTH: (start) => `/api/books/books-growth?start=${start}`,
     TOP: "/api/books/top-books",
+    STATUS: (id) => `/api/books/${id}/status`,
   },
 
   USERS: {
@@ -23,6 +24,9 @@ const ENDPOINTS = {
     Status: (id) => `/api/users/${id}/status`,
     GROWTH: (start) => `/api/users/users-growth?start=${start}`,
     activity: `/api/users/activities`,
+    DELETE: (id) => `/api/users/${id}/delete`,
+    USER: (id) => `/api/users/${id}`,
+    UPDATE: (id) => `/api/users/${id}`,
   },
 
   Codes: {
@@ -41,6 +45,12 @@ const ENDPOINTS = {
     AddClass: (id) => `/api/user-books/${id}/class`,
     activateClassCode: (id) => `/api/user-books/${id}/class/student`,
     Student_one: (bookId) => `/api/user-books/student/${bookId}`,
+  },
+
+  CATEGORIES: {
+    CREATE: "/api/categories",
+    ALL: "/api/categories",
+    BY_ID: (id) => `/api/categories/${id}`,
   },
 };
 

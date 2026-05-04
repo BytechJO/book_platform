@@ -2,7 +2,7 @@ import { Box, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import CodeIcon from "../../../assets/icon/Group (2).svg";
 import BookIcon from "../../../assets/icon/Asset 1 5.svg";
-
+import analysis from "../../../assets/icon/analysis.svg";
 const actions = [
   {
     id: "addBook",
@@ -25,7 +25,7 @@ const actions = [
     color: "#FFF3E0",
     textColor: "#EF6C00",
     path: "/admin/reports",
-    icon: CodeIcon, // حط icon مناسب هون بعدين
+    icon: analysis, // حط icon مناسب هون بعدين
   },
 ];
 
@@ -87,7 +87,10 @@ export default function QuickActions({ onGenerateClick }) {
                 mb: 0.5,
               }}
             >
-              <img src={item.icon} style={{ width: 28, height: 28 ,color:"red" }} />
+              <img
+                src={item.icon}
+                style={{ width: 28, height: 28, color: "red" }}
+              />
             </Typography>
 
             {/* Text */}

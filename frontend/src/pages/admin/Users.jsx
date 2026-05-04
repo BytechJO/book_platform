@@ -182,6 +182,8 @@ function UserCard({ user, onToggle }) {
 }
 
 export default function Users() {
+  const navigate = useNavigate();
+  const [editOpen, setEditOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [statusFilter, setStatusFilter] = useState("all");
@@ -193,6 +195,26 @@ export default function Users() {
   const [updating, setUpdating] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [page, setPage] = useState(1);
+  const [actionType, setActionType] = useState("status"); // status | delete
+  const [editRole, setEditRole] = useState("");
+  const [editStatus, setEditStatus] = useState("active");
+  const [editLoading, setEditLoading] = useState(false);
+  const handleDeleteUser = async () => {
+    if (!selectedUser) return;
+
+    try {
+      setUpdating(true);
+
+      await axiosInstance.patch(ENDPOINTS.USERS.DELETE(selectedUser.id));
+
+      refetch();
+      setConfirmOpen(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setUpdating(false);
+    }
+  };
   const [perPage, setPerPage] = useState(6);
   const open = Boolean(anchorEl);
 
@@ -245,8 +267,9 @@ export default function Users() {
     }
   };
 
-  const openConfirm = (user) => {
+  const openConfirm = (user, type = "status") => {
     setSelectedUser(user);
+    setActionType(type);
     setConfirmOpen(true);
   };
 
@@ -273,10 +296,9 @@ export default function Users() {
 
       <Box
         sx={{
-          px: { xs: 2, sm: 3, md: 4 },
-          py: { xs: 2, md: 3 },
-          pl: { md: 8 },
-          minHeight: "100vh",
+          px: { xs: 2, sm: 1, md: 1 },
+          py: { xs: 2, md: 1 },
+          pl: { md: 2 },
           width: "95%",
           mx: "auto",
         }}
@@ -473,7 +495,6 @@ export default function Users() {
 
                 {!error &&
                   paginatedUsers.map((c) => {
-                    const isActive = c.status === "active";
                     return (
                       <TableRow
                         key={c.id}
@@ -534,26 +555,14 @@ export default function Users() {
                               gap: 1,
                             }}
                           >
-                            <Switch
-                              checked={c.status === "active"}
-                              size="small"
-                              sx={{
-                                "& .MuiSwitch-switchBase.Mui-checked": {
-                                  color: "#2e7d32",
-                                },
-                                "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
-                                  {
-                                    backgroundColor: "#2e7d32",
-                                  },
-                              }}
-                            />
+                            <IOSSwitch checked={c.status === "active"} />
 
                             <Typography
                               sx={{
                                 fontSize: 13,
                                 fontWeight: 500,
                                 color:
-                                  c.status === "active" ? "#2e7d32" : "#888",
+                                  c.status === "active" ? "#34C759" : "#999",
                               }}
                             >
                               {c.status === "active" ? "Active" : "Inactive"}
@@ -700,15 +709,21 @@ export default function Users() {
             },
           }}
         >
-          <DialogTitle sx={{ fontWeight: 600, fontSize: { xs: 18, sm: 20 } }}>
-            Confirm Status Change
+          <DialogTitle>
+            {actionType === "delete"
+              ? "Confirm Deletion"
+              : "Confirm Status Change"}
           </DialogTitle>
 
           <DialogContent>
             <Typography sx={{ fontSize: { xs: 14, sm: 15 }, color: "#555" }}>
               Are you sure you want to{" "}
               <strong>
-                {selectedUser?.status === "active" ? "deactivate" : "activate"}
+                {actionType === "delete"
+                  ? "delete"
+                  : selectedUser?.status?.toLowerCase() === "active"
+                    ? "deactivate"
+                    : "activate"}
               </strong>{" "}
               user{" "}
               <strong style={{ color: "#2d5aa7" }}>
@@ -734,21 +749,28 @@ export default function Users() {
 
             <Button
               variant="contained"
-              onClick={handleToggleStatus}
+              onClick={
+                actionType === "delete" ? handleDeleteUser : handleToggleStatus
+              }
               disabled={updating}
               sx={{
                 textTransform: "none",
                 fontWeight: 500,
-                backgroundColor: "#2B5A9E",
+                backgroundColor:
+                  actionType === "delete" ? "#D32F2F" : "#2B5A9E",
                 borderRadius: 1.5,
                 px: 3,
-                "&:hover": { backgroundColor: "#244a86" },
-                "&:disabled": {
-                  backgroundColor: "#a0b4d4",
+                "&:hover": {
+                  backgroundColor:
+                    actionType === "delete" ? "#b71c1c" : "#244a86",
                 },
               }}
             >
-              {updating ? "Updating..." : "Confirm"}
+              {updating
+                ? "Updating..."
+                : actionType === "delete"
+                  ? "Delete"
+                  : "Confirm"}
             </Button>
           </DialogActions>
         </Dialog>
@@ -764,27 +786,242 @@ export default function Users() {
             },
           }}
         >
-          <MenuItem onClick={handleClose}>
+          <MenuItem
+            onClick={() => {
+              navigate(`/admin/users/${selectedUser.id}`);
+              handleClose();
+            }}
+          >
             <VisibilityIcon sx={{ mr: 1, fontSize: 18 }} />
-            View Details
+            View
           </MenuItem>
 
-          <MenuItem onClick={handleClose}>
+          <MenuItem
+            onClick={() => {
+              const user = selectedUser;
+              handleClose();
+
+              setSelectedUser(user);
+              setEditRole(user.role);
+              setEditStatus(user.status);
+              setEditOpen(true);
+            }}
+          >
             <EditIcon sx={{ mr: 1, fontSize: 18 }} />
             Edit User
           </MenuItem>
 
-          <MenuItem onClick={handleClose} sx={{ color: "#EF6C00" }}>
-            <BlockIcon sx={{ mr: 1, fontSize: 18 }} />
-            Deactivate
+          <MenuItem
+            onClick={() => {
+              const user = selectedUser; // 🔥 خزنه
+              handleClose();
+              openConfirm(user); // 🔥 استخدمه بعد الإغلاق
+            }}
+            sx={{
+              color: selectedUser?.status === "active" ? "#EF6C00" : "#2e7d32",
+            }}
+          >
+            {selectedUser?.status === "active" ? (
+              <>
+                <BlockIcon sx={{ mr: 1, fontSize: 18 }} />
+                Deactivate
+              </>
+            ) : (
+              <>
+                <CheckCircleOutlineIcon sx={{ mr: 1, fontSize: 18 }} />
+                Activate
+              </>
+            )}
           </MenuItem>
-
-          <MenuItem onClick={handleClose} sx={{ color: "#D32F2F" }}>
+          <MenuItem
+            onClick={() => {
+              const user = selectedUser;
+              handleClose();
+              openConfirm(user, "delete"); // نستخدم نفس الديالوج
+            }}
+            sx={{ color: "#D32F2F" }}
+          >
             <DeleteIcon sx={{ mr: 1, fontSize: 18 }} />
             Delete User
           </MenuItem>
         </Menu>
+        <Box
+          sx={{
+            mt: "auto",
+            py: 2,
+            textAlign: "center",
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: 13,
+              color: "#9ca3af",
+              letterSpacing: 0.5,
+            }}
+          >
+            alrowadpub.com
+          </Typography>
+        </Box>
+        <Dialog
+          open={editOpen}
+          onClose={() => setEditOpen(false)}
+          fullWidth
+          maxWidth="xs"
+          PaperProps={{
+            sx: {
+              borderRadius: "16px",
+              p: 1,
+            },
+          }}
+        >
+          <DialogTitle sx={{ fontWeight: 700, color: "#2B5A9E" }}>
+            Edit User
+          </DialogTitle>
+
+          <DialogContent>
+            <Stack spacing={2.5} sx={{ mt: 1 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                <Avatar
+                  src={selectedUser?.avatar_url}
+                  sx={{ width: 46, height: 46 }}
+                >
+                  {!selectedUser?.avatar_url &&
+                    selectedUser?.full_name?.charAt(0)}
+                </Avatar>
+
+                <Box>
+                  <Typography fontWeight={600}>
+                    {selectedUser?.full_name}
+                  </Typography>
+                  <Typography fontSize={13} color="#7a869a">
+                    {selectedUser?.email}
+                  </Typography>
+                </Box>
+              </Box>
+
+              <FormControl fullWidth>
+                <Typography sx={{ fontSize: 13, mb: 0.5, color: "#7a869a" }}>
+                  Role
+                </Typography>
+
+                <Select
+                  value={editRole}
+                  onChange={(e) => setEditRole(e.target.value)}
+                  sx={{ borderRadius: "10px" }}
+                >
+                  <MenuItem value="student">Student</MenuItem>
+                  <MenuItem value="teacher">Teacher</MenuItem>
+                  <MenuItem value="admin">Admin</MenuItem>
+                </Select>
+              </FormControl>
+
+              <Box
+                sx={{
+                  border: "1px solid #e5e7eb",
+                  borderRadius: "12px",
+                  p: 2,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  backgroundColor: "#f9fafb",
+                }}
+              >
+                <Box>
+                  <Typography fontWeight={600}>User Status</Typography>
+                  <Typography fontSize={13} color="#7a869a">
+                    {editStatus === "active"
+                      ? "User can access the platform"
+                      : "User is blocked"}
+                  </Typography>
+                </Box>
+
+                <IOSSwitch
+                  checked={editStatus === "active"}
+                  onChange={(e) =>
+                    setEditStatus(e.target.checked ? "active" : "inactive")
+                  }
+                />
+              </Box>
+            </Stack>
+          </DialogContent>
+
+          <DialogActions sx={{ px: 3, pb: 2 }}>
+            <Button onClick={() => setEditOpen(false)} disabled={editLoading}>
+              Cancel
+            </Button>
+
+            <Button
+              variant="contained"
+              disabled={editLoading}
+              onClick={async () => {
+                try {
+                  setEditLoading(true);
+
+                  await axiosInstance.put(
+                    ENDPOINTS.USERS.UPDATE(selectedUser.id),
+                    {
+                      role: editRole,
+                      status: editStatus,
+                    },
+                  );
+
+                  refetch();
+                  setEditOpen(false);
+                } catch (err) {
+                  console.error(err);
+                } finally {
+                  setEditLoading(false);
+                }
+              }}
+              sx={{
+                backgroundColor: "#2B5A9E",
+                textTransform: "none",
+                borderRadius: "8px",
+                px: 3,
+              }}
+            >
+              {editLoading ? "Saving..." : "Save Changes"}
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </>
   );
 }
+
+import { styled } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+
+const IOSSwitch = styled(Switch)(({ theme }) => ({
+  width: 40,
+  height: 22,
+  padding: 0,
+  "& .MuiSwitch-switchBase": {
+    padding: 0,
+    margin: 2,
+    transitionDuration: "300ms",
+    "&.Mui-checked": {
+      transform: "translateX(18px)",
+      color: "#fff",
+      "& + .MuiSwitch-track": {
+        backgroundColor: "#34C759", // 🔥 نفس لون الآيفون
+        opacity: 1,
+        border: 0,
+      },
+    },
+  },
+  "& .MuiSwitch-thumb": {
+    boxSizing: "border-box",
+    width: 18,
+    height: 18,
+    boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
+  },
+  "& .MuiSwitch-track": {
+    borderRadius: 22,
+    backgroundColor: "#E5E5EA", // 🔥 رمادي فاتح مثل iOS
+    opacity: 1,
+    transition: theme.transitions.create(["background-color"], {
+      duration: 300,
+    }),
+  },
+}));

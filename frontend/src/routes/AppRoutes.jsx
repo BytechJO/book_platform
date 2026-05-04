@@ -33,6 +33,7 @@ import HelpStudent from "../pages/student/Help";
 import UserProfile from "../pages/admin/UserProfile";
 import UserProfileStudent from "../pages/student/UserProfile";
 import UserProfileTeacher from "../pages/teacher/UserProfile";
+import ViewUser from "../pages/admin/ViewUser";
 
 export default function AppRoutes() {
   return (
@@ -63,6 +64,7 @@ export default function AppRoutes() {
 
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="users" element={<Users />} />
+        <Route path="users/:id" element={<ViewUser />} />
         <Route path="books" element={<Books />} />
         <Route path="codes" element={<Codes />} />
         <Route path="reports" element={<Reports />} />

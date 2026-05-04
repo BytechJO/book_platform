@@ -119,7 +119,6 @@ const getMyBookById = async (req, res) => {
   `,
     [bookId],
   );
-  console.log("VIEW INCREMENT", bookId);
   try {
     const result = await pool.query(
       `

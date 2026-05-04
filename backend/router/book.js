@@ -10,6 +10,8 @@ const {
   getPuplicBookById,
   getBooksGrowth,
   getTopBooks,
+  updateBookStatus,
+  duplicateBook,
 } = require("../controller/book");
 const { authenticate } = require("../middleware/authenticate");
 const authorize = require("../middleware/authorized");
@@ -54,4 +56,7 @@ router.put(
   authorize("admin"),
   updateBook,
 );
+
+router.patch("/:id/status", authenticate, authorize("admin"), updateBookStatus);
+router.post("/:id/duplicate", authenticate, authorize("admin"), duplicateBook);
 module.exports = router;

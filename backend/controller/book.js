@@ -21,15 +21,18 @@ const createBook = async (req, res) => {
     const {
       title,
       description,
+      short_description,
       app_store_url,
       google_play_url,
       online_book_url,
-      isbn,
+      category_id,
     } = req.body;
 
+    // ✅ تحقق من الاسم
     if (!title) {
       return res.status(400).json({ message: "Title is required" });
     }
+
     const existingBook = await pool.query(
       "SELECT id FROM books WHERE LOWER(title) = LOWER($1)",
       [title.trim()],
@@ -40,20 +43,22 @@ const createBook = async (req, res) => {
         message: "Book title already exists",
       });
     }
-    if (!isbn) {
-      return res.status(400).json({ message: "ISBN is required" });
+
+    // ✅ توليد ISBN (10 أرقام + unique)
+    let isbn;
+    let exists = true;
+
+    while (exists) {
+      isbn = Math.floor(1000000000 + Math.random() * 9000000000).toString();
+
+      const check = await pool.query("SELECT id FROM books WHERE isbn = $1", [
+        isbn,
+      ]);
+
+      exists = check.rows.length > 0;
     }
 
-    const existingIsbn = await pool.query(
-      "SELECT id FROM books WHERE isbn = $1",
-      [isbn.trim()],
-    );
-
-    if (existingIsbn.rows.length > 0) {
-      return res.status(400).json({
-        message: "ISBN already exists",
-      });
-    }
+    // ✅ الصور
     let shortUrl = null;
     let longUrl = null;
     let shortPublicId = null;
@@ -79,21 +84,20 @@ const createBook = async (req, res) => {
       longPublicId = uploaded.public_id;
     }
 
+    // ✅ إدخال البيانات
     const result = await pool.query(
       `INSERT INTO books
-       (title, description, app_store_url,
-        google_play_url, online_book_url,
-        cover_image_url_short,
-        cover_image_url_long,
-        cover_image_short_public_id,
-        cover_image_long_public_id,
-        isbn,
-        created_by)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9 ,$10  ,$11)
-       RETURNING *`,
+      (title, description, short_description,
+       app_store_url, google_play_url, online_book_url,
+       cover_image_url_short, cover_image_url_long,
+       cover_image_short_public_id, cover_image_long_public_id,
+       isbn, created_by, category_id, status)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
+      RETURNING *`,
       [
         title,
         description,
+        short_description,
         app_store_url,
         google_play_url,
         online_book_url,
@@ -103,16 +107,19 @@ const createBook = async (req, res) => {
         longPublicId,
         isbn,
         req.user.id,
+        category_id,
+        "Draft", // ✅ default
       ],
     );
 
     const createdBook = result.rows[0];
 
+    // ✅ Activity log
     try {
       await logActivity({
         type: "book",
         action: "created",
-        title: "New book published",
+        title: "New book created",
         description: `Book "${createdBook.title}" added`,
       });
     } catch (err) {
@@ -129,10 +136,14 @@ const createBook = async (req, res) => {
 const getAllBooks = async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT b.*, u.full_name AS created_by_name
-       FROM books b
-       LEFT JOIN users u ON b.created_by = u.id
-       ORDER BY b.created_at DESC`,
+      `SELECT 
+  b.*,
+  u.full_name AS created_by_name,
+  c.name AS category_name
+FROM books b
+LEFT JOIN users u ON b.created_by = u.id
+LEFT JOIN categories c ON b.category_id = c.id
+ORDER BY b.created_at DESC`,
     );
 
     res.json(result.rows);
@@ -165,13 +176,26 @@ const getBookById = async (req, res) => {
   try {
     const { id } = req.params;
     const result = await pool.query(
-      `SELECT b.*, u.full_name AS created_by_name
-       FROM books b
-         LEFT JOIN users u ON b.created_by = u.id
-         WHERE b.id = $1`,
+      `SELECT 
+    b.*,
+    u.full_name AS created_by_name,
+    c.name AS category_name,
+
+    ARRAY_AGG(DISTINCT class) AS classes
+
+  FROM books b
+
+  LEFT JOIN users u ON b.created_by = u.id
+  LEFT JOIN categories c ON b.category_id = c.id
+
+  LEFT JOIN user_books ub ON ub.book_id = b.id
+  LEFT JOIN LATERAL UNNEST(ub.book_classes) AS class ON TRUE
+
+  WHERE b.id = $1
+
+  GROUP BY b.id, u.full_name, c.name`,
       [id],
     );
-
     if (result.rows.length === 0) {
       return res.status(404).json({ message: "Book not found" });
     }
@@ -264,11 +288,15 @@ const updateBook = async (req, res) => {
     if (existingBook.rows.length === 0) {
       return res.status(404).json({ message: "Book not found" });
     }
+
+    const book = existingBook.rows[0];
+
+    // ✅ تحقق من تكرار الاسم
     if (req.body.title) {
       const duplicate = await pool.query(
         `SELECT id FROM books 
-     WHERE LOWER(title) = LOWER($1) 
-     AND id != $2`,
+         WHERE LOWER(title) = LOWER($1) 
+         AND id != $2`,
         [req.body.title.trim(), id],
       );
 
@@ -278,24 +306,8 @@ const updateBook = async (req, res) => {
         });
       }
     }
-    if (!req.body.isbn) {
-      return res.status(400).json({ message: "ISBN is required" });
-    }
 
-    const duplicateIsbn = await pool.query(
-      `SELECT id FROM books 
-   WHERE isbn = $1 
-   AND id != $2`,
-      [req.body.isbn.trim(), id],
-    );
-
-    if (duplicateIsbn.rows.length > 0) {
-      return res.status(400).json({
-        message: "ISBN already exists",
-      });
-    }
-    const book = existingBook.rows[0];
-
+    // ✅ الصور
     let shortUrl = book.cover_image_url_short;
     let shortPublicId = book.cover_image_short_public_id;
 
@@ -330,26 +342,31 @@ const updateBook = async (req, res) => {
       longPublicId = uploaded.public_id;
     }
 
+    // ✅ update بدون ISBN
     const result = await pool.query(
       `
-  UPDATE books
-    SET title=$1,
-    description=$2,
-    app_store_url=$3,
-    google_play_url=$4,
-    online_book_url=$5,
-    cover_image_url_short=$6,
-    cover_image_url_long=$7,
-    cover_image_short_public_id=$8,
-    cover_image_long_public_id=$9,
-    isbn=$10,
-    updated_at=NOW()
-    WHERE id=$11
-    RETURNING *
+      UPDATE books
+      SET title=$1,
+          description=$2,
+          short_description=$3,
+          app_store_url=$4,
+          google_play_url=$5,
+          online_book_url=$6,
+          cover_image_url_short=$7,
+          cover_image_url_long=$8,
+          cover_image_short_public_id=$9,
+          cover_image_long_public_id=$10,
+          status=$11,
+          language=$12,
+          category_id=$13,
+          updated_at=NOW()
+      WHERE id=$14
+      RETURNING *
       `,
       [
         req.body.title,
         req.body.description,
+        req.body.short_description,
         req.body.app_store_url,
         req.body.google_play_url,
         req.body.online_book_url,
@@ -357,13 +374,16 @@ const updateBook = async (req, res) => {
         longUrl,
         shortPublicId,
         longPublicId,
-        req.body.isbn,
+        req.body.status,
+        req.body.language,
+        req.body.category_id,
         id,
       ],
     );
 
     const updatedBook = result.rows[0];
 
+    // ✅ Activity log
     try {
       await logActivity({
         type: "book",
@@ -432,6 +452,153 @@ const getTopBooks = async (req, res) => {
     res.status(500).json({ message: "error" });
   }
 };
+const updateBookStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const existing = await pool.query("SELECT * FROM books WHERE id = $1", [
+      id,
+    ]);
+
+    if (existing.rows.length === 0) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+
+    const book = existing.rows[0];
+
+    // 🔥 قلب الحالة
+    const newStatus = book.status === "Published" ? "Draft" : "Published";
+
+    const result = await pool.query(
+      `
+  UPDATE books
+  SET status = $1::text,
+      published_at = CASE 
+        WHEN $1::text = 'Published' THEN NOW()
+        WHEN $1::text = 'Draft' THEN NULL
+        ELSE published_at
+      END,
+      updated_at = NOW()
+  WHERE id = $2
+  RETURNING *
+  `,
+      [newStatus, id],
+    );
+
+    const updatedBook = result.rows[0];
+
+    // 🔥 Activity
+    let action, titleText, desc;
+
+    if (newStatus === "published") {
+      action = "published";
+      titleText = "Book published";
+      desc = `Book "${book.title}" is now published`;
+    } else {
+      action = "unpublished";
+      titleText = "Book unpublished";
+      desc = `Book "${book.title}" moved to draft`;
+    }
+
+    try {
+      await logActivity({
+        type: "book",
+        action,
+        title: titleText,
+        description: desc,
+      });
+    } catch (err) {
+      console.error("Activity log failed:", err);
+    }
+
+    res.json(updatedBook);
+  } catch (error) {
+    console.error("Update status error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const duplicateBook = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // ✅ جيب الكتاب الأصلي
+    const bookResult = await pool.query("SELECT * FROM books WHERE id=$1", [
+      id,
+    ]);
+
+    if (!bookResult.rows.length) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+
+    const b = bookResult.rows[0];
+
+    // 🔥 1. اسم أساسي بدون Copy
+    const baseTitle = b.title.replace(/\s\(Copy.*\)$/, "");
+
+    // 🔥 2. احسب عدد النسخ
+    const countResult = await pool.query(
+      `SELECT COUNT(*) FROM books WHERE title ILIKE $1`,
+      [`${baseTitle}%`],
+    );
+
+    const copyCount = parseInt(countResult.rows[0].count);
+
+    // 🔥 3. اسم جديد
+    const newTitle =
+      copyCount === 0
+        ? `${baseTitle} (Copy)`
+        : `${baseTitle} (Copy ${copyCount})`;
+
+    // 🔥 4. توليد ISBN
+    let isbn;
+    let exists = true;
+
+    while (exists) {
+      isbn = Math.floor(1000000000 + Math.random() * 9000000000).toString();
+
+      const check = await pool.query("SELECT id FROM books WHERE isbn = $1", [
+        isbn,
+      ]);
+
+      exists = check.rows.length > 0;
+    }
+
+    // ✅ 5. إدخال النسخة الجديدة
+    const result = await pool.query(
+      `INSERT INTO books
+      (title, description, short_description,
+       app_store_url, google_play_url, online_book_url,
+       cover_image_url_short, cover_image_url_long,
+       cover_image_short_public_id, cover_image_long_public_id,
+       isbn, created_by, category_id, status, language)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+      RETURNING *`,
+      [
+        newTitle,
+        b.description || null,
+        b.short_description || null,
+        b.app_store_url || null,
+        b.google_play_url || null,
+        b.online_book_url || null,
+        b.cover_image_url_short || null,
+        b.cover_image_url_long || null,
+        b.cover_image_short_public_id || null,
+        b.cover_image_long_public_id || null,
+        isbn,
+        req.user.id,
+        b.category_id || null,
+        "Draft", // 🔥 دايمًا Draft
+        b.language || null,
+      ],
+    );
+
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error("Duplicate error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 module.exports = {
   createBook,
   getAllBooks,
@@ -442,4 +609,6 @@ module.exports = {
   getPuplicBookById,
   getBooksGrowth,
   getTopBooks,
+  updateBookStatus,
+  duplicateBook,
 };

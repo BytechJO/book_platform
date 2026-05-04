@@ -1,21 +1,85 @@
-import { Box, Typography, Stack, Card, Divider } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axiosInstance from "src/api/axios";
 import ENDPOINTS from "src/api/endpoints";
-import ISPNIconButton from "src/components/icons/ISPNIcon";
-import PrinterIcon from "src/components/icons/PrinterIcon";
-import Icon from "src/assets/icon/icone.svg";
-import AppleCircleIcon from "src/components/icons/AppleCircleIcon";
-import AndroidCircleIcon from "src/components/icons/AndroidCircleIcon";
-import onlineIcon1 from "src/assets/icon/onlineIcon.png";
+import {
+  Box,
+  Typography,
+  Stack,
+  Button,
+  IconButton,
+  Card,
+  Dialog,
+  DialogContent,
+} from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import EditIcon from "@mui/icons-material/Edit";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import PublishIcon from "@mui/icons-material/Publish";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-
+import BookTopSection from "./BookTopSection";
+import BottomSection from "./BottomSection";
+import UserBookPreview from "./UserBookPreview";
+import { useGetCodes } from "../../../api";
+import CurveLoader from "../../../components/CurveLoader";
 export default function ViewBook() {
   const { id } = useParams();
   const [book, setBook] = useState(null);
+  const [openPreview, setOpenPreview] = useState(false);
+  const navigate = useNavigate();
+  const [expanded, setExpanded] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const { codes = [] } = useGetCodes();
+  const usedCodes = book
+    ? codes.filter((c) => c.book_id === book.id && c.is_used).length
+    : 0;
+  const handleDelete = async () => {
+    try {
+      setDeleting(true);
 
-  const isArabic = (text) => /[\u0600-\u06FF]/.test(text);
+      await axiosInstance.delete(ENDPOINTS.BOOKS.DELETE(book.id));
+
+      // 🔥 رجوع للصفحة الرئيسية
+      navigate("/admin/books");
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setDeleting(false);
+    }
+  };
+  const handleTogglePublish = async (book) => {
+    try {
+      setLoading(true);
+
+      await axiosInstance.patch(ENDPOINTS.BOOKS.STATUS(book.id));
+
+      const res = await axiosInstance.get(ENDPOINTS.BOOKS.BY_ID(book.id));
+      setBook(res.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleDuplicate = async () => {
+    try {
+      setLoading(true);
+
+      await axiosInstance.post(`/api/books/${book.id}/duplicate`);
+
+      navigate("/admin/books"); // أو refetch إذا بدك تبقى هون
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const isLong = book?.description?.length > 200;
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -25,230 +89,214 @@ export default function ViewBook() {
     fetchBook();
   }, [id]);
 
-  if (!book) return null;
-
-  const isRTL = isArabic(book.title);
+  if (!book)  return <CurveLoader />;;
 
   return (
-    <>
-      <Helmet>
-        <title>Book details - Teacher Dashboard</title>
-      </Helmet>
+    <Box sx={{ px: 3, py: 2 }}>
+      {/* 🔥 HEADER */}
       <Box
         sx={{
           display: "flex",
-          justifyContent: "center",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
         }}
       >
-        <Box sx={{ maxWidth: 1200, mx: "auto", px: 2 }}>
-          <Stack
-            direction={{ xs: "column", md: isRTL ? "row" : "row-reverse" }}
-            spacing={6}
-            alignItems="flex-start"
-          >
-            {/* LEFT SIDE */}
-            <Box
-              sx={{
-                width: { xs: "100%", md: 370 },
-                position: "relative",
-                height: "auto",
-              }}
-            >
-              {/* 🔵 IMAGE */}
-              <Box
-                sx={{
-                  position: "relative",
-                  zIndex: 2,
-                  borderRadius: "24px",
-                  overflow: "hidden",
-                }}
-              >
-                <Box
-                  component="img"
-                  src={book.cover_image_url_long}
-                  alt={book.title}
-                  sx={{
-                    width: "100%",
-                    display: "block",
-                    transform: "scale(1.06)",
-                    transformOrigin: "center",
-                    height: "auto",
-                  }}
-                />
-              </Box>
-              {/* ⚪ INFO BOX */}
-              <Box
-                sx={{
-                  position: "relative",
-                  zIndex: 1,
-                  mt: "-60px",
-                  pt: 8,
-                  px: 4,
-                  pb: 4,
-                  borderRadius: "28px",
-                  backgroundColor: "#ffffff",
-                  boxShadow: "0 20px 45px rgba(0,0,0,0.08)",
-                  border: "1px solid #E1E1E1",
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontWeight: 600,
-                    color: "#2d5aa7",
-                    fontSize: 18,
-                    mt: 2,
-                    mb: 1,
-                  }}
-                >
-                  Information
-                </Typography>
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1.5,
-                    mb: 2,
-                  }}
-                >
-                  <ISPNIconButton size={20} />
-                  <Typography sx={{ color: "#1A4D96", fontSize: 14 }}>
-                    ISBN: {book.isbn || "—"}
-                  </Typography>
-                </Box>
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1.5,
-                    mb: 2,
-                  }}
-                >
-                  <PrinterIcon size={20} />
-                  <Typography sx={{ color: "#1A4D96", fontSize: 14 }}>
-                    Al-Rowad for Publishing & Distribution
-                  </Typography>
-                </Box>
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1.5,
-                    mb: 1,
-                  }}
-                >
-                </Box>
-
-                <Divider sx={{ my: 1 }} />
-
-                <Typography sx={{ fontWeight: 600, mb: 2, color: "#1A4D96" }}>
-                  Available on
-                </Typography>
-
-                <Stack direction="row" spacing={2}>
-                  {book.app_store_url && (
-                    <Box
-                      onClick={() => window.open(book.app_store_url, "_blank")}
-                      sx={{
-                        cursor: "pointer",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
-                    >
-                      <AppleCircleIcon width={40} height={40} />
-                      <Typography variant="caption">App Store</Typography>
-                    </Box>
-                  )}
-
-                  {book.google_play_url && (
-                    <Box
-                      onClick={() =>
-                        window.open(book.google_play_url, "_blank")
-                      }
-                      sx={{
-                        cursor: "pointer",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
-                    >
-                      <AndroidCircleIcon width={40} height={40} />
-                      <Typography variant="caption">Google play</Typography>
-                    </Box>
-                  )}
-
-                  {book.online_book_url && (
-                    <Box
-                      onClick={() =>
-                        window.open(book.online_book_url, "_blank")
-                      }
-                      sx={{
-                        cursor: "pointer",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Box
-                        component="img"
-                        src={onlineIcon1}
-                        sx={{ width: 40 }}
-                      />
-                      <Typography variant="caption">Online book</Typography>
-                    </Box>
-                  )}
-                </Stack>
-              </Box>
-            </Box>
-
-            {/* RIGHT SIDE */}
-            <Box sx={{ flex: 1, textAlign: isRTL ? "right" : "left" }}>
-              <Typography
-                sx={{
-                  fontSize: 36,
-                  fontWeight: 700,
-                  color: "#2d5aa7",
-                  mb: 3,
-                }}
-              >
-                {book.title}
-              </Typography>
-
-              <Box sx={{ width: "100%" }}>
-                <Typography
-                  sx={{
-                    width: "100%",
-                    maxWidth: "100%",
-                    lineHeight: 2,
-                    whiteSpace: "pre-line",
-                    wordBreak: "break-word",
-                    overflowWrap: "anywhere",
-                    minHeight: "150px",
-                    fontSize: 16,
-                    color: "#5d5d5d",
-                  }}
-                >
-                  {book.description?.trim() || "\u00A0"}
-                </Typography>
-              </Box>
-            </Box>
-          </Stack>
-
-          {/* Bottom Text */}
-          <Typography
+        {/* LEFT */}
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <IconButton
+            onClick={() => navigate(-1)}
             sx={{
-              textAlign: "center",
-              fontWeight: 500,
-              fontSize: 14,
+              backgroundColor: "#f4f6f8",
+              borderRadius: "8px",
             }}
           >
-            alrowadpub.com
+            <ArrowBackIcon sx={{ color: "#2B5A9E" }} />{" "}
+          </IconButton>
+
+          <Typography sx={{ color: "#7a869a", fontSize: 14 }}>Books</Typography>
+
+          <Typography sx={{ color: "#7a869a" }}>{">"}</Typography>
+
+          <Typography sx={{ fontWeight: 500, fontSize: 14 }}>
+            Book Details
           </Typography>
-        </Box>
+        </Stack>
+
+        {/* RIGHT */}
+        <Stack direction="row" spacing={1}>
+          <Button
+            variant="outlined"
+            startIcon={<VisibilityIcon />}
+            sx={btnStyle}
+            onClick={() => setOpenPreview(true)}
+          >
+            Preview
+          </Button>
+
+          <Button
+            variant="outlined"
+            startIcon={<EditIcon />}
+            sx={btnStyle}
+            onClick={() => navigate(`/admin/books/${book.id}/edit`)}
+          >
+            Edit Book
+          </Button>
+
+          <Button
+            variant="outlined"
+            startIcon={<ContentCopyIcon />}
+            sx={btnStyle}
+            onClick={handleDuplicate}
+            disabled={loading}
+          >
+            {loading ? "Duplicating..." : "Duplicate"}
+          </Button>
+
+          <Button
+            variant={book.status === "Published" ? "outlined" : "contained"}
+            startIcon={<PublishIcon />}
+            disabled={loading}
+            sx={{
+              ...btnStyle,
+              ...(book.status === "Published"
+                ? {
+                    borderColor: "#f59e0b",
+                    color: "#f59e0b",
+                  }
+                : {
+                    backgroundColor: "#2e7d32",
+                    "&:hover": { backgroundColor: "#27682b" },
+                  }),
+            }}
+            onClick={() => handleTogglePublish(book)}
+          >
+            {book.status === "Published" ? "Draft" : "Publish"}
+          </Button>
+
+          <Button
+            variant="outlined"
+            startIcon={<DeleteIcon />}
+            sx={{
+              ...btnStyle,
+              borderColor: "#d32f2f",
+              color: "#d32f2f",
+            }}
+            onClick={() => setOpenDelete(true)}
+          >
+            Delete
+          </Button>
+        </Stack>
       </Box>
-    </>
+
+      {/* 🔥 CONTENT */}
+      <BookTopSection book={book} />
+      <BottomSection book={book} usedCodes={usedCodes} />
+      <Card
+        sx={{
+          mt: 2,
+          p: 3,
+          borderRadius: "14px",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+        }}
+      >
+        <Typography
+          sx={{
+            fontWeight: 600,
+            mb: 1,
+            color: "#2B5A9E",
+          }}
+        >
+          Book Description
+        </Typography>
+
+        <Typography
+          sx={{
+            color: "#6b7280",
+            fontSize: 14,
+            lineHeight: 1.8,
+            whiteSpace: "pre-line", // 🔥 يحافظ على الفقرات
+          }}
+        >
+          {expanded || !isLong
+            ? book.description
+            : book.description.slice(0, 200) + "..."}
+        </Typography>
+
+        {/* 🔥 Show More */}
+        {isLong && (
+          <Box
+            onClick={() => setExpanded(!expanded)}
+            sx={{
+              mt: 1,
+              color: "#2B5A9E",
+              fontSize: 13,
+              fontWeight: 500,
+              cursor: "pointer",
+              width: "fit-content",
+            }}
+          >
+            {expanded ? "Show less" : "Show more"}
+          </Box>
+        )}
+      </Card>
+      <Box
+        sx={{
+          mt: 2,
+          pt: 2,
+          textAlign: "center",
+        }}
+      >
+        <Typography
+          sx={{
+            fontSize: 13,
+            color: "#9ca3af",
+            letterSpacing: 0.5,
+          }}
+        >
+          alrowadpub.com
+        </Typography>
+      </Box>
+      <Dialog
+        open={openPreview}
+        onClose={() => setOpenPreview(false)}
+        maxWidth="lg"
+        fullWidth
+      >
+        <DialogContent sx={{ p: 0 }}>
+          {/* 🔥 هون تحط UI تبع اليوزر */}
+          <UserBookPreview book={book} />
+        </DialogContent>
+      </Dialog>
+      <Dialog open={openDelete} onClose={() => setOpenDelete(false)}>
+        <DialogContent sx={{ p: 3, minWidth: 300 }}>
+          <Typography fontWeight={600} mb={1}>
+            Delete Book
+          </Typography>
+
+          <Typography sx={{ fontSize: 14, color: "#666" }}>
+            Are you sure you want to delete this book?
+          </Typography>
+
+          <Stack direction="row" spacing={2} mt={3} justifyContent="flex-end">
+            <Button onClick={() => setOpenDelete(false)}>Cancel</Button>
+
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleDelete}
+              disabled={deleting}
+            >
+              {deleting ? "Deleting..." : "Delete"}
+            </Button>
+          </Stack>
+        </DialogContent>
+      </Dialog>
+    </Box>
   );
 }
+const btnStyle = {
+  textTransform: "none",
+  borderRadius: "8px",
+  fontWeight: 500,
+};

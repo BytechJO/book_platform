@@ -68,3 +68,24 @@ export function useActivities() {
 
   return memoizedValue;
 }
+
+export function useGetUser(id) {
+  const URL = id ? ENDPOINTS.USERS.USER(id) : null;
+
+  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      user: data?.user || null,
+      books: data?.books || [],
+      used_codes: data?.used_codes || 0,
+      classes: data?.classes || [],
+      loading: isLoading,
+      error,
+      validating: isValidating,
+    }),
+    [data, error, isLoading, isValidating],
+  );
+
+  return memoizedValue;
+}

@@ -8,6 +8,14 @@ import {
   Button,
   Stack,
   CircularProgress,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -16,6 +24,7 @@ import ENDPOINTS from "../../../api/endpoints";
 import { Helmet } from "react-helmet-async";
 import ImageUploadBox from "../../../components/ImageUploadBox";
 import { useGetBooks } from "../../../api";
+import { useGetCategories } from "../../../api/categories";
 export default function CreateBook() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -25,9 +34,38 @@ export default function CreateBook() {
   const isEdit = Boolean(id);
   const [shortPreview, setShortPreview] = useState(null);
   const [longPreview, setLongPreview] = useState(null);
-  const [shortImageError, setShortImageError] = useState("");
   const [longImageError, setLongImageError] = useState("");
   const { books } = useGetBooks();
+  const { categories } = useGetCategories();
+  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
+  const [newCategory, setNewCategory] = useState("");
+  const [categoryLoading, setCategoryLoading] = useState(false);
+  const handleCreateCategory = async () => {
+    if (!newCategory.trim()) return;
+
+    try {
+      setCategoryLoading(true);
+
+      const res = await axiosInstance.post(ENDPOINTS.CATEGORIES.CREATE, {
+        name: newCategory,
+      });
+
+      const created = res.data;
+
+      // 🔥 تحديث القائمة
+      categories.push(created);
+
+      // 🔥 اختاره مباشرة
+      setValue("category_id", created.id);
+
+      setNewCategory("");
+      setCategoryDialogOpen(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setCategoryLoading(false);
+    }
+  };
   const schema = yup.object().shape({
     title: yup
       .string()
@@ -36,17 +74,17 @@ export default function CreateBook() {
       .min(3, "Title must be at least 3 characters"),
 
     description: yup.string().nullable(),
-
-    isbn: yup
-      .string()
-      .required("ISBN is required")
-      .matches(/^[0-9-]*$/, "ISBN must contain only numbers and dashes"),
+    short_description: yup.string().nullable(),
 
     app_store_url: yup.string().nullable().url("Invalid App Store URL"),
 
     google_play_url: yup.string().nullable().url("Invalid Google Play URL"),
 
     online_book_url: yup.string().nullable().url("Invalid Online Book URL"),
+    // category: yup.string().required("Category is required"),
+    short_image: isEdit
+      ? yup.mixed().nullable() // 🔥 هنا الحل
+      : yup.mixed().required("Short cover image is required"),
   });
 
   useEffect(() => {
@@ -56,11 +94,13 @@ export default function CreateBook() {
       if (book) {
         setValue("title", book.title || "");
         setValue("description", book.description || "");
+        setValue("short_description", book.short_description || "");
         setValue("app_store_url", book.app_store_url || "");
         setValue("google_play_url", book.google_play_url || "");
         setValue("online_book_url", book.online_book_url || "");
-        setValue("isbn", book.isbn || "");
-
+        setValue("status", book.status || "Draft");
+        setValue("language", book.language || "");
+        setValue("category_id", book.category_id || "");
         setShortPreview(book.cover_image_url_short);
         setLongPreview(book.cover_image_url_long);
       } else {
@@ -74,6 +114,7 @@ export default function CreateBook() {
     register,
     handleSubmit,
     setValue,
+    watch,
     setError,
     formState: { errors },
   } = useForm({
@@ -81,10 +122,14 @@ export default function CreateBook() {
     defaultValues: {
       title: "",
       description: "",
-      isbn: "",
+      short_description: "",
       app_store_url: "",
       google_play_url: "",
       online_book_url: "",
+      status: "Draft",
+      language: "",
+      category_id: "",
+      short_image: null,
     },
   });
   const handleImageChange = (file, type) => {
@@ -95,7 +140,7 @@ export default function CreateBook() {
     if (type === "short") {
       setShortImage(file);
       setShortPreview(previewUrl);
-      setShortImageError("");
+      setValue("short_image", file);
     } else {
       setLongImage(file);
       setLongPreview(previewUrl);
@@ -103,28 +148,24 @@ export default function CreateBook() {
     }
   };
   const onSubmit = async (data) => {
-    if (!shortImage && !shortPreview) {
-      setShortImageError("Short cover image is required");
-      return;
-    } else {
-      setShortImageError("");
-    }
-
-    if (!longImage && !longPreview) {
-      setLongImageError("Long cover image is required");
-      return;
-    } else {
-      setLongImageError("");
-    }
-
     const formData = new FormData();
 
     Object.keys(data).forEach((key) => {
-      formData.append(key, data[key]?.trim?.() ?? data[key]);
+      if (key === "short_image") return;
+
+      let value = data[key];
+
+      // 🔥 أهم سطر
+      if (key === "category_id" && value === "") {
+        return; // ❌ لا تبعت الحقل نهائياً
+      }
+
+      formData.append(key, value?.trim?.() ?? value);
     });
 
     if (shortImage) formData.append("cover_short", shortImage);
     if (longImage) formData.append("cover_long", longImage);
+
     try {
       setLoading(true);
 
@@ -143,16 +184,6 @@ export default function CreateBook() {
           type: "server",
           message: "This title already exists",
         });
-      } else if (message === "ISBN already exists") {
-        setError("isbn", {
-          type: "server",
-          message: "ISBN already exists",
-        });
-      } else if (message === "ISBN is required") {
-        setError("isbn", {
-          type: "server",
-          message: "ISBN is required",
-        });
       } else {
         console.log(message || "Something went wrong");
       }
@@ -160,7 +191,9 @@ export default function CreateBook() {
       setLoading(false);
     }
   };
-
+  if (loading) {
+    return <CurveLoader />;
+  }
   return (
     <>
       <Helmet>
@@ -183,6 +216,7 @@ export default function CreateBook() {
                 label="Title *"
                 {...register("title")}
                 error={!!errors.title}
+                InputLabelProps={{ shrink: true }}
                 helperText={errors.title?.message}
                 fullWidth
               />
@@ -190,22 +224,28 @@ export default function CreateBook() {
                 label="Description"
                 {...register("description")}
                 error={!!errors.description}
+                InputLabelProps={{ shrink: true }}
                 helperText={errors.description?.message}
                 multiline
                 rows={4}
                 fullWidth
               />
               <TextField
-                label="ISBN"
-                {...register("isbn")}
-                error={!!errors.isbn}
-                helperText={errors.isbn?.message}
+                label="Short Description"
+                {...register("short_description")}
+                error={!!errors.short_description}
+                InputLabelProps={{ shrink: true }}
+                helperText={errors.short_description?.message}
+                multiline
+                rows={2}
                 fullWidth
               />
+
               <TextField
                 label="App Store URL"
                 {...register("app_store_url")}
                 error={!!errors.app_store_url}
+                InputLabelProps={{ shrink: true }}
                 helperText={errors.app_store_url?.message}
                 fullWidth
               />
@@ -214,6 +254,7 @@ export default function CreateBook() {
                 label="Google Play URL"
                 {...register("google_play_url")}
                 error={!!errors.google_play_url}
+                InputLabelProps={{ shrink: true }}
                 helperText={errors.google_play_url?.message}
                 fullWidth
               />
@@ -222,9 +263,63 @@ export default function CreateBook() {
                 label="Online Book URL"
                 {...register("online_book_url")}
                 error={!!errors.online_book_url}
+                InputLabelProps={{ shrink: true }}
                 helperText={errors.online_book_url?.message}
                 fullWidth
               />
+              <FormControl fullWidth>
+                <InputLabel>Status</InputLabel>
+                <Select
+                  value={watch("status")}
+                  onChange={(e) => setValue("status", e.target.value)}
+                >
+                  <MenuItem value="Draft">Draft</MenuItem>
+                  <MenuItem value="Published">Published</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl fullWidth>
+                <InputLabel>Category</InputLabel>
+                <Select
+                  value={watch("category_id")}
+                  onChange={(e) => {
+                    if (e.target.value === "add_new") {
+                      setCategoryDialogOpen(true);
+                      return;
+                    }
+
+                    setValue("category_id", e.target.value);
+                  }}
+                >
+                  <MenuItem value="">
+                    <em>Select Category</em>
+                  </MenuItem>
+
+                  {categories.map((cat) => (
+                    <MenuItem key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </MenuItem>
+                  ))}
+
+                  {/* 🔥 زر الإضافة */}
+                  <MenuItem
+                    value="add_new"
+                    sx={{ color: "#2B5A9E", fontWeight: 600 }}
+                  >
+                    ➕ Add Category
+                  </MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl fullWidth>
+                <InputLabel>Language</InputLabel>
+                <Select
+                  value={watch("language")}
+                  onChange={(e) => setValue("language", e.target.value)}
+                >
+                  <MenuItem value="English">English</MenuItem>
+                  <MenuItem value="Arabic">Arabic</MenuItem>
+                  <MenuItem value="French">French</MenuItem>
+                </Select>
+              </FormControl>
               <Stack spacing={4}>
                 {/* Short Image */}
                 <ImageUploadBox
@@ -233,9 +328,9 @@ export default function CreateBook() {
                   onFileSelect={(file) => handleImageChange(file, "short")}
                 />
 
-                {shortImageError && (
+                {errors.short_image && (
                   <Typography color="error" fontSize={14}>
-                    {shortImageError}
+                    {errors.short_image.message}
                   </Typography>
                 )}
 
@@ -290,6 +385,34 @@ export default function CreateBook() {
             </Stack>
           </Box>
         </Box>
+        <Dialog
+          open={categoryDialogOpen}
+          onClose={() => setCategoryDialogOpen(false)}
+        >
+          <DialogTitle>Create Category</DialogTitle>
+
+          <DialogContent>
+            <TextField
+              fullWidth
+              label="Category Name"
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+              sx={{ mt: 2 }}
+            />
+          </DialogContent>
+
+          <DialogActions>
+            <Button onClick={() => setCategoryDialogOpen(false)}>Cancel</Button>
+
+            <Button
+              variant="contained"
+              onClick={handleCreateCategory}
+              disabled={categoryLoading}
+            >
+              {categoryLoading ? <CircularProgress size={20} /> : "Create"}
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </>
   );
