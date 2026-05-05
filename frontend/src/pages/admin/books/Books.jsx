@@ -258,7 +258,7 @@ export default function Books() {
   const totalBooks = books.length;
 
   const publishedList = books.filter(
-    (b) => b.status?.toLowerCase() === "Published",
+    (b) => b.status === "Published",
   );
 
   const draftList = books.filter((b) => b.status?.toLowerCase() === "draft");

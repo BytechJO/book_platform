@@ -407,15 +407,16 @@ const getBooksGrowth = async (req, res) => {
   try {
     const result = await pool.query(
       `
-    SELECT
-  FLOOR(EXTRACT(EPOCH FROM (created_at - $1::timestamp)) / 86400 / 7)::int AS week_index,
+SELECT
+  FLOOR(EXTRACT(EPOCH FROM (published_at - $1::timestamp)) / 86400 / 7)::int AS week_index,
   COUNT(*)::int AS value
 FROM books
-WHERE created_at >= $1::timestamp
-AND created_at <= $1::timestamp + INTERVAL '35 days'
+WHERE published_at >= $1::timestamp
+AND published_at <= $1::timestamp + INTERVAL '35 days'
+AND status = 'Published'
 GROUP BY week_index
 ORDER BY week_index;
-      `,
+  `,
       [start],
     );
 
