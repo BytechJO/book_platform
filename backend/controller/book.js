@@ -177,23 +177,22 @@ const getBookById = async (req, res) => {
     const { id } = req.params;
     const result = await pool.query(
       `SELECT 
-    b.*,
-    u.full_name AS created_by_name,
-    c.name AS category_name,
+  b.*,
+  u.full_name AS created_by_name,
+  c2.name AS category_name,
 
-    ARRAY_AGG(DISTINCT class) AS classes
+  ARRAY_AGG(DISTINCT c.class_name) AS classes
 
-  FROM books b
+FROM books b
 
-  LEFT JOIN users u ON b.created_by = u.id
-  LEFT JOIN categories c ON b.category_id = c.id
+LEFT JOIN users u ON b.created_by = u.id
+LEFT JOIN categories c2 ON b.category_id = c2.id
 
-  LEFT JOIN user_books ub ON ub.book_id = b.id
-  LEFT JOIN LATERAL UNNEST(ub.book_classes) AS class ON TRUE
+LEFT JOIN classes c ON c.book_id = b.id
 
-  WHERE b.id = $1
+WHERE b.id = $1
 
-  GROUP BY b.id, u.full_name, c.name`,
+GROUP BY b.id, u.full_name, c2.name`,
       [id],
     );
     if (result.rows.length === 0) {

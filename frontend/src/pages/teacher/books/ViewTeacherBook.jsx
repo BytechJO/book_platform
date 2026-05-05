@@ -40,9 +40,15 @@ export default function ViewTeacherBook() {
     return <CurveLoader />;
   }
   const generateClassName = (classes = [], id) => {
-    const safeClasses = classes || []; // 👈 الحل
-    const nextLetter = String.fromCharCode(65 + safeClasses.length);
-    return `${nextLetter}-${id}`;
+    const letters = classes.map((c) => c.class_name?.split("-")[0]);
+
+    let nextCharCode = 65; // A
+
+    while (letters.includes(String.fromCharCode(nextCharCode))) {
+      nextCharCode++;
+    }
+
+    return `${String.fromCharCode(nextCharCode)}-${id}`;
   };
 
   const handleSaveClass = async () => {
@@ -383,7 +389,7 @@ export default function ViewTeacherBook() {
                   </Typography>
                 </Box>
 
-                {book.book_classes?.length > 0 ? (
+                {book.classes?.length > 0 ? (
                   <Box
                     sx={{
                       p: 2.5,
@@ -400,10 +406,10 @@ export default function ViewTeacherBook() {
                       flexWrap="wrap"
                       useFlexGap
                     >
-                      {book.book_classes.map((c, index) => (
+                      {book.classes.map((c, index) => (
                         <Chip
                           key={index}
-                          label={c}
+                          label={c.class_name}
                           sx={{
                             backgroundColor: "#E3F2FD",
                             color: "#1565C0",
@@ -476,7 +482,7 @@ export default function ViewTeacherBook() {
                     }}
                     onClick={() => {
                       const generated = generateClassName(
-                        book.book_classes || [],
+                        book.classes || [],
                         book.user_book_id,
                       );
                       setClassInput(generated);

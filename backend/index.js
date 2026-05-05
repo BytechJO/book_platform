@@ -34,6 +34,15 @@ app.use("/api/user-books", bookCodesRoutes);
 const categoriesRoutes = require("./router/categories");
 app.use("/api/categories", categoriesRoutes);
 
+// Import and use Classes routes
+const classesRoutes = require("./router/classes");
+app.use("/api/classes", classesRoutes);
+
+// Import and use events routes
+const eventsRoutes = require("./router/events");
+app.use("/api/events", eventsRoutes);
+
+
 app.get("/", async (req, res) => {
   try {
     const result = await pool.query("SELECT NOW()");

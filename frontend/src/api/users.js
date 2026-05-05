@@ -68,7 +68,24 @@ export function useActivities() {
 
   return memoizedValue;
 }
+export function useMyActivities() {
+  const URL = ENDPOINTS.USERS.Myactivity; // 🔥 مهم
 
+  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      activities: data || [],
+      loading: isLoading,
+      error,
+      validating: isValidating,
+      empty: !isLoading && !data?.length,
+    }),
+    [data, error, isLoading, isValidating],
+  );
+
+  return memoizedValue;
+}
 export function useGetUser(id) {
   const URL = id ? ENDPOINTS.USERS.USER(id) : null;
 

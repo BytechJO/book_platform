@@ -24,6 +24,7 @@ const ENDPOINTS = {
     Status: (id) => `/api/users/${id}/status`,
     GROWTH: (start) => `/api/users/users-growth?start=${start}`,
     activity: `/api/users/activities`,
+    Myactivity: `/api/users/myactivities`,
     DELETE: (id) => `/api/users/${id}/delete`,
     USER: (id) => `/api/users/${id}`,
     UPDATE: (id) => `/api/users/${id}`,
@@ -45,12 +46,22 @@ const ENDPOINTS = {
     AddClass: (id) => `/api/user-books/${id}/class`,
     activateClassCode: (id) => `/api/user-books/${id}/class/student`,
     Student_one: (bookId) => `/api/user-books/student/${bookId}`,
+    teacher_dashboard: "/api/user-books/teacher-dashboard",
   },
 
   CATEGORIES: {
     CREATE: "/api/categories",
     ALL: "/api/categories",
     BY_ID: (id) => `/api/categories/${id}`,
+  },
+  Classes: {
+    TeacherClasses: "/api/classes/teacherClasses",
+    MyClassesByBook: (bookId) => `/api/classes/myClassesByBook/${bookId}`,
+  },
+  EVENTS: {
+    CREATE: "/api/events/create",
+    MY_EVENTS: "/api/events/my-events",
+    DELETE: (id) => `/api/events/${id}`,
   },
 };
 

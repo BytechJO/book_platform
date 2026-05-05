@@ -80,3 +80,30 @@ export function useGetStudentBook(bookId) {
   };
   return { ...memoizedValue, refetch };
 }
+
+export function useTeacherDashboard() {
+  const URL = ENDPOINTS.User_book.teacher_dashboard;
+
+  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      stats: data || {
+        total_books: 0,
+        total_classes: 0,
+        total_students: 0,
+      },
+      loading: isLoading,
+      error,
+      validating: isValidating,
+      empty: !isLoading && !data,
+    }),
+    [data, error, isLoading, isValidating],
+  );
+
+  const refetch = async () => {
+    await mutate(URL);
+  };
+
+  return { ...memoizedValue, refetch };
+}

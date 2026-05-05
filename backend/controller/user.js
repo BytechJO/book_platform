@@ -173,26 +173,28 @@ const getUserFullDetails = async (req, res) => {
 
     let classes = [];
 
-    // ✅ classes
     if (user.role === "teacher") {
       const result = await pool.query(
         `
-        SELECT DISTINCT unnest(book_classes) AS class_name
-        FROM user_books
-        WHERE user_id = $1 AND book_classes IS NOT NULL
-        `,
+    SELECT c.id, c.class_name, c.book_id
+    FROM classes c
+    WHERE c.teacher_id = $1
+    `,
         [id],
       );
+
       classes = result.rows;
     } else {
       const result = await pool.query(
         `
-        SELECT DISTINCT student_class
-        FROM user_books
-        WHERE user_id = $1 AND student_class IS NOT NULL
-        `,
+    SELECT c.id, c.class_name, c.book_id
+    FROM class_students cs
+    JOIN classes c ON c.id = cs.class_id
+    WHERE cs.student_id = $1
+    `,
         [id],
       );
+
       classes = result.rows;
     }
 
@@ -230,6 +232,22 @@ const updateUser = async (req, res) => {
     res.status(500).json({ message: "error" });
   }
 };
+// GET /teacher/activities
+const getMyActivities = async (req, res) => {
+  const teacherId = req.user.id;
+
+  const result = await pool.query(
+    `
+    SELECT *
+    FROM activities
+    WHERE teacher_id = $1
+    ORDER BY created_at DESC
+    `,
+    [teacherId],
+  );
+
+  res.json(result.rows);
+};
 module.exports = {
   getAllUsers,
   toggleUserStatus,
@@ -238,4 +256,5 @@ module.exports = {
   softDeleteUser,
   getUserFullDetails,
   updateUser,
+  getMyActivities,
 };

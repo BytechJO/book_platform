@@ -23,7 +23,7 @@ import TeacherBooks from "../pages/teacher/books/TeacherBooks";
 import TeacherLayout from "../pages/teacher/TeacherLayout";
 import ViewTeacherBook from "../pages/teacher/books/ViewTeacherBook";
 import Help from "../pages/teacher/Help";
-import TeacherHome from "../pages/teacher/TeacherHome";
+import TeacherHome from "../pages/teacher/teacher_home/TeacherHome";
 import ViewPuplicBook from "../pages/Public-Layout/ViewPuplicBook";
 import NotFound from "../pages/NotFound";
 import StudentLayout from "../pages/student/StudentLayout";
@@ -34,6 +34,7 @@ import UserProfile from "../pages/admin/UserProfile";
 import UserProfileStudent from "../pages/student/UserProfile";
 import UserProfileTeacher from "../pages/teacher/UserProfile";
 import ViewUser from "../pages/admin/ViewUser";
+import CreateEvent from "../pages/teacher/events/CreateEvent";
 
 export default function AppRoutes() {
   return (
@@ -83,6 +84,7 @@ export default function AppRoutes() {
         }
       >
         <Route index element={<TeacherHome />} />
+        <Route path="events/create" element={<CreateEvent />} />
         <Route path="books" element={<TeacherBooks />} />
         <Route path="books/:id" element={<ViewTeacherBook />} />
         <Route path="help" element={<Help />} />

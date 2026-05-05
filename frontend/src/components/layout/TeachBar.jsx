@@ -27,6 +27,7 @@ import { LoadingButton } from "@mui/lab";
 import { useGetMyBooks } from "../../api/user_books";
 import { useAuthMe } from "../../api";
 import MenuIcon from "@mui/icons-material/Menu";
+import KeyIcon from "@mui/icons-material/Key";
 
 export default function TeachBar() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -328,72 +329,99 @@ export default function TeachBar() {
         <Dialog
           open={openDialog}
           onClose={() => setOpenDialog(false)}
-          maxWidth="md"
+          maxWidth="sm"
           fullWidth
           BackdropProps={{
-            sx: {
-              backgroundColor: "rgba(0,0,0,0.8)",
-            },
+            sx: { backgroundColor: "rgba(0,0,0,0.6)" },
           }}
           PaperProps={{
             component: "form",
             onSubmit: handleActivateCode,
             sx: {
-              width: "700px",
-              maxWidth: "100%",
-              borderRadius: "30px",
-              p: 3,
+              borderRadius: "20px",
+              p: 4,
+              textAlign: "center",
             },
           }}
         >
-          <DialogTitle
+          {/* ICON */}
+          <Box
             sx={{
-              textAlign: "center",
-              fontWeight: 600,
+              width: 70,
+              height: 70,
+              borderRadius: "50%",
+              background: "#e8f0fe",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "0 auto",
+              mb: 2,
+            }}
+          >
+            <KeyIcon sx={{ color: "#2d5aa7", fontSize: 32 }} />
+          </Box>
+          {/* TITLE */}
+          <Typography
+            sx={{
+              fontSize: 22,
+              fontWeight: 700,
               color: "#2d5aa7",
-              fontSize: 20,
+              mb: 1,
             }}
           >
             Activate Code
-          </DialogTitle>
+          </Typography>
 
-          <DialogContent sx={{ mt: 2 }}>
-            <Typography
-              sx={{
-                fontSize: 16,
-                fontWeight: 500,
-                mb: 1,
-                color: "#7A869A",
-              }}
-            >
-              Activation Code *
-            </Typography>
-
-            <TextField
-              fullWidth
-              value={activationCode}
-              onChange={(e) => {
-                setActivationCode(e.target.value);
-                if (activationError) setActivationError("");
-              }}
-              placeholder="Enter activation code"
-              error={Boolean(activationError)}
-              helperText={activationError}
-              InputProps={{
-                sx: {
-                  height: 56,
-                  borderRadius: "12px",
-                  backgroundColor: "#F9FBFF",
-                },
-              }}
-            />
-          </DialogContent>
-
-          <DialogActions
+          {/* DESCRIPTION */}
+          <Typography
             sx={{
+              fontSize: 14,
+              color: "#6b7280",
+              mb: 3,
+            }}
+          >
+            Enter your activation code to access your class or content.
+          </Typography>
+
+          {/* INPUT LABEL */}
+          <Typography
+            sx={{
+              fontSize: 13,
+              fontWeight: 600,
+              mb: 1,
+              textAlign: "left",
+            }}
+          >
+            Activation Code *
+          </Typography>
+
+          {/* INPUT */}
+          <TextField
+            fullWidth
+            value={activationCode}
+            onChange={(e) => {
+              setActivationCode(e.target.value);
+              if (activationError) setActivationError("");
+            }}
+            placeholder="Enter activation code"
+            error={Boolean(activationError)}
+            helperText={activationError}
+            InputProps={{
+              sx: {
+                height: 50,
+                borderRadius: "10px",
+                backgroundColor: "#f9fbff",
+              },
+            }}
+          />
+
+          {/* BUTTONS */}
+          <Box
+            sx={{
+              display: "flex",
               justifyContent: "center",
-              gap: 3,
-              pb: 5,
+              gap: 2,
+              mt: 4,
             }}
           >
             <LoadingButton
@@ -401,18 +429,14 @@ export default function TeachBar() {
               loading={activateLoading}
               variant="contained"
               sx={{
-                width: 126,
-                height: 59,
+                px: 4,
+                py: 1.2,
                 borderRadius: "10px",
                 textTransform: "none",
                 fontWeight: 600,
-                fontSize: 16,
-                backgroundColor: "#466FAA",
-                color: "#FFFFFF",
-                boxShadow: "none",
+                backgroundColor: "#2d5aa7",
                 "&:hover": {
-                  backgroundColor: "#3D6399",
-                  boxShadow: "none",
+                  backgroundColor: "#244a87",
                 },
               }}
             >
@@ -423,24 +447,21 @@ export default function TeachBar() {
               onClick={() => setOpenDialog(false)}
               variant="contained"
               sx={{
-                width: 126,
-                height: 59,
+                px: 4,
+                py: 1.2,
                 borderRadius: "10px",
                 textTransform: "none",
                 fontWeight: 600,
-                fontSize: 16,
-                backgroundColor: "#ECECEC",
-                color: "#2B5A9E",
-                boxShadow: "none",
+                backgroundColor: "#e5e7eb",
+                color: "#374151",
                 "&:hover": {
-                  backgroundColor: "#DCDCDC",
-                  boxShadow: "none",
+                  backgroundColor: "#d1d5db",
                 },
               }}
             >
               Cancel
             </Button>
-          </DialogActions>
+          </Box>
         </Dialog>
         <Drawer
           anchor="left"

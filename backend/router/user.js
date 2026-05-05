@@ -9,6 +9,7 @@ const {
   softDeleteUser,
   getUserFullDetails,
   updateUser,
+  getMyActivities,
 } = require("../controller/user");
 const { authenticate } = require("../middleware/authenticate");
 const authorize = require("../middleware/authorized");
@@ -20,6 +21,7 @@ router.get("/all-users", authenticate, authorize("admin"), getAllUsers);
 router.patch("/:id/status", authenticate, authorize("admin"), toggleUserStatus);
 router.get("/users-growth", authenticate, authorize("admin"), getUsersGrowth);
 router.get("/activities", authenticate, authorize("admin"), getActivities);
+router.get("/myactivities", authenticate, authorize("teacher"), getMyActivities);
 router.patch("/:id/delete", authenticate, authorize("admin"), softDeleteUser);
 router.get("/:id", authenticate, authorize("admin"), getUserFullDetails);
 router.put("/:id", authenticate, authorize("admin"), updateUser);

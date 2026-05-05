@@ -1,7 +1,7 @@
 import { Box, Typography, Avatar } from "@mui/material";
 import { useAuthMe } from "../../api/auth";
 
-export default function WelcomeBanner() {
+export default function WelcomeBanner({ variant = "home" }) {
   const today = new Date().toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -17,10 +17,9 @@ export default function WelcomeBanner() {
     <Box
       sx={{
         width: "100%",
-        px: { xs: 2, sm: 4, md: 8, lg: 14 }, // 👈 ريسبونسف
         display: "flex",
         alignItems: "center",
-        marginBottom:2,
+        marginBottom: 2,
         gap: 3,
       }}
     >
@@ -64,6 +63,17 @@ export default function WelcomeBanner() {
           }}
         >
           Welcome back, Teacher {firstName} !
+        </Typography>
+        <Typography
+          sx={{
+            color: "#6B7280",
+            fontSize: "14px",
+            mt: 0.5,
+          }}
+        >
+          {variant === "home"
+            ? "Here's what's happening with your classes today."
+            : "Manage your books and assign them to your classes."}
         </Typography>
       </Box>
     </Box>

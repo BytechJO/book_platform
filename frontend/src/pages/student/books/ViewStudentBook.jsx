@@ -372,7 +372,7 @@ export default function ViewStudentBook() {
                   </Typography>
                 </Box>
 
-                {book.student_class ? (
+                {book.class_name ? (
                   <Box
                     sx={{
                       p: 2.5,
@@ -392,7 +392,7 @@ export default function ViewStudentBook() {
                       <Typography
                         sx={{ fontSize: 15, fontWeight: 600, color: "#1A4D96" }}
                       >
-                        {book.student_class}
+                        {book.class_name}
                       </Typography>
                     </Box>
                     <Box>
