@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import ActivivtyReport from "./activivtyReport";
+import ActivivtyReport from "./ActivivtyReport";
 export default function Reports() {
 
   return (
