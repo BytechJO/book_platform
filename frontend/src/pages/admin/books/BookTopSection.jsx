@@ -84,7 +84,7 @@ export default function BookTopSection({ book }) {
             />
 
             {/* Title */}
-            <Typography fontSize={24} fontWeight={700} mb={1}>
+            <Typography fontSize={24} fontWeight={700} mb={1} mt={2}>
               {book.title}
             </Typography>
 
