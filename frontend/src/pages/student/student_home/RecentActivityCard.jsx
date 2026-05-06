@@ -4,10 +4,10 @@ import PersonIcon from "@mui/icons-material/Person";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CurveLoader from "../../../components/CurveLoader";
-import { useGetTeacherActivities } from "../../../api/teacherActivities";
+import { useGetStudentActivities } from "../../../api/studentActivities";
 
 export default function RecentActivityCard() {
-  const { activities, loading } = useGetTeacherActivities();
+  const { activities, loading } = useGetStudentActivities();
   if (loading) {
     return <CurveLoader />;
   }
@@ -38,7 +38,7 @@ export default function RecentActivityCard() {
 
     return d.toLocaleDateString() + `, ${time}`;
   };
-  const displayedActivities = activities?.slice(0, 5);
+
   return (
     <Box sx={cardStyle}>
       <Typography sx={titleStyle}>Recent Activity</Typography>
@@ -77,12 +77,12 @@ export default function RecentActivityCard() {
           </Typography>
         </Box>
       ) : (
-        displayedActivities.map((act, i) => {
+        activities?.slice(0, 5).map((act, i) => {
           // 🎯 تحديد الأيقونة حسب النوع
           const getIcon = () => {
-            if (act.type === "class" && act.action === "joined")
+            if (act.type === "class" && act.action === "join")
               return <PersonIcon fontSize="small" />;
-            if (act.type === "class" && act.action === "created")
+            if (act.type === "class" && act.action === "create")
               return <FolderIcon fontSize="small" />;
             if (act.type === "book") return <MenuBookIcon fontSize="small" />;
 
@@ -103,9 +103,7 @@ export default function RecentActivityCard() {
                 </Box>
               </Box>
 
-              {i !== displayedActivities.length - 1 && (
-                <Divider sx={dividerStyle} />
-              )}
+              {i !== activities.length - 1 && <Divider sx={dividerStyle} />}
             </Box>
           );
         })

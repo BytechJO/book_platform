@@ -7,10 +7,9 @@ import {
 } from "@mui/material";
 import GroupsIcon from "@mui/icons-material/Groups";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import { useGetTeacherClasses } from "../../../api/Classes";
 import CurveLoader from "../../../components/CurveLoader";
-export default function MyClassesCard() {
-  const { classes, loading } = useGetTeacherClasses();
+import PersonIcon from "@mui/icons-material/Person";
+export default function MyClassesCard({ classes, loading }) {
   const progressValues = [72, 65, 80, 60, 90];
 
   if (loading) {
@@ -63,10 +62,8 @@ export default function MyClassesCard() {
                 <Typography sx={classTitle}>{cls.book_title}</Typography>
 
                 <Box sx={studentsRow}>
-                  <GroupsIcon sx={{ fontSize: 14, color: "#9aa5b1" }} />
-                  <Typography sx={studentsText}>
-                    {Number(cls.total_students)} Students
-                  </Typography>
+                  <PersonIcon sx={{ fontSize: 14, color: "#9aa5b1" }} />
+                  <Typography sx={studentsText}>{cls.teacher_name}</Typography>
                 </Box>
               </Box>
 
@@ -100,7 +97,9 @@ export default function MyClassesCard() {
               </Box>
             </Box>
 
-            {i !== classes.length - 1 && <Divider sx={dividerStyle} />}
+            {i !== classes.slice(0, 5).length - 1 && (
+              <Divider sx={dividerStyle} />
+            )}
           </Box>
         ))
       )}

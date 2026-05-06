@@ -41,7 +41,11 @@ function ServerDay(props) {
   );
 
   return (
-    <Badge key={day.toString()} overlap="circular" badgeContent={hasEvents ? "" : 0}>
+    <Badge
+      key={day.toString()}
+      overlap="circular"
+      badgeContent={hasEvents ? "" : 0}
+    >
       <PickersDay
         {...other}
         outsideCurrentMonth={outsideCurrentMonth}
@@ -99,8 +103,7 @@ export default function CreateEvent() {
   const [selectedClass, setSelectedClass] = useState("");
   const selectedEvents = events
     .filter(
-      (e) =>
-        dayjs(e.date).format("YYYY-MM-DD") === date.format("YYYY-MM-DD"),
+      (e) => dayjs(e.date).format("YYYY-MM-DD") === date.format("YYYY-MM-DD"),
     )
     .sort((a, b) => a.time.localeCompare(b.time));
 
@@ -123,8 +126,7 @@ export default function CreateEvent() {
   );
 
   const minutes = useMemo(
-    () =>
-      Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, "0")),
+    () => Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, "0")),
     [],
   );
 
@@ -158,6 +160,8 @@ export default function CreateEvent() {
         subject,
         date: date.format("YYYY-MM-DD"),
         time: finalTime,
+        book_id: selectedBook,
+        class_id: selectedClass,
       });
       refetch();
       setOpen(true);
@@ -341,16 +345,16 @@ export default function CreateEvent() {
                     fontSize: 11,
                     fontWeight: 600,
                     height: 24,
-                    bgcolor: selectedEvents.length > 0
-                      ? "rgba(99, 102, 241, 0.08)"
-                      : "#f1f5f9",
-                    color: selectedEvents.length > 0
-                      ? "#6366f1"
-                      : "#94a3b8",
+                    bgcolor:
+                      selectedEvents.length > 0
+                        ? "rgba(99, 102, 241, 0.08)"
+                        : "#f1f5f9",
+                    color: selectedEvents.length > 0 ? "#6366f1" : "#94a3b8",
                     border: "1px solid",
-                    borderColor: selectedEvents.length > 0
-                      ? "rgba(99, 102, 241, 0.15)"
-                      : "#e2e8f0",
+                    borderColor:
+                      selectedEvents.length > 0
+                        ? "rgba(99, 102, 241, 0.15)"
+                        : "#e2e8f0",
                   }}
                 />
               </Box>
@@ -403,7 +407,9 @@ export default function CreateEvent() {
                 </Fade>
               ) : (
                 <Fade in>
-                  <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                  <Box
+                    sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}
+                  >
                     {selectedEvents.map((event, index) => (
                       <Box
                         key={event.id}
@@ -741,7 +747,9 @@ export default function CreateEvent() {
                     <Select
                       value={time.hour}
                       label="Hour"
-                      onChange={(e) => setTime({ ...time, hour: e.target.value })}
+                      onChange={(e) =>
+                        setTime({ ...time, hour: e.target.value })
+                      }
                       MenuProps={{
                         PaperProps: {
                           sx: {

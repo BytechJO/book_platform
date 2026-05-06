@@ -8,6 +8,7 @@ const {
   activateClassCode,
   getStudentBookById,
   getTeacherDashboard,
+  getStudentDashboard,
 } = require("../controller/user_book");
 const { authenticate } = require("../middleware/authenticate");
 const authorize = require("../middleware/authorized");
@@ -55,5 +56,12 @@ router.get(
   authenticate,
   authorize("teacher"),
   getTeacherDashboard,
+);
+
+router.get(
+  "/student-dashboard",
+  authenticate,
+  authorize("student"),
+  getStudentDashboard,
 );
 module.exports = router;

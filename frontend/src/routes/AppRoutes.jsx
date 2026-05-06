@@ -12,7 +12,7 @@ import BookSeries from "../pages/Public-Layout/Book-series";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import AuthLayout from "../pages/auth/AuthLayout";
-import Reports from "../pages/admin/Reports";
+import Reports from "../pages/admin/Dashboard/reports/Reports";
 import ProtectedRoute from "../utils/ProtectedRoute";
 import Users from "../pages/admin/Users";
 import Books from "../pages/admin/books/Books";
@@ -26,6 +26,7 @@ import Help from "../pages/teacher/Help";
 import TeacherHome from "../pages/teacher/teacher_home/TeacherHome";
 import ViewPuplicBook from "../pages/Public-Layout/ViewPuplicBook";
 import NotFound from "../pages/NotFound";
+import StudentHome from "../pages/student/student_home/studentHome";
 import StudentLayout from "../pages/student/StudentLayout";
 import StudentBooks from "../pages/student/books/StudentBooks";
 import ViewStudentBook from "../pages/student/books/ViewStudentBook";
@@ -35,6 +36,8 @@ import UserProfileStudent from "../pages/student/UserProfile";
 import UserProfileTeacher from "../pages/teacher/UserProfile";
 import ViewUser from "../pages/admin/ViewUser";
 import CreateEvent from "../pages/teacher/events/CreateEvent";
+import ViewEvents from "../pages/teacher/events/ViewEvents";
+import ViewEventsStudent from "../pages/student/student_home/ViewEvents";
 
 export default function AppRoutes() {
   return (
@@ -85,6 +88,7 @@ export default function AppRoutes() {
       >
         <Route index element={<TeacherHome />} />
         <Route path="events/create" element={<CreateEvent />} />
+        <Route path="events" element={<ViewEvents />} />
         <Route path="books" element={<TeacherBooks />} />
         <Route path="books/:id" element={<ViewTeacherBook />} />
         <Route path="help" element={<Help />} />
@@ -98,7 +102,9 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       >
+        <Route index element={<StudentHome />} />
         <Route path="books" element={<StudentBooks />} />
+        <Route path="events" element={<ViewEventsStudent />} />
         <Route path="books/:id" element={<ViewStudentBook />} />
         <Route path="help" element={<HelpStudent />} />
         <Route path="profile" element={<UserProfileStudent />} />

@@ -28,6 +28,9 @@ import { useGetMyBooks } from "../../api/user_books";
 import { useAuthMe } from "../../api";
 import MenuIcon from "@mui/icons-material/Menu";
 import KeyIcon from "@mui/icons-material/Key";
+import { useGetTeacherNotifications } from "../../api/teacherActivities";
+import NotificationMenu from "../notifications/NotificationMenu";
+import { useGetStudentNotifications } from "../../api/studentActivities";
 
 export default function TeachBar() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -42,6 +45,14 @@ export default function TeachBar() {
   const role = localStorage.getItem("role");
   const [mobileOpen, setMobileOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width:768px)");
+  const { notifications } =
+    role === "teacher"
+      ? // eslint-disable-next-line react-hooks/rules-of-hooks
+        useGetTeacherNotifications()
+      : role === "student"
+        ? // eslint-disable-next-line react-hooks/rules-of-hooks
+          useGetStudentNotifications()
+        : { notifications: [] };
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -52,7 +63,6 @@ export default function TeachBar() {
   };
   const [activationCode, setActivationCode] = useState("");
   const [activateLoading, setActivateLoading] = useState(false);
-
   const handleActivateCode = async (e) => {
     e.preventDefault();
 
@@ -113,11 +123,7 @@ export default function TeachBar() {
           )}
           <img
             onClick={() => {
-              if (role === "teacher") {
-                navigate(`/${role}`);
-              } else if (role === "student") {
-                navigate(`/${role}/books`);
-              }
+              navigate(`/${role}`);
             }}
             src={logo}
             alt="logo"
@@ -138,31 +144,30 @@ export default function TeachBar() {
             }}
           >
             {/* Home */}
-            {role === "teacher" && (
-              <Box
-                onClick={() => navigate(`/${role}`)}
-                sx={{
-                  px: 2,
-                  py: 0.5,
-                  borderRadius: "20px",
+
+            <Box
+              onClick={() => navigate(`/${role}`)}
+              sx={{
+                px: 2,
+                py: 0.5,
+                borderRadius: "20px",
+                backgroundColor: isExactActive(`/${role}`)
+                  ? "white"
+                  : "transparent",
+                color: isExactActive(`/${role}`) ? "#1A4D96" : "white",
+                fontWeight: 500,
+                fontSize: 13,
+                "&:hover": {
                   backgroundColor: isExactActive(`/${role}`)
                     ? "white"
-                    : "transparent",
-                  color: isExactActive(`/${role}`) ? "#1A4D96" : "white",
-                  fontWeight: 500,
-                  fontSize: 13,
-                  "&:hover": {
-                    backgroundColor: isExactActive(`/${role}`)
-                      ? "white"
-                      : "rgba(255,255,255,0.1)",
-                  },
-                  cursor: "pointer",
-                  transition: "0.2s",
-                }}
-              >
-                Home
-              </Box>
-            )}
+                    : "rgba(255,255,255,0.1)",
+                },
+                cursor: "pointer",
+                transition: "0.2s",
+              }}
+            >
+              Home
+            </Box>
 
             {/* Books */}
             <Box
@@ -218,6 +223,31 @@ export default function TeachBar() {
               Help
             </Box>
             <Box
+              onClick={() => navigate(`/${role}/Events`)}
+              sx={{
+                px: 2,
+                py: 0.5,
+                borderRadius: "20px",
+                backgroundColor: isStartsWithActive(`/${role}/Events`)
+                  ? "white"
+                  : "transparent",
+                color: isStartsWithActive(`/${role}/Events`)
+                  ? "#1A4D96"
+                  : "white",
+                fontWeight: 500,
+                cursor: "pointer",
+                transition: "0.2s",
+                fontSize: 13,
+                "&:hover": {
+                  backgroundColor: isStartsWithActive(`/${role}/Events`)
+                    ? "white"
+                    : "rgba(255,255,255,0.1)",
+                },
+              }}
+            >
+              Events
+            </Box>
+            <Box
               onClick={() => setOpenDialog(true)}
               sx={{
                 px: 2,
@@ -249,30 +279,7 @@ export default function TeachBar() {
             <SettingsIcon size={26} />
           </IconButton>
           {/* Notifications */}
-          <IconButton sx={{ color: "white", position: "relative" }}>
-            <BellIcon size={26} />
-
-            <Box
-              sx={{
-                position: "absolute",
-                top: 6,
-                right: 6,
-                backgroundColor: "#FF4B55",
-                color: "white",
-                fontSize: 9,
-                width: 16,
-                height: 16,
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontWeight: "bold",
-              }}
-            >
-              1
-            </Box>
-          </IconButton>
-
+          <NotificationMenu items={notifications} />
           {/* User */}
           <IconButton
             sx={{
@@ -477,16 +484,14 @@ export default function TeachBar() {
           }}
         >
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            {role === "teacher" && (
-              <Button
-                onClick={() => {
-                  navigate(`/${role}`);
-                  setMobileOpen(false); // 👈 سكر الدراور
-                }}
-              >
-                Home
-              </Button>
-            )}
+            <Button
+              onClick={() => {
+                navigate(`/${role}`);
+                setMobileOpen(false); // 👈 سكر الدراور
+              }}
+            >
+              Home
+            </Button>
             <Button
               onClick={() => {
                 navigate(`/${role}/books`);

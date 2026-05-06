@@ -30,8 +30,13 @@ const createCategory = async (req, res) => {
       await logActivity({
         type: "category",
         action: "created",
+
         title: "New category created",
+
         description: `Category "${createdCategory.name}" added`,
+
+        actor_id: req.user.id,
+        actor_role: req.user.role,
       });
     } catch (err) {
       console.error("Activity log failed:", err);

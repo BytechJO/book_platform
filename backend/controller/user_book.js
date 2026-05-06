@@ -63,10 +63,16 @@ const activateBookCode = async (req, res) => {
     );
     await logActivity({
       type: "book",
-      action: "activate",
+      action: "activated",
+
       title: "Book Activated",
+
       description: `Activated book ${bookCode.book_id}`,
-      teacher_id: userRole === "teacher" ? userId : null,
+
+      actor_id: userId,
+      actor_role: userRole,
+
+      book_id: bookCode.book_id,
     });
     return res.json({ message: "Book activated successfully" });
   } catch (error) {
@@ -82,23 +88,30 @@ const getMyBooks = async (req, res) => {
     const result = await pool.query(
       `
       SELECT 
-        b.*,                     
-        ub.id AS user_book_id,
-        ub.class_id,
-        c.class_name,
-        ub.activated_at,
-        ub.expires_at,
-        ub.last_opened_at,
-        ub.created_at AS enrolled_at,
-        CASE 
-          WHEN NOW() > ub.expires_at THEN false
-          ELSE true
-        END AS is_active
-      FROM user_books ub
-      JOIN books b ON ub.book_id = b.id
-      LEFT JOIN classes c ON c.id = ub.class_id
-      WHERE ub.user_id = $1
-      ORDER BY ub.activated_at DESC
+  b.*,                     
+  ub.id AS user_book_id,
+  ub.class_id,
+  c.class_name,
+  u.full_name AS teacher_name,
+  ub.activated_at,
+  ub.expires_at,
+  ub.last_opened_at,
+  ub.created_at AS enrolled_at,
+  CASE 
+    WHEN NOW() > ub.expires_at THEN false
+    ELSE true
+  END AS is_active
+
+FROM user_books ub
+
+JOIN books b ON ub.book_id = b.id
+
+LEFT JOIN classes c ON c.id = ub.class_id
+LEFT JOIN users u ON u.id = c.teacher_id
+
+WHERE ub.user_id = $1
+
+ORDER BY ub.activated_at DESC
       `,
       [userId],
     );
@@ -274,10 +287,17 @@ const addBookClass = async (req, res) => {
 
     await logActivity({
       type: "class",
-      action: "create",
+      action: "created",
+
       title: "New Class",
+
       description: `Created class ${newClass.class_name}`,
-      teacher_id: teacherId,
+
+      actor_id: teacherId,
+      actor_role: req.user.role,
+
+      class_id: newClass.id,
+      book_id: bookId,
     });
     res.status(201).json(result.rows[0]);
   } catch (error) {
@@ -356,10 +376,17 @@ const activateClassCode = async (req, res) => {
     // 🔥 أهم خطوة: سجل activity للأستاذ
     await logActivity({
       type: "class",
-      action: "join",
+      action: "joined",
+
       title: "Student Joined",
+
       description: `${studentName} joined class ${normalizedCode}`,
-      teacher_id: teacherId, // 🔥 هذا اللي بخلي النشاط يظهر للأستاذ الصح
+
+      actor_id: userId,
+      actor_role: req.user.role,
+
+      class_id: classId,
+      book_id: bookId,
     });
 
     return res.json({
@@ -486,6 +513,97 @@ const getTeacherDashboard = async (req, res) => {
     res.status(500).json({ message: "error" });
   }
 };
+
+const getStudentDashboard = async (req, res) => {
+  const studentId = req.user.id;
+
+  try {
+    const result = await pool.query(
+      `
+      SELECT
+
+      -- 📘 TOTAL BOOKS
+      (
+        SELECT COUNT(DISTINCT ub.book_id)
+        FROM user_books ub
+        WHERE ub.user_id = $1
+        AND ub.expires_at > NOW()
+      ) AS total_books,
+
+      -- 📚 TOTAL CLASSES
+      (
+        SELECT COUNT(DISTINCT cs.class_id)
+        FROM class_students cs
+        WHERE cs.student_id = $1
+      ) AS total_classes,
+
+      -- 📘 BOOKS CURRENT
+      (
+        SELECT COUNT(DISTINCT ub.book_id)
+        FROM user_books ub
+        WHERE ub.user_id = $1
+        AND ub.expires_at > NOW()
+        AND ub.activated_at >= DATE_TRUNC('month', NOW())
+      ) AS books_current,
+
+      -- 📘 BOOKS LAST
+      (
+        SELECT COUNT(DISTINCT ub.book_id)
+        FROM user_books ub
+        WHERE ub.user_id = $1
+        AND ub.expires_at > NOW()
+        AND ub.activated_at >= DATE_TRUNC('month', NOW() - INTERVAL '1 month')
+        AND ub.activated_at < DATE_TRUNC('month', NOW())
+      ) AS books_last,
+
+      -- 📚 CLASSES CURRENT
+      (
+        SELECT COUNT(DISTINCT cs.class_id)
+        FROM class_students cs
+        WHERE cs.student_id = $1
+        AND cs.joined_at >= DATE_TRUNC('month', NOW())
+      ) AS classes_current,
+
+      -- 📚 CLASSES LAST
+      (
+        SELECT COUNT(DISTINCT cs.class_id)
+        FROM class_students cs
+        WHERE cs.student_id = $1
+        AND cs.joined_at >= DATE_TRUNC('month', NOW() - INTERVAL '1 month')
+        AND cs.joined_at < DATE_TRUNC('month', NOW())
+      ) AS classes_last
+      `,
+      [studentId],
+    );
+
+    const row = result.rows[0];
+
+    const calcGrowth = (current, last) => {
+      const c = Number(current) || 0;
+      const l = Number(last) || 0;
+
+      if (l === 0) return c > 0 ? 100 : 0;
+
+      return Math.round(((c - l) / l) * 100);
+    };
+
+    res.json({
+      total_books: Number(row.total_books),
+      total_classes: Number(row.total_classes),
+
+      growth: {
+        books: calcGrowth(row.books_current, row.books_last),
+        classes: calcGrowth(row.classes_current, row.classes_last),
+      },
+    });
+  } catch (err) {
+    console.error("Student dashboard error:", err);
+
+    res.status(500).json({
+      message: "error",
+    });
+  }
+};
 module.exports = {
   activateBookCode,
   getMyBooks,
@@ -494,4 +612,5 @@ module.exports = {
   activateClassCode,
   getStudentBookById,
   getTeacherDashboard,
+  getStudentDashboard,
 };

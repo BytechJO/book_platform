@@ -6,17 +6,14 @@ import ENDPOINTS from "./endpoints";
 
 const fetcher = (url) => axiosInstance.get(url).then((res) => res.data);
 
-// =============================
-// GET MY EVENTS (Teacher)
-// =============================
-export function useGetTeacherEvents() {
-  const URL = ENDPOINTS.EVENTS.MY_EVENTS;
+export function useGetActivities() {
+  const URL = ENDPOINTS.ACTIVITIES.ALL;
 
   const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
 
   const memoizedValue = useMemo(
     () => ({
-      events: data || [],
+      activities: data || [],
       loading: isLoading,
       error,
       validating: isValidating,
@@ -31,15 +28,19 @@ export function useGetTeacherEvents() {
 
   return { ...memoizedValue, refetch };
 }
+export const markAllActivitiesAsRead = async () => {
+  await axiosInstance.post(ENDPOINTS.ACTIVITIES.READ_ALL);
 
-export function useGetStudentEvents() {
-  const URL = ENDPOINTS.EVENTS.STUDENT_EVENTS;
+  mutate(ENDPOINTS.ACTIVITIES.ALL);
+};
+export function useGetNotifications() {
+  const URL = ENDPOINTS.ACTIVITIES.NOTIFICATIONS;
 
   const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
 
   const memoizedValue = useMemo(
     () => ({
-      events: data || [],
+      notifications: data || [],
       loading: isLoading,
       error,
       validating: isValidating,
@@ -48,9 +49,5 @@ export function useGetStudentEvents() {
     [data, error, isLoading, isValidating],
   );
 
-  const refetch = async () => {
-    await mutate(URL);
-  };
-
-  return { ...memoizedValue, refetch };
+  return memoizedValue;
 }

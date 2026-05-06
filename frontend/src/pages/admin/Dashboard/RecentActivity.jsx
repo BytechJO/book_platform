@@ -1,5 +1,4 @@
 import { Box, Typography } from "@mui/material";
-import { useActivities } from "../../../api";
 import CodeIcon from "../../../assets/icon/Group (2).svg";
 import MenuBookIcon from "../../../assets/icon/bookIcone.svg";
 import PersonIcon from "../../../assets/icon/userIcone.svg";
@@ -7,11 +6,14 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import relativeTime from "dayjs/plugin/relativeTime";
+import FolderIcon from "@mui/icons-material/Folder";
+import { useGetActivities } from "../../../api/activities";
+
 export default function RecentActivity() {
   dayjs.extend(utc);
   dayjs.extend(timezone);
   dayjs.extend(relativeTime);
-  const { activities, loading } = useActivities();
+  const { activities, loading } = useGetActivities();
   const getIcon = (type) => {
     switch (type) {
       case "code":
@@ -26,12 +28,15 @@ export default function RecentActivity() {
   };
   const getColor = (action) => {
     switch (action) {
-      case "created":
-        return "#E8F5E9"; // أخضر فاتح
-      case "updated":
-        return "#FFF3E0"; // برتقالي
-      case "deleted":
-        return "#FFEBEE"; // أحمر
+      case "create":
+        return "#E8F5E9";
+
+      case "update":
+        return "#FFF3E0";
+
+      case "delete":
+        return "#FFEBEE";
+
       default:
         return "#E3F2FD";
     }
@@ -57,44 +62,84 @@ export default function RecentActivity() {
 
       {/* List */}
       <Box sx={{ flex: 1 }}>
-        {activities.map((item, index) => (
+        {activities?.length === 0 ? (
           <Box
-            key={index}
-            sx={{ display: "flex", justifyContent: "space-between", mb: 1.5 }}
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              py: 6,
+              color: "#9aa5b1",
+              textAlign: "center",
+            }}
           >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-              {/* ICON */}
-              <Box
-                sx={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: "50%",
-                  background: getColor(item.action),
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <img src={getIcon(item.type)} width={16} />
-              </Box>
+            <FolderIcon sx={{ fontSize: 42, mb: 1, opacity: 0.5 }} />
 
-              {/* TEXT */}
-              <Box>
-                <Typography sx={{ fontSize: 13, fontWeight: 600 }}>
-                  {item.title}
-                </Typography>
-                <Typography sx={{ fontSize: 11, color: "#777" }}>
-                  {item.description}
-                </Typography>
-              </Box>
-            </Box>
+            <Typography
+              sx={{
+                fontSize: 14,
+                fontWeight: 600,
+              }}
+            >
+              No Activity Yet
+            </Typography>
 
-            {/* TIME */}
-            <Typography sx={{ fontSize: 11, color: "#999" }}>
-              {dayjs.utc(item.created_at).tz("Asia/Amman").fromNow()}
+            <Typography
+              sx={{
+                fontSize: 12,
+                mt: 0.5,
+              }}
+            >
+              Your recent activity will appear here
             </Typography>
           </Box>
-        ))}
+        ) : (
+          activities?.slice(0, 5).map((act, index) => (
+            <Box
+              key={index}
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                mb: 1.5,
+              }}
+            >
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                {/* ICON */}
+                <Box
+                  sx={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: "50%",
+                    background: getColor(act.action),
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <img src={getIcon(act.type)} width={16} />
+                </Box>
+
+                {/* TEXT */}
+                <Box>
+                  <Typography sx={{ fontSize: 13, fontWeight: 600 }}>
+                    {act.title}
+                  </Typography>
+
+                  <Typography sx={{ fontSize: 11, color: "#777" }}>
+                    {act.description}
+                  </Typography>
+                </Box>
+              </Box>
+
+              {/* TIME */}
+              <Typography sx={{ fontSize: 11, color: "#999" }}>
+                {dayjs.utc(act.created_at).tz("Asia/Amman").fromNow()}
+              </Typography>
+            </Box>
+          ))
+        )}
       </Box>
     </Box>
   );

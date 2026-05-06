@@ -257,9 +257,7 @@ export default function Books() {
   // 🔹 Stats
   const totalBooks = books.length;
 
-  const publishedList = books.filter(
-    (b) => b.status === "Published",
-  );
+  const publishedList = books.filter((b) => b.status === "Published");
 
   const draftList = books.filter((b) => b.status?.toLowerCase() === "draft");
 
@@ -354,8 +352,11 @@ export default function Books() {
               variant="contained"
               onClick={() => navigate("create")}
               startIcon={<AddIcon />}
-              fullWidth={{ xs: true, sm: false }}
               sx={{
+                width: {
+                  xs: "100%",
+                  sm: "auto",
+                },
                 height: { xs: 42, sm: 36 },
                 px: { xs: 2, sm: 3 },
                 borderRadius: "6px",
@@ -367,7 +368,7 @@ export default function Books() {
               }}
             >
               Create Book
-            </Button>{" "}
+            </Button>
             <Button
               variant="outlined"
               startIcon={<DownloadIcon />}

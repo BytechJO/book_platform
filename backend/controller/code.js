@@ -55,8 +55,13 @@ const createCode = async (req, res) => {
       await logActivity({
         type: "code",
         action: "created",
+
         title: "New code generated",
+
         description: `${createdCodes.length} code(s) created`,
+
+        actor_id: req.user.id,
+        actor_role: req.user.role,
       });
     } catch (err) {
       console.error("Activity log failed:", err);
@@ -224,8 +229,13 @@ const updateCodeValidity = async (req, res) => {
       await logActivity({
         type: "code",
         action: "updated",
+
         title: "Code updated",
+
         description: `Code validity updated`,
+
+        actor_id: req.user.id,
+        actor_role: req.user.role,
       });
     } catch (err) {
       console.error("Activity log failed:", err);
@@ -267,8 +277,13 @@ const deleteCode = async (req, res) => {
       await logActivity({
         type: "code",
         action: "deleted",
+
         title: "Code deleted",
+
         description: `Code removed`,
+
+        actor_id: req.user.id,
+        actor_role: req.user.role,
       });
     } catch (err) {
       console.error("Activity log failed:", err);

@@ -118,9 +118,15 @@ const createBook = async (req, res) => {
     try {
       await logActivity({
         type: "book",
-        action: "created",
-        title: "New book created",
-        description: `Book "${createdBook.title}" added`,
+        action: "create",
+
+        title: "Book Created",
+        description: `Created book "${createdBook.title}"`,
+
+        actor_id: req.user.id,
+        actor_role: req.user.role,
+
+        book_id: createdBook.id,
       });
     } catch (err) {
       console.error("Activity log failed:", err);
@@ -163,6 +169,8 @@ const getAllBooksPublic = async (req, res) => {
         b.cover_image_url_short,
         b.cover_image_url_long
       FROM books b
+ WHERE b.status = 'Published'
+
       ORDER BY b.created_at DESC
     `);
 
@@ -191,7 +199,6 @@ LEFT JOIN categories c2 ON b.category_id = c2.id
 LEFT JOIN classes c ON c.book_id = b.id
 
 WHERE b.id = $1
-
 GROUP BY b.id, u.full_name, c2.name`,
       [id],
     );
@@ -262,9 +269,15 @@ const deleteBook = async (req, res) => {
     try {
       await logActivity({
         type: "book",
-        action: "deleted",
-        title: "Book deleted",
-        description: `Book "${book.title}" removed`,
+        action: "delete",
+
+        title: "Book Deleted",
+        description: `Deleted book "${book.title}"`,
+
+        actor_id: req.user.id,
+        actor_role: req.user.role,
+
+        book_id: book.id,
       });
     } catch (err) {
       console.error("Activity log failed:", err);
@@ -386,9 +399,15 @@ const updateBook = async (req, res) => {
     try {
       await logActivity({
         type: "book",
-        action: "updated",
-        title: "Book updated",
-        description: `Book "${updatedBook.title}" updated`,
+        action: "update",
+
+        title: "Book Updated",
+        description: `Updated book "${updatedBook.title}"`,
+
+        actor_id: req.user.id,
+        actor_role: req.user.role,
+
+        book_id: updatedBook.id,
       });
     } catch (err) {
       console.error("Activity log failed:", err);
@@ -490,7 +509,7 @@ const updateBookStatus = async (req, res) => {
     // 🔥 Activity
     let action, titleText, desc;
 
-    if (newStatus === "published") {
+    if (newStatus === "Published") {
       action = "published";
       titleText = "Book published";
       desc = `Book "${book.title}" is now published`;
@@ -503,9 +522,20 @@ const updateBookStatus = async (req, res) => {
     try {
       await logActivity({
         type: "book",
-        action,
-        title: titleText,
-        description: desc,
+
+        action: newStatus === "Published" ? "publish" : "draft",
+
+        title: newStatus === "Published" ? "Book Published" : "Book Drafted",
+
+        description:
+          newStatus === "Published"
+            ? `Published "${book.title}"`
+            : `Moved "${book.title}" to draft`,
+
+        actor_id: req.user.id,
+        actor_role: req.user.role,
+
+        book_id: book.id,
       });
     } catch (err) {
       console.error("Activity log failed:", err);
@@ -592,7 +622,20 @@ const duplicateBook = async (req, res) => {
         b.language || null,
       ],
     );
+    const duplicatedBook = result.rows[0];
 
+    await logActivity({
+      type: "book",
+      action: "duplicate",
+
+      title: "Book Duplicated",
+      description: `Duplicated "${b.title}"`,
+
+      actor_id: req.user.id,
+      actor_role: req.user.role,
+
+      book_id: duplicatedBook.id,
+    });
     res.status(201).json(result.rows[0]);
   } catch (error) {
     console.error("Duplicate error:", error);

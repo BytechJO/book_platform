@@ -42,6 +42,17 @@ app.use("/api/classes", classesRoutes);
 const eventsRoutes = require("./router/events");
 app.use("/api/events", eventsRoutes);
 
+// Import and use activities routes
+const activitiesRoutes = require("./router/activities");
+app.use("/api/activities", activitiesRoutes);
+
+// Import and use teacher activities routes
+const teacherActivitiesRoutes = require("./router/teacherActivities");
+app.use("/api/teacher-activities", teacherActivitiesRoutes);
+
+// Import and use student Activities routes
+const studentActivitiesRoutes = require("./router/studentActivities");
+app.use("/api/student-activities", studentActivitiesRoutes);
 
 app.get("/", async (req, res) => {
   try {

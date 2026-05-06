@@ -128,7 +128,6 @@ export default function TeacherBooks() {
           width: "90%",
           mx: "auto",
           px: { xs: 2, sm: 3 },
-          mb: 4,
           mt: 0.5,
         }}
       >
@@ -208,10 +207,10 @@ export default function TeacherBooks() {
       {/* 🔹 Books Grid */}
       <Box
         sx={{
-          width: "90%",
+          width: "91%",
           mx: "auto",
           px: 4,
-          pb: 6,
+          pb: 1,
         }}
       >
         <Box
@@ -228,6 +227,7 @@ export default function TeacherBooks() {
               md: 3,
             },
           }}
+          mt={3}
         >
           {paginatedBooks.length > 0 ? (
             paginatedBooks.map((book, id) => {
@@ -432,7 +432,7 @@ export default function TeacherBooks() {
             display="grid"
             gridTemplateColumns="1fr auto 1fr"
             alignItems="center"
-            mt={4}
+            mt={5}
           >
             {/* 🔹 اليسار */}
             <Typography variant="body2" color="#7a869a">

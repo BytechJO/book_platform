@@ -53,3 +53,25 @@ export function useGetClassesByBook(bookId) {
 
   return { ...memoizedValue, refetch };
 }
+export function useGetStudentClasses() {
+  const URL = ENDPOINTS.Classes.StudentClasses;
+
+  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      classes: data || [],
+      loading: isLoading,
+      error,
+      validating: isValidating,
+      empty: !isLoading && !data?.length,
+    }),
+    [data, error, isLoading, isValidating],
+  );
+
+  const refetch = async () => {
+    await mutate(URL);
+  };
+
+  return { ...memoizedValue, refetch };
+}

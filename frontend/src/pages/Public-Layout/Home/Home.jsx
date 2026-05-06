@@ -202,8 +202,8 @@ export default function Home() {
                 const role = localStorage.getItem("role");
                 if (token) {
                   if (role === "admin") navigate("/admin/dashboard");
-                  else if (role === "teacher") navigate("/teacher/books");
-                  else if (role === "student") navigate("/student/books");
+                  else if (role === "teacher") navigate("/teacher");
+                  else if (role === "student") navigate("/student");
                   else navigate("/");
                 } else {
                   navigate("/login");

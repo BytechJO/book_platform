@@ -13,12 +13,14 @@ import {
   CardContent,
   Stack,
   Pagination,
+  CircularProgress,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import WelcomeBanner from "../WelcomeBanner";
 import { useGetMyBooks } from "../../../api/user_books";
 import { useNavigate } from "react-router-dom";
 import CurveLoader from "../../../components/CurveLoader";
+import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 
 export default function StudentBooks() {
   const { books, loading } = useGetMyBooks();
@@ -30,7 +32,7 @@ export default function StudentBooks() {
   const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
 
-  const booksPerPage = 8;
+  const booksPerPage = 4;
 
   // 🔹 Filter + Sort
   const sortedBooks = useMemo(() => {
@@ -108,7 +110,6 @@ export default function StudentBooks() {
       <Helmet>
         <title>Student Books - Student Dashboard</title>
       </Helmet>
-      <WelcomeBanner />
 
       {/* 🔹 Filters Section */}
       <Box
@@ -119,6 +120,7 @@ export default function StudentBooks() {
           mb: 4,
         }}
       >
+        <WelcomeBanner variant="books" />
         <Box
           sx={{
             display: "grid",
@@ -195,10 +197,10 @@ export default function StudentBooks() {
       {/* 🔹 Books Grid */}
       <Box
         sx={{
-          width: "90%",
+          width: "91%",
           mx: "auto",
           px: 4,
-          pb: 6,
+          pb: 1,
         }}
       >
         <Box
@@ -212,111 +214,183 @@ export default function StudentBooks() {
             gap: {
               xs: 3,
               sm: 4,
-              md: 6,
+              md: 3,
             },
           }}
+          mt={3}
         >
           {paginatedBooks.length > 0 ? (
-            paginatedBooks.map((book) => {
-              const isDescRTL = isArabic(book.description);
+            paginatedBooks.map((book, id) => {
               const isRTL = isArabic(book.title || book.description);
-
               return (
                 <Card
-                  key={book.id}
+                  key={id}
+                  onClick={() => navigate(`/student/books/${book.id}`)}
                   sx={{
-                    borderRadius: 3,
-                    overflow: "hidden",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+                    borderRadius: "16px",
+                    border: "1px solid #E6EAF0",
+                    cursor: "pointer",
+                    backgroundColor: "#fff",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                     transition: "0.2s ease",
-                    opacity: book.is_active ? 1 : 0.5,
-                    cursor: book.is_active ? "pointer" : "auto",
+                    overflow: "hidden",
 
-                    "&:hover": book.is_active
-                      ? {
-                          transform: "translateY(-4px)",
-                          boxShadow: "0 6px 16px rgba(0,0,0,0.1)",
-                        }
-                      : {},
-                  }}
-                  onClick={() => {
-                    if (!book.is_active) return;
-                    navigate(`/student/books/${book.id}`);
+                    "&:hover": {
+                      boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
+                    },
                   }}
                 >
                   <Box
                     sx={{
-                      width: "100%",
-                      height: 240, // 👈 ثبّت الارتفاع
-                      backgroundColor: "#739ebd",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      padding: 2, // 👈 هذا المهم عشان يبين الفراغ من كل الجهات
-                      boxSizing: "border-box",
+                      p: 1,
                     }}
                   >
-                    <Box
-                      component="img"
-                      src={book.cover_image_url_short}
-                      alt={book.title}
-                      className="book-cover"
-                      sx={{
-                        maxWidth: "100%",
-                        maxHeight: "100%",
-                        objectFit: "contain",
-                        transition: "transform 0.4s ease",
-                      }}
-                    />
-                  </Box>
+                    <CardContent sx={{ p: "0 !important" }}>
+                      {/* 🔹 الصف الأول */}
+                      <Box display="flex" gap={2} alignItems="center">
+                        {/* 🔹 الصورة (ثابتة دايمًا عاليسار) */}
+                        <Box
+                          component="img"
+                          src={book.cover_image_url_short}
+                          alt={book.title}
+                          sx={{
+                            width: 120,
+                            height: 170,
+                            objectFit: "cover", // 🔥 أهم سطر
+                            borderRadius: 2,
+                            mt: 2,
+                            ml: 1,
+                          }}
+                        />
 
-                  <CardContent>
-                    <Stack
-                      direction="row"
-                      justifyContent="space-between"
-                      alignItems="center"
-                      sx={{
-                        direction: isRTL ? "rtl" : "ltr",
-                        textAlign: isRTL ? "right" : "left",
-                      }}
-                    >
-                      <Typography
-                        fontWeight={500}
-                        fontSize={{
-                          xs: 14,
-                          sm: 16,
-                          md: 18,
-                        }}
-                        color="#535353"
+                        {/* 🔹 النص */}
+                        <Box flex={1}>
+                          {/* 🔹 العنوان */}
+                          <Typography
+                            fontWeight={600}
+                            fontSize={16}
+                            sx={{
+                              textAlign: isRTL ? "right" : "left",
+                              direction: isRTL ? "rtl" : "ltr",
+                            }}
+                          >
+                            {book.title}
+                          </Typography>
+
+                          {/* 🔹 الوصف */}
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              mt: 1,
+                              color: "#7a869a",
+                              display: "-webkit-box",
+                              WebkitLineClamp: 3,
+                              WebkitBoxOrient: "vertical",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              textAlign: isRTL ? "right" : "left",
+                              direction: isRTL ? "rtl" : "ltr",
+                            }}
+                          >
+                            {book.description || "No description available."}
+                          </Typography>
+                        </Box>
+                      </Box>
+
+                      {/* 🔹 divider */}
+                      <Box
                         sx={{
-                          display: "-webkit-box",
-                          WebkitLineClamp: 1,
-                          WebkitBoxOrient: "vertical",
-                          overflow: "hidden",
-                          direction: isRTL ? "rtl" : "ltr",
-                          textAlign: isRTL ? "right" : "left",
+                          mt: 2,
+                          px: 2, // 👈 يمين + شمال
+                          pb: 2, // 👈 تحت
                         }}
                       >
-                        {book.title}
-                      </Typography>
-                    </Stack>
+                        {/* 🔹 الطلاب + البروغرس */}
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            mt: 2,
+                            pt: 2,
+                          }}
+                        >
+                          {/* 🔹 الطلاب */}
+                          <Box
+                            display="flex"
+                            alignItems="center"
+                            gap={1}
+                            sx={{ flex: 1 }}
+                          >
+                            <PeopleAltIcon
+                              sx={{ fontSize: 18, color: "#6b7280" }}
+                            />
+                            <Typography variant="body2" color="#535353">
+                              {book.teacher_name}
+                            </Typography>
+                          </Box>
 
-                    <Typography
-                      variant="body2"
-                      dir={isDescRTL ? "rtl" : "ltr"}
-                      textAlign={isDescRTL ? "right" : "left"}
-                      sx={{
-                        mt: 1,
-                        color: "#7a869a",
-                        display: "-webkit-box",
-                        WebkitLineClamp: 1,
-                        WebkitBoxOrient: "vertical",
-                        overflow: "hidden",
-                      }}
-                    >
-                      {book.description || "No description available."}
-                    </Typography>
-                  </CardContent>
+                          {/* 🔹 الخط العمودي */}
+                          <Box
+                            sx={{
+                              width: "1px",
+                              height: "40px",
+                              backgroundColor: "#E6EAF0",
+                              mx: 2,
+                            }}
+                          />
+
+                          {/* 🔹 البروغرس */}
+                          <Box
+                            display="flex"
+                            alignItems="center"
+                            gap={1.5}
+                            sx={{ flex: 1 }}
+                          >
+                            <Box position="relative" display="inline-flex">
+                              {/* 🔹 الخلفية الرمادية */}
+                              <CircularProgress
+                                variant="determinate"
+                                value={100}
+                                size={36}
+                                thickness={4}
+                                sx={{
+                                  color: "#E6EAF0",
+                                  position: "absolute",
+                                  left: 0,
+                                }}
+                              />
+
+                              {/* 🔹 التقدم الأخضر */}
+                              <CircularProgress
+                                variant="determinate"
+                                value={64}
+                                size={36}
+                                thickness={4}
+                                sx={{
+                                  color: "#22c55e",
+                                }}
+                              />
+                            </Box>
+
+                            {/* 🔹 النص */}
+                            <Box>
+                              <Typography fontWeight={600} fontSize={14}>
+                                64%
+                              </Typography>
+                              <Typography
+                                variant="caption"
+                                sx={{ color: "#9AA5B1", fontSize: 10 }}
+                              >
+                                Avg. Progress
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </Box>
+
+                        {/* 🔹 الأزرار */}
+                      </Box>
+                    </CardContent>
+                  </Box>
                 </Card>
               );
             })
@@ -342,38 +416,59 @@ export default function StudentBooks() {
           )}
         </Box>
 
-        {/* 🔹 Pagination */}
+        {/* 🔹 Pagination + Info */}
         {totalPages > 1 && (
-          <Stack alignItems="center" sx={{ mt: 6 }}>
-            <Pagination
-              count={totalPages}
-              page={page}
-              onChange={(event, value) => setPage(value)}
-              shape="circular"
-              siblingCount={1}
-              boundaryCount={1}
-              sx={{
-                "& .MuiPaginationItem-root": {
-                  borderRadius: "50%",
-                  fontWeight: 500,
-                },
+          <Box
+            display="grid"
+            gridTemplateColumns="1fr auto 1fr"
+            alignItems="center"
+            mt={5}
+          >
+            {/* 🔹 اليسار */}
+            <Typography variant="body2" color="#7a869a">
+              Showing {(page - 1) * booksPerPage + 1} to{" "}
+              {Math.min(page * booksPerPage, sortedBooks.length)} of{" "}
+              {sortedBooks.length} books
+            </Typography>
 
-                "& .Mui-selected": {
-                  border: "1px solid #1A4D96",
-                  backgroundColor: "#fff !important",
-                  color: "#000000",
-                },
+            {/* 🔹 النص (Pagination بالنص) */}
+            <Box display="flex" justifyContent="center">
+              <Pagination
+                count={totalPages}
+                page={page}
+                onChange={(event, value) => setPage(value)}
+                shape="rounded"
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    borderRadius: "8px",
+                    backgroundColor: "#fff",
+                    border: "1px solid #E6EAF0",
+                    color: "#535353",
+                    minWidth: 36,
+                    height: 36,
+                  },
 
-                "& .MuiPaginationItem-previousNext": {
-                  backgroundColor: "#1A4D96",
-                },
+                  "& .MuiPaginationItem-root:hover": {
+                    backgroundColor: "#f5f7fb",
+                  },
 
-                "& .MuiPaginationItem-previousNext:hover": {
-                  backgroundColor: "#E2E8F0",
-                },
-              }}
-            />
-          </Stack>
+                  "& .Mui-selected": {
+                    backgroundColor: "#1A4D96 !important",
+                    color: "#fff",
+                    border: "1px solid #1A4D96",
+                  },
+
+                  "& .MuiPaginationItem-previousNext": {
+                    backgroundColor: "#fff",
+                    border: "1px solid #E6EAF0",
+                  },
+                }}
+              />
+            </Box>
+
+            {/* 🔹 اليمين (فاضي حالياً أو dropdown لاحقاً) */}
+            <Box />
+          </Box>
         )}
       </Box>
     </Box>

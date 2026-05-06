@@ -23,8 +23,6 @@ const ENDPOINTS = {
     ALL: "/api/users/all-users",
     Status: (id) => `/api/users/${id}/status`,
     GROWTH: (start) => `/api/users/users-growth?start=${start}`,
-    activity: `/api/users/activities`,
-    Myactivity: `/api/users/myactivities`,
     DELETE: (id) => `/api/users/${id}/delete`,
     USER: (id) => `/api/users/${id}`,
     UPDATE: (id) => `/api/users/${id}`,
@@ -47,6 +45,7 @@ const ENDPOINTS = {
     activateClassCode: (id) => `/api/user-books/${id}/class/student`,
     Student_one: (bookId) => `/api/user-books/student/${bookId}`,
     teacher_dashboard: "/api/user-books/teacher-dashboard",
+    student_dashboard: "/api/user-books/Student-dashboard",
   },
 
   CATEGORIES: {
@@ -56,12 +55,30 @@ const ENDPOINTS = {
   },
   Classes: {
     TeacherClasses: "/api/classes/teacherClasses",
+    StudentClasses: "/api/classes/student-classes",
     MyClassesByBook: (bookId) => `/api/classes/myClassesByBook/${bookId}`,
   },
   EVENTS: {
     CREATE: "/api/events/create",
     MY_EVENTS: "/api/events/my-events",
+    STUDENT_EVENTS: "/api/events/student-events",
     DELETE: (id) => `/api/events/${id}`,
+  },
+  ACTIVITIES: {
+    ALL: "/api/activities/all",
+
+    NOTIFICATIONS: "/api/activities/notifications",
+
+    READ_ALL: "/api/activities/read-all",
+  },
+  TEACHER_ACTIVITIES: {
+    MY_ACTIVITIES: "/api/teacher-activities/my-activities",
+    NOTIFICATIONS: "/api/teacher-activities/notifications",
+  },
+  STUDENT_ACTIVITIES: {
+    MY_ACTIVITIES: "/api/student-activities/my-activities",
+
+    NOTIFICATIONS: "/api/student-activities/notifications",
   },
 };
 

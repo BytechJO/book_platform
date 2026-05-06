@@ -59,7 +59,47 @@ const getMyClassesByBook = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+const getStudentClasses = async (req, res) => {
+  const studentId = req.user.id;
+
+  try {
+    const result = await pool.query(
+      `
+      SELECT
+  c.id,
+  c.class_name,
+  c.book_id,
+  b.title AS book_title,
+  c.created_at,
+  c.teacher_id,
+  u.full_name AS teacher_name
+
+FROM class_students cs
+
+JOIN classes c
+  ON c.id = cs.class_id
+
+JOIN books b
+  ON b.id = c.book_id
+
+JOIN users u
+  ON u.id = c.teacher_id
+
+WHERE cs.student_id = $1
+
+ORDER BY c.created_at DESC
+      `,
+      [studentId],
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Get student classes error:", error);
+    res.status(500).json({ message: "error" });
+  }
+};
 module.exports = {
   getTeacherClasses,
   getMyClassesByBook,
+  getStudentClasses,
 };

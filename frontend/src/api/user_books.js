@@ -107,3 +107,28 @@ export function useTeacherDashboard() {
 
   return { ...memoizedValue, refetch };
 }
+export function useStudentDashboard() {
+  const URL = ENDPOINTS.User_book.student_dashboard;
+
+  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      stats: data || {
+        total_books: 0,
+        total_classes: 0,
+      },
+      loading: isLoading,
+      error,
+      validating: isValidating,
+      empty: !isLoading && !data,
+    }),
+    [data, error, isLoading, isValidating],
+  );
+
+  const refetch = async () => {
+    await mutate(URL);
+  };
+
+  return { ...memoizedValue, refetch };
+}

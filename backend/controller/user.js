@@ -232,22 +232,8 @@ const updateUser = async (req, res) => {
     res.status(500).json({ message: "error" });
   }
 };
-// GET /teacher/activities
-const getMyActivities = async (req, res) => {
-  const teacherId = req.user.id;
 
-  const result = await pool.query(
-    `
-    SELECT *
-    FROM activities
-    WHERE teacher_id = $1
-    ORDER BY created_at DESC
-    `,
-    [teacherId],
-  );
 
-  res.json(result.rows);
-};
 module.exports = {
   getAllUsers,
   toggleUserStatus,
@@ -256,5 +242,4 @@ module.exports = {
   softDeleteUser,
   getUserFullDetails,
   updateUser,
-  getMyActivities,
 };

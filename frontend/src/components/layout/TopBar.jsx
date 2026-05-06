@@ -22,6 +22,8 @@ import BellIcon from "../icons/BellIcon";
 import UserIcon from "../icons/UserIcon";
 import { useAuthMe } from "src/api";
 import logo from "../../assets/logo_white.svg";
+import { useGetNotifications } from "../../api/activities";
+import NotificationMenu from "../notifications/NotificationMenu";
 
 export default function TopBar() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -29,7 +31,7 @@ export default function TopBar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-
+  const { notifications } = useGetNotifications();
   const open = Boolean(anchorEl);
 
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
@@ -127,29 +129,7 @@ export default function TopBar() {
             <SettingsIcon size={24} />
           </IconButton>
 
-          <IconButton sx={{ color: "white", position: "relative" }}>
-            <BellIcon size={24} />
-
-            <Box
-              sx={{
-                position: "absolute",
-                top: 6,
-                right: 6,
-                backgroundColor: "#FF4B55",
-                color: "white",
-                fontSize: 9,
-                width: 16,
-                height: 16,
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontWeight: "bold",
-              }}
-            >
-              1
-            </Box>
-          </IconButton>
+          <NotificationMenu items={notifications} />
 
           <IconButton
             sx={{

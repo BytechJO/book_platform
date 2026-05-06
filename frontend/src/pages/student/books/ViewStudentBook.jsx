@@ -10,7 +10,7 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ISPNIconButton from "src/components/icons/ISPNIcon";
 import PrinterIcon from "src/components/icons/PrinterIcon";
 import Icon from "src/assets/icon/icone.svg";
@@ -24,9 +24,12 @@ import axiosInstance from "../../../api/axios";
 import ENDPOINTS from "../../../api/endpoints";
 import { useGetStudentBook } from "../../../api/user_books";
 import CurveLoader from "../../../components/CurveLoader";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 export default function ViewStudentBook() {
   const { id } = useParams();
+  const navigate = useNavigate();
+
   const [open, setOpen] = useState(false);
   const [classCode, setClassCode] = useState("");
   const [loadingClass, setLoadingClass] = useState(false);
@@ -93,7 +96,26 @@ export default function ViewStudentBook() {
           justifyContent: "center",
         }}
       >
-        <Box sx={{ maxWidth: 1200, mx: "auto", px: 2 }}>
+        <Box sx={{ maxWidth: 1200, mx: "auto", px: 1 }}>
+          <Typography
+            onClick={() => navigate("/Student/books")}
+            sx={{
+              mb: 2,
+              cursor: "pointer",
+              color: "#2d5aa7",
+              fontWeight: 600,
+              fontSize: 15,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 1,
+              "&:hover": {
+                textDecoration: "underline",
+              },
+            }}
+          >
+            <ArrowBackIcon sx={{ fontSize: 18 }} />
+            Back to Books
+          </Typography>
           <Stack
             direction={{ xs: "column", md: isRTL ? "row" : "row-reverse" }}
             spacing={6}
@@ -102,51 +124,43 @@ export default function ViewStudentBook() {
             {/* LEFT SIDE */}
             <Box
               sx={{
-                width: { xs: "100%", md: 450 },
+                width: { xs: "100%", md: 420 },
                 position: "relative",
                 height: "auto",
               }}
             >
-              {/* 🔵 IMAGE */}
-              <Box
-                sx={{
-                  position: "relative",
-                  zIndex: 2,
-                  borderTopLeftRadius: "24px",
-                  borderTopRightRadius: "24px",
-                  overflow: "hidden",
-                  boxShadow: "0px 10px 15px -5px rgba(0,0,0,0.35)",
-                }}
-              >
-                <Box
-                  component="img"
-                  src={book.cover_image_url_long}
-                  alt={book.title}
-                  sx={{
-                    width: "100%",
-                    display: "block",
-                    transform: "scale(1.06)",
-                    transformOrigin: "center",
-                    height: "auto",
-                    boxShadow: "5px 5px 15px 5px #888888",
-                  }}
-                />
-              </Box>
               {/* ⚪ INFO BOX */}
               <Box
                 sx={{
                   position: "relative",
                   zIndex: 1,
-                  mt: "-60px",
-                  pt: 8,
-                  px: 4,
-                  pb: 2,
+                  p: 2,
                   borderRadius: "28px",
                   backgroundColor: "#ffffff",
                   boxShadow: "0 20px 45px rgba(0,0,0,0.08)",
                   border: "1px solid #E1E1E1",
                 }}
               >
+                {/* 🔵 IMAGE */}
+                <Box
+                  sx={{
+                    borderRadius: "20px",
+                    overflow: "hidden",
+                    mb: 3,
+                  }}
+                >
+                  <Box
+                    component="img"
+                    src={book.cover_image_url_long}
+                    alt={book.title}
+                    sx={{
+                      width: "100%",
+                      display: "block",
+                      height: "auto",
+                      objectFit: "cover",
+                    }}
+                  />
+                </Box>
                 <Typography
                   sx={{
                     fontWeight: 600,
@@ -194,9 +208,7 @@ export default function ViewStudentBook() {
                     gap: 1.5,
                     mb: 1,
                   }}
-                >
-                
-                </Box>
+                ></Box>
 
                 <Divider sx={{ my: 1 }} />
 

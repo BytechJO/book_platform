@@ -25,6 +25,7 @@ import { Helmet } from "react-helmet-async";
 import ImageUploadBox from "../../../components/ImageUploadBox";
 import { useGetBooks } from "../../../api";
 import { useGetCategories } from "../../../api/categories";
+import CurveLoader from "../../../components/CurveLoader";
 export default function CreateBook() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -34,7 +35,6 @@ export default function CreateBook() {
   const isEdit = Boolean(id);
   const [shortPreview, setShortPreview] = useState(null);
   const [longPreview, setLongPreview] = useState(null);
-  const [longImageError, setLongImageError] = useState("");
   const { books } = useGetBooks();
   const { categories } = useGetCategories();
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
@@ -85,6 +85,9 @@ export default function CreateBook() {
     short_image: isEdit
       ? yup.mixed().nullable() // 🔥 هنا الحل
       : yup.mixed().required("Short cover image is required"),
+    long_image: isEdit
+      ? yup.mixed().nullable()
+      : yup.mixed().required("Long cover image is required"),
   });
 
   useEffect(() => {
@@ -130,6 +133,7 @@ export default function CreateBook() {
       language: "",
       category_id: "",
       short_image: null,
+      long_image: null,
     },
   });
   const handleImageChange = (file, type) => {
@@ -144,15 +148,14 @@ export default function CreateBook() {
     } else {
       setLongImage(file);
       setLongPreview(previewUrl);
-      setLongImageError("");
+      setValue("long_image", file);
     }
   };
   const onSubmit = async (data) => {
     const formData = new FormData();
 
     Object.keys(data).forEach((key) => {
-      if (key === "short_image") return;
-
+      if (key === "short_image" || key === "long_image") return;
       let value = data[key];
 
       // 🔥 أهم سطر
@@ -340,9 +343,9 @@ export default function CreateBook() {
                   onFileSelect={(file) => handleImageChange(file, "long")}
                 />
 
-                {longImageError && (
+                {errors.long_image && (
                   <Typography color="error" fontSize={14}>
-                    {longImageError}
+                    {errors.long_image.message}
                   </Typography>
                 )}
               </Stack>

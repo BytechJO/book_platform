@@ -113,8 +113,13 @@ const register = async (req, res) => {
       await logActivity({
         type: "user",
         action: "created",
+
         title: "New user registered",
+
         description: `${user.full_name} joined the system`,
+
+        actor_id: user.id,
+        actor_role: user.role,
       });
     } catch (err) {
       console.error("Activity log failed:", err);
@@ -294,6 +299,5 @@ const updateProfile = async (req, res) => {
     });
   }
 };
-
 
 module.exports = { register, login, me, updateProfile };
