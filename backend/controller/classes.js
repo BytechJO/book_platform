@@ -6,29 +6,33 @@ const getTeacherClasses = async (req, res) => {
   try {
     const result = await pool.query(
       `
-      SELECT
-        c.id,
-        c.class_name,
-        c.book_id,
-        b.title AS book_title,
-        c.created_at,
+  SELECT
+    c.id,
+    c.class_name,
+    c.book_id,
+    b.title AS book_title,
+    b.cover_image_url_short AS cover_image,
+    c.created_at,
 
-        COUNT(cs.student_id) AS total_students
+    COUNT(cs.student_id) AS total_students
 
-      FROM classes c
+  FROM classes c
 
-      LEFT JOIN class_students cs 
-        ON cs.class_id = c.id
+  LEFT JOIN class_students cs 
+    ON cs.class_id = c.id
 
-      JOIN books b 
-        ON b.id = c.book_id
+  JOIN books b 
+    ON b.id = c.book_id
 
-      WHERE c.teacher_id = $1
+  WHERE c.teacher_id = $1
 
-      GROUP BY c.id, b.title
+  GROUP BY 
+    c.id,
+    b.title,
+    b.cover_image_url_short
 
-      ORDER BY c.created_at DESC
-      `,
+  ORDER BY c.created_at DESC
+  `,
       [teacherId],
     );
 
@@ -70,6 +74,8 @@ const getStudentClasses = async (req, res) => {
   c.class_name,
   c.book_id,
   b.title AS book_title,
+  b.cover_image_url_short,
+  b.cover_image_url_long,
   c.created_at,
   c.teacher_id,
   u.full_name AS teacher_name

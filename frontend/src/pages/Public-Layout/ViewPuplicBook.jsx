@@ -71,50 +71,42 @@ export default function ViewPuplicBook() {
                 {/* LEFT SIDE */}
                 <Box
                   sx={{
-                    width: { xs: "100%", md: 450 },
+                    width: { xs: "100%", md: 420 },
                     position: "relative",
                     height: "auto",
                   }}
                 >
-                  {/* 🔵 IMAGE */}
-                  <Box
-                    sx={{
-                      position: "relative",
-                      zIndex: 2,
-                      borderRadius: "24px",
-                      overflow: "hidden",
-                      boxShadow: "0px 10px 15px -5px rgba(0,0,0,0.35)",
-                    }}
-                  >
-                    <Box
-                      component="img"
-                      src={book.cover_image_url_long}
-                      alt={book.title}
-                      sx={{
-                        width: "100%",
-                        display: "block",
-                        transform: "scale(1.06)",
-                        transformOrigin: "center",
-                        height: "auto",
-                        boxShadow: "5px 5px 15px 5px #888888",
-                      }}
-                    />
-                  </Box>
                   {/* ⚪ INFO BOX */}
                   <Box
                     sx={{
                       position: "relative",
                       zIndex: 1,
-                      mt: "-60px",
-                      pt: 7,
-                      px: 4,
-                      pb: 4,
-                      borderRadius: "28px",
+                      p: 2,
+                      borderRadius: "20px",
                       backgroundColor: "#ffffff",
-                      boxShadow: "0 20px 45px rgba(0,0,0,0.08)",
-                      border: "1px solid #E1E1E1",
+                      boxShadow: "0 0 12px rgba(0,0,0,0.06)",
                     }}
                   >
+                    {/* 🔵 IMAGE */}
+                    <Box
+                      sx={{
+                        borderRadius: "20px",
+                        overflow: "hidden",
+                        mb: 3,
+                      }}
+                    >
+                      <Box
+                        component="img"
+                        src={book.cover_image_url_long}
+                        alt={book.title}
+                        sx={{
+                          width: "100%",
+                          display: "block",
+                          height: "auto",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </Box>
                     <Typography
                       sx={{
                         fontWeight: 600,

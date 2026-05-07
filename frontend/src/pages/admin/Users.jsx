@@ -319,7 +319,7 @@ export default function Users() {
               color: "#2B5A9E",
             }}
           >
-            All Users
+             Users
           </Typography>
 
           <Typography sx={{ fontSize: 14, color: "#7a869a" }}>

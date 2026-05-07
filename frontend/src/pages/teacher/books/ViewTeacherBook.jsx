@@ -26,7 +26,7 @@ import axiosInstance from "../../../api/axios";
 import ENDPOINTS from "../../../api/endpoints";
 import CurveLoader from "../../../components/CurveLoader";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 export default function ViewTeacherBook() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -143,10 +143,9 @@ export default function ViewTeacherBook() {
                   position: "relative",
                   zIndex: 1,
                   p: 2,
-                  borderRadius: "28px",
+                  borderRadius: "20px",
                   backgroundColor: "#ffffff",
-                  boxShadow: "0 20px 45px rgba(0,0,0,0.08)",
-                  border: "1px solid #E1E1E1",
+                  boxShadow: "0 0 12px rgba(0,0,0,0.06)",
                 }}
               >
                 {/* 🔵 IMAGE */}
@@ -357,6 +356,16 @@ export default function ViewTeacherBook() {
                 {book.description?.length > 200 && (
                   <Button
                     onClick={() => setExpanded(!expanded)}
+                    startIcon={
+                      <KeyboardArrowDownIcon
+                        sx={{
+                          transition: "0.3s",
+                          transform: expanded
+                            ? "rotate(180deg)"
+                            : "rotate(0deg)",
+                        }}
+                      />
+                    }
                     sx={{
                       mt: 1,
                       p: 0,
@@ -364,6 +373,12 @@ export default function ViewTeacherBook() {
                       fontWeight: 600,
                       fontSize: 14,
                       textTransform: "none",
+
+                      "& .MuiButton-startIcon": {
+                        marginRight: "4px",
+                        marginLeft: 0,
+                      },
+
                       "&:hover": {
                         backgroundColor: "transparent",
                         textDecoration: "underline",

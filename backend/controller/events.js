@@ -89,8 +89,87 @@ const getStudentEvents = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+// ✅ UPDATE event
+const updateEvent = async (req, res) => {
+  try {
+    const teacherId = req.user.id;
+    const { id } = req.params;
+    const { title, subject, date, time, book_id, class_id } = req.body;
+
+    const result = await pool.query(
+      `
+      UPDATE events
+      SET title = $1,
+          subject = $2,
+          date = $3,
+          time = $4,
+          book_id = $5,
+          class_id = $6
+      WHERE id = $7 AND teacher_id = $8
+      RETURNING *
+      `,
+      [title, subject, date, time, book_id, class_id, id, teacherId],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+    const updatedEvent = result.rows[0];
+    try {
+      await logActivity({
+        type: "event",
+        action: "updated",
+
+        title: "Event updated",
+
+        description: `${title} event updated`,
+
+        actor_id: req.user.id,
+        actor_role: req.user.role,
+
+        event_id: updatedEvent.id,
+        class_id,
+        book_id,
+      });
+    } catch (err) {
+      console.error("Activity log failed:", err);
+    }
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Update event error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// ✅ DELETE event
+const deleteEvent = async (req, res) => {
+  try {
+    const teacherId = req.user.id;
+    const { id } = req.params;
+
+    const result = await pool.query(
+      `
+      DELETE FROM events
+      WHERE id = $1 AND teacher_id = $2
+      RETURNING *
+      `,
+      [id, teacherId],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    res.json({ message: "Event deleted successfully" });
+  } catch (error) {
+    console.error("Delete event error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 module.exports = {
   getMyEvents,
   createEvent,
   getStudentEvents,
+  updateEvent,
+  deleteEvent,
 };

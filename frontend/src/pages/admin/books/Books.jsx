@@ -54,6 +54,11 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { useGetCategories } from "../../../api/categories";
+import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
+import AutoStoriesRoundedIcon from "@mui/icons-material/AutoStoriesRounded";
+import BookmarkRoundedIcon from "@mui/icons-material/BookmarkRounded";
+import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
+
 export default function Books() {
   const { books = [], refetch, loading } = useGetBooks();
   const [search, setSearch] = useState("");
@@ -331,7 +336,7 @@ export default function Books() {
                 color: "#2B5A9E",
               }}
             >
-              All Books
+              Books
             </Typography>
 
             <Typography sx={{ fontSize: 14, color: "#7a869a" }}>
@@ -406,7 +411,7 @@ export default function Books() {
             value={totalBooks}
             change={`${totalPercent > 0 ? "+" : ""}${totalPercent}%`}
             changeColor={totalPercent >= 0 ? "green" : "red"}
-            icon="📘"
+            icon={<MenuBookRoundedIcon />}
             color="#2B5A9E"
           />
 
@@ -415,7 +420,7 @@ export default function Books() {
             value={publishedBooks}
             change={`${publishedPercent > 0 ? "+" : ""}${publishedPercent}%`}
             changeColor={publishedPercent >= 0 ? "green" : "red"}
-            icon="📖"
+            icon={<AutoStoriesRoundedIcon />}
             color="#2e7d32"
           />
 
@@ -424,7 +429,7 @@ export default function Books() {
             value={draftBooks}
             change={`${draftPercent > 0 ? "+" : ""}${draftPercent}%`}
             changeColor={draftPercent >= 0 ? "green" : "red"}
-            icon="🔖"
+            icon={<BookmarkRoundedIcon />}
             color="#9C27B0"
           />
 
@@ -433,7 +438,7 @@ export default function Books() {
             value={totalViews.toLocaleString()}
             change={`${viewsPercent > 0 ? "+" : ""}${viewsPercent}%`}
             changeColor={viewsPercent >= 0 ? "green" : "red"}
-            icon="👁️"
+            icon={<VisibilityRoundedIcon />}
             color="#EF6C00"
           />
         </Box>
@@ -668,7 +673,7 @@ export default function Books() {
                           <Box
                             component="img"
                             src={b.cover_image_url_short}
-                            sx={{ width: 32, height: 42, borderRadius: "4px" }}
+                            sx={{ width: 32, height: 42, borderRadius: "4px" ,objectFit:"contain"}}
                           />
 
                           <Box>
@@ -1019,7 +1024,9 @@ function StatCard({ title, value, change, changeColor, icon, color }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            fontSize: 22,
+            "& svg": {
+              fontSize: 24,
+            },
             color: color,
           }}
         >

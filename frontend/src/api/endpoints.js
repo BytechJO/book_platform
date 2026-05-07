@@ -62,6 +62,7 @@ const ENDPOINTS = {
     CREATE: "/api/events/create",
     MY_EVENTS: "/api/events/my-events",
     STUDENT_EVENTS: "/api/events/student-events",
+    UPDATE: (id) => `/api/events/${id}`,
     DELETE: (id) => `/api/events/${id}`,
   },
   ACTIVITIES: {

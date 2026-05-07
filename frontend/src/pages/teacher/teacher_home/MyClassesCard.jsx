@@ -9,10 +9,11 @@ import GroupsIcon from "@mui/icons-material/Groups";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useGetTeacherClasses } from "../../../api/Classes";
 import CurveLoader from "../../../components/CurveLoader";
+import { useNavigate } from "react-router-dom";
 export default function MyClassesCard() {
   const { classes, loading } = useGetTeacherClasses();
   const progressValues = [72, 65, 80, 60, 90];
-
+  const navigate = useNavigate();
   if (loading) {
     return <CurveLoader />;
   }
@@ -108,7 +109,19 @@ export default function MyClassesCard() {
       {/* Footer */}
       <Box sx={footerStyle}>
         <Box sx={footerStyle}>
-          <Typography sx={footerText}>View all classes</Typography>
+          <Typography
+            onClick={() => navigate("/teacher/classes")}
+            sx={{
+              ...footerText,
+              cursor: "pointer",
+
+              "&:hover": {
+                textDecoration: "underline",
+              },
+            }}
+          >
+            View all classes
+          </Typography>
 
           <ArrowForwardIosIcon
             sx={{

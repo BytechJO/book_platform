@@ -24,6 +24,10 @@ import TeacherLayout from "../pages/teacher/TeacherLayout";
 import ViewTeacherBook from "../pages/teacher/books/ViewTeacherBook";
 import Help from "../pages/teacher/Help";
 import TeacherHome from "../pages/teacher/teacher_home/TeacherHome";
+import TeacherClasses from "../pages/teacher/TeacherClasses";
+import TeacherActivities from "../pages/teacher/TeacherActivities";
+import StudentClasses from "../pages/student/StudentClasses";
+import StudentActivities from "../pages/student/StudentActivities";
 import ViewPuplicBook from "../pages/Public-Layout/ViewPuplicBook";
 import NotFound from "../pages/NotFound";
 import StudentHome from "../pages/student/student_home/studentHome";
@@ -92,6 +96,8 @@ export default function AppRoutes() {
         <Route path="books" element={<TeacherBooks />} />
         <Route path="books/:id" element={<ViewTeacherBook />} />
         <Route path="help" element={<Help />} />
+        <Route path="classes" element={<TeacherClasses />} />
+        <Route path="activities" element={<TeacherActivities />} />
         <Route path="profile" element={<UserProfileTeacher />} />
       </Route>
       <Route
@@ -106,6 +112,8 @@ export default function AppRoutes() {
         <Route path="books" element={<StudentBooks />} />
         <Route path="events" element={<ViewEventsStudent />} />
         <Route path="books/:id" element={<ViewStudentBook />} />
+        <Route path="classes" element={<StudentClasses />} />
+        <Route path="activities" element={<StudentActivities />} />
         <Route path="help" element={<HelpStudent />} />
         <Route path="profile" element={<UserProfileStudent />} />
       </Route>

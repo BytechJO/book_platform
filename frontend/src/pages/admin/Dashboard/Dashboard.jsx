@@ -141,6 +141,10 @@ export default function Dashboard() {
           flex: 1,
           display: "flex",
           flexDirection: "column",
+
+          width: "95%",
+          mx: "auto",
+
         }}
       >
         {/* 1. العنوان (أعلى الصفحة) */}

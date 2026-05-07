@@ -16,6 +16,7 @@ import PlayCircleOutlineOutlinedIcon from "@mui/icons-material/PlayCircleOutline
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import SendIcon from "@mui/icons-material/Send";
 import ShieldOutlinedIcon from "@mui/icons-material/ShieldOutlined";
+
 export default function Help() {
   const [formData, setFormData] = useState({
     fullName: "",
@@ -89,8 +90,9 @@ export default function Help() {
             borderRadius: "18px",
             p: { xs: 2, md: 1.5 },
             background: "#fff",
-            border: "1px solid #eef0f4",
+            border: "1px solid #f7f8fa",
             display: "flex",
+            boxShadow: "0 4px 12px rgba(17, 24, 39, 0.08)",
             flexDirection: "column",
             justifyContent: "space-between",
           }}
@@ -99,16 +101,16 @@ export default function Help() {
           <Box sx={{ display: "flex", gap: 1.5 }}>
             <Box
               sx={{
-                width: 42,
-                height: 42,
-                borderRadius: "12px",
+                width: 55,
+                height: 55,
+                borderRadius: "50px",
                 background: "#edf4ff",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
-              <MailOutlineIcon sx={{ color: "#2563eb", fontSize: 20 }} />
+              <MailOutlineIcon sx={{ color: "#1c459e", fontSize: 30 }} />
             </Box>
 
             <Box>
@@ -224,7 +226,7 @@ export default function Help() {
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
-                rows={3}
+                rows={2}
                 placeholder="Type your message here..."
                 InputProps={{
                   startAdornment: (
@@ -304,9 +306,10 @@ export default function Help() {
             borderRadius: "18px",
             p: { xs: 2, md: 3 },
             background: "#fff",
-            border: "1px solid #eef0f4",
+            border: "1px solid #f7f8fa",
             display: "flex",
             flexDirection: "column",
+            boxShadow: "0 4px 12px rgba(17, 24, 39, 0.08)",
             justifyContent: "space-between",
           }}
         >
@@ -314,9 +317,9 @@ export default function Help() {
           <Box sx={{ display: "flex", gap: 1.5 }}>
             <Box
               sx={{
-                width: 42,
-                height: 42,
-                borderRadius: "12px",
+                width: 55,
+                height: 55,
+                borderRadius: "50px",
                 background: "#edf4ff",
                 display: "flex",
                 alignItems: "center",
@@ -324,7 +327,7 @@ export default function Help() {
               }}
             >
               <PlayCircleOutlineOutlinedIcon
-                sx={{ color: "#2563eb", fontSize: 20 }}
+                sx={{ color: "#1c459e", fontSize: 30 }}
               />
             </Box>
 

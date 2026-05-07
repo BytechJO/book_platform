@@ -10,9 +10,6 @@ export default function StudentLayout() {
     <Box
       sx={{
         width: "100%",
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
       }}
     >
       <TeachBar />

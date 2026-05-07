@@ -1,5 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 export default function TopCodes({ codes }) {
   const navigate = useNavigate();
@@ -7,7 +8,7 @@ export default function TopCodes({ codes }) {
   const latestCodes = codes
     ?.slice()
     ?.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-    ?.slice(0, 5);
+    ?.slice(0, 6);
 
   return (
     <Box
@@ -92,32 +93,38 @@ export default function TopCodes({ codes }) {
       {/* Footer */}
       <Box
         sx={{
-          borderTop: "1px solid #eee",
-          pt: 1.5,
-          mt: 1,
           display: "flex",
-          justifyContent: "space-between",
-            marginLeft:2,
           alignItems: "center",
+          justifyContent: "flex-end",
+          gap: 0.5,
+          pt: 2,
+          borderTop: "1px solid #eee",
+          mt: "auto",
         }}
       >
         <Typography
           onClick={() => navigate("/admin/codes")}
           sx={{
             fontSize: 12,
-            color: "#3B6DB5",
+            color: "#3f51b5",
+            fontWeight: 500,
             cursor: "pointer",
+
+            "&:hover": {
+              textDecoration: "underline",
+            },
           }}
         >
           View all codes
         </Typography>
 
-        <Typography
-          onClick={() => navigate("/admin/codes")}
-          sx={{ fontSize: 22, color: "#3B6DB5", cursor: "pointer" }}
-        >
-          ›
-        </Typography>
+        <ArrowForwardIosIcon
+          sx={{
+            fontSize: 12,
+            color: "#3f51b5",
+            ml: 0.5,
+          }}
+        />
       </Box>
     </Box>
   );

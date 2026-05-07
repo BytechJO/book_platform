@@ -5,8 +5,11 @@ import MenuBookIcon from "@mui/icons-material/MenuBook";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CurveLoader from "../../../components/CurveLoader";
 import { useGetStudentActivities } from "../../../api/studentActivities";
+import { useNavigate } from "react-router-dom";
 
 export default function RecentActivityCard() {
+  const navigate = useNavigate();
+
   const { activities, loading } = useGetStudentActivities();
   if (loading) {
     return <CurveLoader />;
@@ -111,7 +114,19 @@ export default function RecentActivityCard() {
 
       {/* Footer */}
       <Box sx={footerStyle}>
-        <Typography sx={footerText}>View all Activities</Typography>
+        <Typography
+          onClick={() => navigate("/student/activities")}
+          sx={{
+            ...footerText,
+            cursor: "pointer",
+
+            "&:hover": {
+              textDecoration: "underline",
+            },
+          }}
+        >
+          View all Activities
+        </Typography>
 
         <ArrowForwardIosIcon
           sx={{

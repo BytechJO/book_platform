@@ -1,6 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useTopBooks } from "../../../api";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 export default function TopBooks() {
   const navigate = useNavigate();
@@ -54,7 +55,7 @@ export default function TopBooks() {
             alignItems: "center",
             py: 1,
             fontSize: 13,
-            marginLeft:2
+            marginLeft: 2,
           }}
         >
           {/* ترتيب */}
@@ -80,32 +81,38 @@ export default function TopBooks() {
       {/* Footer */}
       <Box
         sx={{
-          borderTop: "1px solid #eee",
-          pt: 1.5,
-          mt: 1,
           display: "flex",
-          justifyContent: "space-between",
           alignItems: "center",
+          justifyContent: "flex-end",
+          gap: 0.5,
+          pt: 2,
+          borderTop: "1px solid #eee",
+          mt: "auto",
         }}
       >
         <Typography
           onClick={() => navigate("/admin/books")}
           sx={{
             fontSize: 12,
-            color: "#3B6DB5",
-            marginLeft:2,
+            color: "#3f51b5",
+            fontWeight: 500,
             cursor: "pointer",
+
+            "&:hover": {
+              textDecoration: "underline",
+            },
           }}
         >
-          View all books{" "}
+          View all books
         </Typography>
 
-        <Typography
-          onClick={() => navigate("/admin/books")}
-          sx={{ fontSize: 22, color: "#3B6DB5", cursor: "pointer" }}
-        >
-          ›
-        </Typography>
+        <ArrowForwardIosIcon
+          sx={{
+            fontSize: 12,
+            color: "#3f51b5",
+            ml: 0.5,
+          }}
+        />
       </Box>
     </Box>
   );

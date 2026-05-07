@@ -33,7 +33,7 @@ export default function BookSlider() {
   const [isVisible, setIsVisible] = useState(false);
   const containerRef = useRef(null);
 
-  const booksPerPage = 8;
+  const booksPerPage = 6;
   const totalPages = Math.ceil(books.length / booksPerPage);
 
   const paginatedBooks = useMemo(() => {
@@ -91,7 +91,7 @@ export default function BookSlider() {
             gridTemplateColumns: {
               xs: "repeat(2, 1fr)",
               sm: "repeat(2, 1fr)",
-              md: "repeat(4, 1fr)",
+              md: "repeat(3, 1fr)",
             },
             gap: {
               xs: 3,
@@ -106,106 +106,168 @@ export default function BookSlider() {
               <Card
                 key={book.id}
                 sx={{
-                  borderRadius: 3,
+                  borderRadius: "20px",
                   overflow: "hidden",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+                  backgroundColor: "#fff",
+                  border: "1px solid #eef1f5",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.04)",
                   transition: "0.3s ease",
                   cursor: "pointer",
-                  transform: {
-                    xs: "scale(0.92)",
-                    sm: "scale(1)",
-                  },
-                  transformOrigin: "top center",
                   opacity: 0,
 
                   animation: isVisible
-                    ? `${fadeInUp} 0.8s ease-out ${index * 0.5}s forwards`
+                    ? `${fadeInUp} 0.8s ease-out ${index * 0.15}s forwards`
                     : "none",
 
                   "&:hover": {
-                    transform: "translateY(-8px)",
-                    boxShadow: "0 12px 24px rgba(0,0,0,0.15)",
+                    transform: "translateY(-6px)",
+                    boxShadow: "0 10px 24px rgba(0,0,0,0.08)",
 
                     "& .book-cover": {
-                      transform: "scale(1.1)",
+                      transform: "scale(1.05)",
                     },
                   },
                 }}
                 onClick={() => navigate(`/books/${book.id}`)}
               >
+                {/* IMAGE SECTION */}
                 <Box
                   sx={{
-                    width: "100%",
-                    height: 240, // 👈 ثبّت الارتفاع
-                    backgroundColor: "#739ebd",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    padding: 2, // 👈 هذا المهم عشان يبين الفراغ من كل الجهات
-                    boxSizing: "border-box",
+                    p: 2,
+                    pb: 1,
                   }}
                 >
                   <Box
-                    component="img"
-                    src={book.cover_image_url_short}
-                    alt={book.title}
-                    className="book-cover"
                     sx={{
-                      maxWidth: "100%",
-                      maxHeight: "100%",
-                      objectFit: "contain",
-                      transition: "transform 0.4s ease",
-                    }}
-                  />
-                </Box>
-
-                <CardContent>
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    sx={{
-                      flexDirection: isRTL ? "row-reverse" : "row",
+                      height: 170,
+                      borderRadius: "16px",
+                      background: "#f7f9fc",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      overflow: "hidden",
                     }}
                   >
-                    <Typography
-                      fontSize={{
-                        xs: 12,
-                        sm: 16,
-                        md: 18,
-                      }}
-                      color="#535353"
-                      noWrap
-                      fontWeight={600}
+                    <Box
+                      component="img"
+                      src={book.cover_image_url_short}
+                      alt={book.title}
+                      className="book-cover"
                       sx={{
-                        direction: isRTL ? "rtl" : "ltr",
-                        textAlign: isRTL ? "right" : "left",
+                        width: "85%",
+                        height: "85%",
+                        objectFit: "contain",
+                        transition: "transform 0.4s ease",
                       }}
-                    >
-                      {book.title}
-                    </Typography>
-                  </Stack>
+                    />
+                  </Box>
+                </Box>
 
-                  <Typography
-                    variant="body2"
+                {/* CONTENT */}
+                <CardContent
+                  sx={{
+                    pt: 1,
+                    px: 2.2,
+                    pb: "18px !important",
+                  }}
+                >
+                  {/* CATEGORY */}
+                  <Box
                     sx={{
-                      fontSize: {
-                        xs: 11,
-                        sm: 14,
-                      },
-                      mt: 1,
-                      color: "#7a869a",
-                      display: "-webkit-box",
-                      WebkitLineClamp: 1,
-                      WebkitBoxOrient: "vertical",
-                      overflow: "hidden",
-                      fontWeight: 400,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      px: 1.2,
+                      py: 0.4,
+                      borderRadius: "999px",
+                      backgroundColor: "#eef7ee",
+                      color: "#4caf50",
+                      fontSize: 11,
+                      fontWeight: 600,
+                      mb: 1.2,
+                    }}
+                  >
+                    {book.category || ""}
+                  </Box>
+
+                  {/* TITLE */}
+                  <Typography
+                    sx={{
+                      fontSize: 16,
+                      fontWeight: 700,
+                      color: "#1d1d1f",
+                      mb: 1,
+                      lineHeight: 1.3,
                       direction: isRTL ? "rtl" : "ltr",
                       textAlign: isRTL ? "right" : "left",
                     }}
                   >
-                    {book.description || "No description available."}
+                    {book.title}
                   </Typography>
+
+                  {/* DESCRIPTION */}
+                  <Typography
+                    sx={{
+                      fontSize: 14,
+                      color: "#7b8190",
+                      lineHeight: 1.7,
+                      minHeight: 48,
+                      mb: 2,
+                      direction: isRTL ? "rtl" : "ltr",
+                      textAlign: isRTL ? "right" : "left",
+                    }}
+                  >
+                    {(book.description || "No description available.").slice(
+                      0,
+                      70,
+                    )}
+                    ...
+                  </Typography>
+
+                  {/* BUTTONS */}
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Box
+                      sx={{
+                        flex: 1,
+                        height: 42,
+                        borderRadius: "12px",
+                        border: "1px solid #d7e3ff",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "#2563eb",
+                        fontWeight: 600,
+                        fontSize: 14,
+                        transition: "0.2s",
+
+                        "&:hover": {
+                          backgroundColor: "#f5f9ff",
+                        },
+                      }}
+                    >
+                      📖 View Book
+                    </Box>
+
+                    <Box
+                      sx={{
+                        width: 42,
+                        height: 42,
+                        borderRadius: "12px",
+                        border: "1px solid #e5e7eb",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: 18,
+                        color: "#6b7280",
+                        transition: "0.2s",
+
+                        "&:hover": {
+                          backgroundColor: "#f8fafc",
+                        },
+                      }}
+                    >
+                      →
+                    </Box>
+                  </Stack>
                 </CardContent>
               </Card>
             );

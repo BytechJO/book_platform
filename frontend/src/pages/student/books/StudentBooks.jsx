@@ -228,15 +228,15 @@ export default function StudentBooks() {
                   onClick={() => navigate(`/student/books/${book.id}`)}
                   sx={{
                     borderRadius: "16px",
-                    border: "1px solid #E6EAF0",
                     cursor: "pointer",
                     backgroundColor: "#fff",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+
+                    boxShadow: "0 0 12px rgba(0,0,0,0.06)",
                     transition: "0.2s ease",
                     overflow: "hidden",
 
                     "&:hover": {
-                      boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
+                      boxShadow: "0 14px 30px rgba(0,0,0,0.10)",
                     },
                   }}
                 >
@@ -367,7 +367,7 @@ export default function StudentBooks() {
                                 size={36}
                                 thickness={4}
                                 sx={{
-                                  color: "#22c55e",
+                                  color: "#2B5A9E",
                                 }}
                               />
                             </Box>

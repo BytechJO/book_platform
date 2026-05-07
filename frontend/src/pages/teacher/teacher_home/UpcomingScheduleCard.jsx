@@ -17,7 +17,8 @@ export default function UpcomingScheduleCard() {
     (e) =>
       dayjs(e.date).format("YYYY-MM-DD") === selectedDate.format("YYYY-MM-DD"),
   );
-
+  const visibleEvents = selectedEvents.slice(0, 1);
+  const hiddenCount = selectedEvents.length - 1;
   return (
     <Box sx={cardStyle}>
       <Typography sx={titleStyle}>Upcoming Schedule</Typography>
@@ -149,11 +150,11 @@ export default function UpcomingScheduleCard() {
                 },
               }}
             >
-              Add Event ➕
+              Add Event +
             </Typography>
           </Box>
         ) : (
-          selectedEvents.map((event, i) => {
+          visibleEvents.map((event, i) => {
             const isPast = dayjs(event.date).isBefore(dayjs(), "day");
 
             return (
@@ -187,6 +188,36 @@ export default function UpcomingScheduleCard() {
               </Box>
             );
           })
+        )}
+        {hiddenCount > 0 && (
+          <Box
+            onClick={() =>
+              navigate("/teacher/events", {
+                state: {
+                  selectedDate: selectedDate.format("YYYY-MM-DD"),
+                },
+              })
+            }
+            sx={{
+              mt: 1,
+              py: 1,
+              borderRadius: "10px",
+              background: "rgba(43,90,158,0.08)",
+              border: "1px dashed rgba(43,90,158,0.25)",
+              textAlign: "center",
+              cursor: "pointer",
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: 12,
+                fontWeight: 700,
+                color: "#2B5A9E",
+              }}
+            >
+              Show {hiddenCount} more
+            </Typography>
+          </Box>
         )}
       </Box>
     </Box>

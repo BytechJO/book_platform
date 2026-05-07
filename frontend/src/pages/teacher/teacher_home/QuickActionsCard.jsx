@@ -350,6 +350,7 @@ const iconBox = {
   alignItems: "center",
   justifyContent: "center",
   margin: "0 auto 8px",
+  color: "#6b7280",
 };
 
 const label = {

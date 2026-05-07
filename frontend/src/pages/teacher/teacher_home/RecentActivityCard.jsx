@@ -5,8 +5,10 @@ import MenuBookIcon from "@mui/icons-material/MenuBook";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CurveLoader from "../../../components/CurveLoader";
 import { useGetTeacherActivities } from "../../../api/teacherActivities";
+import { useNavigate } from "react-router-dom";
 
 export default function RecentActivityCard() {
+  const navigate = useNavigate();
   const { activities, loading } = useGetTeacherActivities();
   if (loading) {
     return <CurveLoader />;
@@ -77,7 +79,7 @@ export default function RecentActivityCard() {
           </Typography>
         </Box>
       ) : (
-        displayedActivities.map((act, i) => {
+        displayedActivities.map((act) => {
           // 🎯 تحديد الأيقونة حسب النوع
           const getIcon = () => {
             if (act.type === "class" && act.action === "joined")
@@ -103,9 +105,7 @@ export default function RecentActivityCard() {
                 </Box>
               </Box>
 
-              {i !== displayedActivities.length - 1 && (
-                <Divider sx={dividerStyle} />
-              )}
+              <Divider sx={dividerStyle} />
             </Box>
           );
         })
@@ -113,7 +113,19 @@ export default function RecentActivityCard() {
 
       {/* Footer */}
       <Box sx={footerStyle}>
-        <Typography sx={footerText}>View all Activities</Typography>
+        <Typography
+          onClick={() => navigate("/teacher/activities")}
+          sx={{
+            ...footerText,
+            cursor: "pointer",
+
+            "&:hover": {
+              textDecoration: "underline",
+            },
+          }}
+        >
+          View all Activities
+        </Typography>
 
         <ArrowForwardIosIcon
           sx={{

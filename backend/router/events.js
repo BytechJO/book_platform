@@ -4,6 +4,8 @@ const {
   getMyEvents,
   createEvent,
   getStudentEvents,
+  updateEvent,
+  deleteEvent,
 } = require("../controller/events");
 const { authenticate } = require("../middleware/authenticate");
 const authorize = require("../middleware/authorized");
@@ -19,4 +21,6 @@ router.get(
   authorize("student"),
   getStudentEvents,
 );
+router.put("/:id", authenticate, authorize("teacher"), updateEvent);
+router.delete("/:id", authenticate, authorize("teacher"), deleteEvent);
 module.exports = router;

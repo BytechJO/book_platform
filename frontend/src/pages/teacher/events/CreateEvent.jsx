@@ -24,7 +24,7 @@ import {
 } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import axiosInstance from "../../../api/axios";
 import ENDPOINTS from "../../../api/endpoints";
@@ -92,6 +92,8 @@ function Badge(props) {
 
 export default function CreateEvent() {
   const location = useLocation();
+  const editEvent = location.state?.editEvent;
+  const navigate = useNavigate();
   const { events, refetch } = useGetTeacherEvents();
   const [date, setDate] = useState(
     location.state?.selectedDate ? dayjs(location.state.selectedDate) : dayjs(),
@@ -119,7 +121,25 @@ export default function CreateEvent() {
   const [subject, setSubject] = useState("");
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (editEvent) {
+      setSelectedBook(editEvent.book_id);
+      setSelectedClass(editEvent.class_id);
+      setSubject(editEvent.subject || "");
 
+      const eventHour = dayjs(editEvent.time, "HH:mm:ss").format("h");
+      const eventMinute = dayjs(editEvent.time, "HH:mm:ss").format("mm");
+      const eventPeriod = dayjs(editEvent.time, "HH:mm:ss").format("A");
+
+      setTime({
+        hour: eventHour,
+        minute: eventMinute,
+        period: eventPeriod,
+      });
+
+      setDate(dayjs(editEvent.date));
+    }
+  }, [editEvent]);
   const hours = useMemo(
     () => Array.from({ length: 12 }, (_, i) => (i + 1).toString()),
     [],
@@ -155,17 +175,34 @@ export default function CreateEvent() {
         .toString()
         .padStart(2, "0")}:${time.minute}:00`;
 
-      await axiosInstance.post(ENDPOINTS.EVENTS.CREATE, {
-        title,
-        subject,
-        date: date.format("YYYY-MM-DD"),
-        time: finalTime,
-        book_id: selectedBook,
-        class_id: selectedClass,
-      });
+      if (editEvent) {
+        await axiosInstance.put(ENDPOINTS.EVENTS.UPDATE(editEvent.id), {
+          title,
+          subject,
+          date: date.format("YYYY-MM-DD"),
+          time: finalTime,
+          book_id: selectedBook,
+          class_id: selectedClass,
+        });
+      } else {
+        await axiosInstance.post(ENDPOINTS.EVENTS.CREATE, {
+          title,
+          subject,
+          date: date.format("YYYY-MM-DD"),
+          time: finalTime,
+          book_id: selectedBook,
+          class_id: selectedClass,
+        });
+      }
       refetch();
       setOpen(true);
-
+      if (editEvent) {
+        navigate("/teacher/events", {
+          state: {
+            selectedDate: date.format("YYYY-MM-DD"),
+          },
+        });
+      }
       setSelectedBook("");
       setSelectedClass("");
       setSubject("");
@@ -187,7 +224,7 @@ export default function CreateEvent() {
         bgcolor: "#fafbfc",
       },
       "&.Mui-focused": {
-        border: "1.5px solid #6366f1",
+        border: "1.5px solid #2B5A9E",
         bgcolor: "#fff",
         boxShadow: "0 0 0 3px rgba(99, 102, 241, 0.1)",
       },
@@ -200,7 +237,7 @@ export default function CreateEvent() {
       color: "#64748b",
       fontSize: 14,
       "&.Mui-focused": {
-        color: "#6366f1",
+        color: "#2B5A9E",
       },
     },
   };
@@ -215,10 +252,8 @@ export default function CreateEvent() {
   return (
     <Box
       sx={{
-        minHeight: "100vh",
-        bgcolor: "#f8fafc",
-        py: 5,
         px: 3,
+        mb: 2,
         display: "flex",
         justifyContent: "center",
         alignItems: "flex-start",
@@ -231,11 +266,11 @@ export default function CreateEvent() {
             sx={{
               fontSize: 28,
               fontWeight: 800,
-              color: "#0f172a",
+              color: "#295899",
               letterSpacing: "-0.5px",
             }}
           >
-            Create Event
+            {editEvent ? "Update Event" : "Create Event"}
           </Typography>
           <Typography sx={{ fontSize: 14, color: "#94a3b8", mt: 0.5 }}>
             Schedule a new event for your classes
@@ -249,7 +284,7 @@ export default function CreateEvent() {
             gap: 0,
             borderRadius: 4,
             overflow: "hidden",
-            border: "1.5px solid #e2e8f0",
+            boxShadow: "0 0 20px rgba(0,0,0,0.08)",
             bgcolor: "#fff",
           }}
         >
@@ -291,11 +326,11 @@ export default function CreateEvent() {
                       width: 36,
                       height: 36,
                       "&.Mui-selected": {
-                        bgcolor: "#6366f1",
+                        bgcolor: "#2B5A9E",
                         color: "#fff",
                         fontWeight: 700,
                         "&:hover": {
-                          bgcolor: "#4f46e5",
+                          bgcolor: "#2B5A9E",
                         },
                       },
                     },
@@ -349,7 +384,7 @@ export default function CreateEvent() {
                       selectedEvents.length > 0
                         ? "rgba(99, 102, 241, 0.08)"
                         : "#f1f5f9",
-                    color: selectedEvents.length > 0 ? "#6366f1" : "#94a3b8",
+                    color: selectedEvents.length > 0 ? "#2B5A9E" : "#94a3b8",
                     border: "1px solid",
                     borderColor:
                       selectedEvents.length > 0
@@ -454,7 +489,7 @@ export default function CreateEvent() {
                             sx={{
                               fontSize: 12,
                               fontWeight: 700,
-                              color: "#4338ca",
+                              color: "#2B5A9E",
                               lineHeight: 1.2,
                             }}
                           >
@@ -560,7 +595,7 @@ export default function CreateEvent() {
                     gap: 0.5,
                   }}
                 >
-                  <span style={{ color: "#6366f1" }}>●</span> Book
+                  <span style={{ color: "#2B5A9E" }}>●</span> Book
                 </Typography>
                 <FormControl fullWidth sx={selectStyles}>
                   <InputLabel>Select a book</InputLabel>
@@ -618,7 +653,7 @@ export default function CreateEvent() {
                     gap: 0.5,
                   }}
                 >
-                  <span style={{ color: "#6366f1" }}>●</span> Class
+                  <span style={{ color: "#2B5A9E" }}>●</span> Class
                 </Typography>
                 <FormControl
                   fullWidth
@@ -657,7 +692,7 @@ export default function CreateEvent() {
                             "&.Mui-selected": {
                               bgcolor: "rgba(99, 102, 241, 0.08)",
                               fontWeight: 600,
-                              color: "#4338ca",
+                              color: "#2B5A9E",
                             },
                             "&:hover": {
                               bgcolor: "#f8fafc",
@@ -705,7 +740,7 @@ export default function CreateEvent() {
                     gap: 0.5,
                   }}
                 >
-                  <span style={{ color: "#6366f1" }}>●</span> Subject{" "}
+                  <span style={{ color: "#2B5A9E" }}>●</span> Subject{" "}
                   <Typography
                     component="span"
                     sx={{
@@ -739,7 +774,7 @@ export default function CreateEvent() {
                     gap: 0.5,
                   }}
                 >
-                  <span style={{ color: "#6366f1" }}>●</span> Time
+                  <span style={{ color: "#2B5A9E" }}>●</span> Time
                 </Typography>
                 <Box sx={{ display: "flex", gap: 1.5 }}>
                   <FormControl fullWidth sx={selectStyles}>
@@ -767,7 +802,7 @@ export default function CreateEvent() {
                               "&.Mui-selected": {
                                 bgcolor: "rgba(99, 102, 241, 0.08)",
                                 fontWeight: 700,
-                                color: "#4338ca",
+                                color: "#2B5A9E",
                               },
                             },
                           },
@@ -807,7 +842,7 @@ export default function CreateEvent() {
                               "&.Mui-selected": {
                                 bgcolor: "rgba(99, 102, 241, 0.08)",
                                 fontWeight: 700,
-                                color: "#4338ca",
+                                color: "#2B5A9E",
                               },
                             },
                           },
@@ -846,7 +881,7 @@ export default function CreateEvent() {
                               mx: 1,
                               "&.Mui-selected": {
                                 bgcolor: "rgba(99, 102, 241, 0.08)",
-                                color: "#4338ca",
+                                color: "#2B5A9E",
                               },
                             },
                           },
@@ -875,14 +910,14 @@ export default function CreateEvent() {
                   fontWeight: 700,
                   letterSpacing: "0.3px",
                   textTransform: "none",
-                  bgcolor: "#6366f1",
+                  bgcolor: "#2B5A9E",
                   color: "#fff",
                   boxShadow: "none",
-                  border: "1.5px solid #6366f1",
+                  border: "1.5px solid #2B5A9E",
                   transition: "all 0.2s ease",
                   "&:hover": {
-                    bgcolor: "#4f46e5",
-                    borderColor: "#4f46e5",
+                    bgcolor: "#2B5A9E",
+                    borderColor: "#2B5A9E",
                     boxShadow: "0 4px 16px rgba(99, 102, 241, 0.35)",
                     transform: "translateY(-1px)",
                   },
@@ -908,6 +943,8 @@ export default function CreateEvent() {
                     <CircularProgress size={16} sx={{ color: "inherit" }} />
                     Creating...
                   </Box>
+                ) : editEvent ? (
+                  "Update Event"
                 ) : (
                   "Create Event"
                 )}
@@ -940,7 +977,9 @@ export default function CreateEvent() {
             },
           }}
         >
-          Event created successfully
+          {editEvent
+            ? "Event updated successfully"
+            : "Event created successfully"}
         </Alert>
       </Snackbar>
     </Box>

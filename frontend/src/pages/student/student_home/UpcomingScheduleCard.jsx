@@ -6,8 +6,11 @@ import { PickersDay } from "@mui/x-date-pickers/PickersDay";
 import { useState } from "react";
 import dayjs from "dayjs";
 import { useGetStudentEvents } from "../../../api/events";
+import { useNavigate } from "react-router-dom";
 
 export default function UpcomingScheduleCard() {
+  const navigate = useNavigate();
+
   const { events } = useGetStudentEvents();
   const [selectedDate, setSelectedDate] = useState(dayjs());
 
@@ -16,7 +19,8 @@ export default function UpcomingScheduleCard() {
     (e) =>
       dayjs(e.date).format("YYYY-MM-DD") === selectedDate.format("YYYY-MM-DD"),
   );
-
+  const visibleEvents = selectedEvents.slice(0, 1);
+  const hiddenCount = selectedEvents.length - 1;
   return (
     <Box sx={cardStyle}>
       <Typography sx={titleStyle}>Upcoming Schedule</Typography>
@@ -117,7 +121,7 @@ export default function UpcomingScheduleCard() {
           mt: selectedEvents.length === 0 ? -2 : 1,
         }}
       >
-        {selectedEvents.length === 0 ? (
+        {visibleEvents.length === 0 ? (
           <Box
             sx={{
               display: "flex",
@@ -132,7 +136,7 @@ export default function UpcomingScheduleCard() {
             </Typography>
           </Box>
         ) : (
-          selectedEvents.map((event, i) => {
+          visibleEvents.map((event, i) => {
             const isPast = dayjs(event.date).isBefore(dayjs(), "day");
 
             return (
@@ -166,6 +170,36 @@ export default function UpcomingScheduleCard() {
               </Box>
             );
           })
+        )}
+        {hiddenCount > 0 && (
+          <Box
+            onClick={() =>
+              navigate("/student/events", {
+                state: {
+                  selectedDate: selectedDate.format("YYYY-MM-DD"),
+                },
+              })
+            }
+            sx={{
+              mt: 1,
+              py: 1,
+              borderRadius: "10px",
+              background: "rgba(43,90,158,0.08)",
+              border: "1px dashed rgba(43,90,158,0.25)",
+              textAlign: "center",
+              cursor: "pointer",
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: 12,
+                fontWeight: 700,
+                color: "#2B5A9E",
+              }}
+            >
+              Show {hiddenCount} more
+            </Typography>
+          </Box>
         )}
       </Box>
     </Box>

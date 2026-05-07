@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -173,7 +173,12 @@ export default function ViewEvents() {
     return events.filter((e) => dayjs(e.date).format("YYYY-MM") === month)
       .length;
   }, [events, date]);
-
+  useEffect(() => {
+    if (selectedEvents.length > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSelectedEventId(selectedEvents[0].id);
+    }
+  }, [date, events]);
   // Auto-select first event when date changes
   const handleDateChange = (newDate) => {
     setDate(newDate);
@@ -218,11 +223,11 @@ export default function ViewEvents() {
       width: 36,
       height: 36,
       "&.Mui-selected": {
-        bgcolor: "#6366f1",
+        bgcolor: "#2B5A9E",
         color: "#fff",
         fontWeight: 700,
         "&:hover": {
-          bgcolor: "#4f46e5",
+          bgcolor: "#2B5A9E",
         },
       },
     },
@@ -265,7 +270,7 @@ export default function ViewEvents() {
               sx={{
                 fontSize: 28,
                 fontWeight: 800,
-                color: "#0f172a",
+                color: "#295899",
                 letterSpacing: "-0.5px",
               }}
             >
@@ -285,10 +290,10 @@ export default function ViewEvents() {
               height: 32,
               px: 0.5,
               bgcolor: "rgba(99, 102, 241, 0.08)",
-              color: "#6366f1",
+              color: "#2B5A9E",
               border: "1px solid rgba(99, 102, 241, 0.15)",
               "& .MuiChip-icon": {
-                color: "#6366f1",
+                color: "#2B5A9E",
               },
             }}
           />
@@ -480,7 +485,7 @@ export default function ViewEvents() {
                               sx={{
                                 fontSize: 12,
                                 fontWeight: 700,
-                                color: isSelected ? "#4338ca" : "#475569",
+                                color: isSelected ? "#2B5A9E" : "#475569",
                                 lineHeight: 1.2,
                               }}
                             >
@@ -490,7 +495,7 @@ export default function ViewEvents() {
                               sx={{
                                 fontSize: 9,
                                 fontWeight: 600,
-                                color: isSelected ? "#6366f1" : "#94a3b8",
+                                color: isSelected ? "#2B5A9E" : "#94a3b8",
                                 textTransform: "uppercase",
                                 letterSpacing: "0.5px",
                               }}
@@ -504,7 +509,7 @@ export default function ViewEvents() {
                               sx={{
                                 fontSize: 13,
                                 fontWeight: isSelected ? 700 : 600,
-                                color: isSelected ? "#4338ca" : "#1e293b",
+                                color: isSelected ? "#2B5A9E" : "#1e293b",
                                 overflow: "hidden",
                                 textOverflow: "ellipsis",
                                 whiteSpace: "nowrap",
@@ -534,7 +539,7 @@ export default function ViewEvents() {
                               sx={{
                                 width: 6,
                                 borderRadius: 3,
-                                bgcolor: "#6366f1",
+                                bgcolor: "#2B5A9E",
                                 alignSelf: "stretch",
                                 flexShrink: 0,
                               }}

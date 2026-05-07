@@ -166,11 +166,14 @@ const getAllBooksPublic = async (req, res) => {
         b.id,
         b.title,
         b.description,
+        b.short_description,
         b.cover_image_url_short,
-        b.cover_image_url_long
+        b.cover_image_url_long,
+        c.name AS category
       FROM books b
- WHERE b.status = 'Published'
-
+      LEFT JOIN categories c 
+        ON b.category_id = c.id
+      WHERE b.status = 'Published'
       ORDER BY b.created_at DESC
     `);
 

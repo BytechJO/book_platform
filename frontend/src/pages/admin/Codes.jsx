@@ -16,6 +16,10 @@ import {
   Card,
   CardContent,
   Chip,
+  FormControl,
+  Select,
+  MenuItem,
+  Paper,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -34,7 +38,8 @@ import DownloadIcon from "@mui/icons-material/Download";
 export default function Codes() {
   const { codes = [], loading, error, refetch } = useGetCodes();
   const { books = [] } = useGetBooks();
-
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
   // Filters State
   const [search, setSearch] = useState("");
   const [bookId, setBookId] = useState("all");
@@ -102,7 +107,9 @@ export default function Codes() {
       );
     });
   }, [search, codes, bookId, role, status, year]);
+  const totalPages = Math.ceil(filtered.length / perPage);
 
+  const paginatedCodes = filtered.slice((page - 1) * perPage, page * perPage);
   const handleExportExcel = () => {
     const data = filtered.map((c) => ({
       "Book Name": c.book_title || "—",
@@ -194,11 +201,11 @@ export default function Codes() {
       </Helmet>
       <Box
         sx={{
-          width: "90%",
+          px: { xs: 2, sm: 1, md: 1 },
+          py: { xs: 2, md: 1 },
+          pl: { md: 2 },
+          width: "95%",
           mx: "auto",
-          px: { md: 4 },
-          py: 3,
-          overflowX: "hidden",
         }}
       >
         {/* Header */}
@@ -222,7 +229,7 @@ export default function Codes() {
                 color: "#2B5A9E",
               }}
             >
-              All Codes
+              Codes
             </Typography>
 
             <Typography sx={{ fontSize: 14, color: "#7a869a" }}>
@@ -338,142 +345,237 @@ export default function Codes() {
 
         {/* ================= DESKTOP TABLE ================= */}
         <Box sx={{ display: { xs: "none", md: "block" } }}>
-          <TableContainer
-            sx={{ backgroundColor: "transparent", boxShadow: "none" }}
+          <Paper
+            elevation={0}
+            sx={{
+              backgroundColor: "#fff",
+              borderRadius: "12px",
+              p: 2,
+              boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+            }}
           >
-            <Table
+            <TableContainer
               sx={{
-                width: "100%",
-                "& .MuiTableCell-root": {
-                  borderBottom: "none",
-                  paddingTop: "10px",
-                  paddingBottom: "10px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                },
+                backgroundColor: "transparent",
+                boxShadow: "none",
               }}
             >
-              <TableHead>
-                <TableRow sx={{ borderBottom: "2px solid #e0e0e0" }}>
-                  <TableCell sx={{ color: "#7a869a", fontSize: 16 }}>
-                    Book
-                  </TableCell>
-                  <TableCell sx={{ color: "#7a869a", fontSize: 16 }}>
-                    Code
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ color: "#7a869a", fontSize: 16 }}
-                  >
-                    Validity (Months)
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ color: "#7a869a", fontSize: 16 }}
-                  >
-                    Role
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ color: "#7a869a", fontSize: 16 }}
-                  >
-                    Status
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ color: "#7a869a", fontSize: 16 }}
-                  >
-                    Created
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ color: "#7a869a", fontSize: 16 }}
-                  >
-                    Used
-                  </TableCell>
-                  <TableCell align="center">Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {error && (
-                  <TableRow>
-                    <TableCell
-                      colSpan={7}
-                      sx={{ py: 4, textAlign: "center", color: "red" }}
-                    >
-                      Failed to load codes
+              <Table
+                sx={{
+                  width: "100%",
+                  "& .MuiTableCell-root": {
+                    borderBottom: "none",
+                    paddingTop: "10px",
+                    paddingBottom: "10px",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  },
+                }}
+              >
+                <TableHead>
+                  <TableRow sx={{ borderBottom: "2px solid #e0e0e0" }}>
+                    <TableCell sx={{ color: "#7a869a", fontSize: 16 }}>
+                      Book
                     </TableCell>
-                  </TableRow>
-                )}
-                {!error && filtered.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={7} sx={{ py: 4, textAlign: "center" }}>
-                      No codes found
-                    </TableCell>
-                  </TableRow>
-                )}
-                {filtered.map((c) => (
-                  <TableRow
-                    key={c.id}
-                    sx={{ "&:hover": { backgroundColor: "#f9fafc" } }}
-                  >
-                    <TableCell sx={{ fontSize: 16, color: "#333333" }}>
-                      {c.book_title || "—"}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: 16, color: "#333333" }}>
-                      {c.code}
+                    <TableCell sx={{ color: "#7a869a", fontSize: 16 }}>
+                      Code
                     </TableCell>
                     <TableCell
                       align="center"
-                      sx={{  fontWeight: 400, fontSize: 16 }}
+                      sx={{ color: "#7a869a", fontSize: 16 }}
                     >
-                      {c.validity_months}
+                      Validity (Months)
                     </TableCell>
-                    <TableCell align="center">
-                      {roleLabel(c.allowed_role)}
+                    <TableCell
+                      align="center"
+                      sx={{ color: "#7a869a", fontSize: 16 }}
+                    >
+                      Role
                     </TableCell>
-                    <TableCell align="center">
-                      <Typography
-                        sx={{
-                          fontWeight: 500,
-                          color: c.is_used ? "#2e7d32" : "#d32f2f",
-                        }}
-                      >
-                        {c.is_used ? "Used" : "Unused"}
-                      </Typography>
+                    <TableCell
+                      align="center"
+                      sx={{ color: "#7a869a", fontSize: 16 }}
+                    >
+                      Status
                     </TableCell>
-                    <TableCell align="center" sx={{ color: "#7a869a" }}>
-                      {formatDate(c.created_at)}
+                    <TableCell
+                      align="center"
+                      sx={{ color: "#7a869a", fontSize: 16 }}
+                    >
+                      Created
                     </TableCell>
-                    <TableCell align="center" sx={{ color: "#7a869a" }}>
-                      {c.used_at ? formatDate(c.used_at) : "—"}
+                    <TableCell
+                      align="center"
+                      sx={{ color: "#7a869a", fontSize: 16 }}
+                    >
+                      Used
                     </TableCell>
-                    <TableCell align="center">
-                      <Stack
-                        direction="row"
-                        spacing={1}
-                        justifyContent="center"
-                      >
-                        <IconButton
-                          onClick={() => handleEdit(c)}
-                          color="primary"
-                        >
-                          <EditIcon />
-                        </IconButton>
-                        <IconButton
-                          onClick={() => handleDelete(c.id)}
-                          color="error"
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Stack>
-                    </TableCell>
+                    <TableCell align="center">Actions</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {error && (
+                    <TableRow>
+                      <TableCell
+                        colSpan={7}
+                        sx={{ py: 4, textAlign: "center", color: "red" }}
+                      >
+                        Failed to load codes
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {!error && filtered.length === 0 && (
+                    <TableRow>
+                      <TableCell
+                        colSpan={7}
+                        sx={{ py: 4, textAlign: "center" }}
+                      >
+                        No codes found
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {paginatedCodes.map((c) => (
+                    <TableRow
+                      key={c.id}
+                      sx={{ "&:hover": { backgroundColor: "#f9fafc" } }}
+                    >
+                      <TableCell sx={{ fontSize: 16, color: "#333333" }}>
+                        {c.book_title || "—"}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: 16, color: "#333333" }}>
+                        {c.code}
+                      </TableCell>
+                      <TableCell
+                        align="center"
+                        sx={{ fontWeight: 400, fontSize: 16 }}
+                      >
+                        {c.validity_months}
+                      </TableCell>
+                      <TableCell align="center">
+                        {roleLabel(c.allowed_role)}
+                      </TableCell>
+                      <TableCell align="center">
+                        <Typography
+                          sx={{
+                            fontWeight: 500,
+                            color: c.is_used ? "#2e7d32" : "#d32f2f",
+                          }}
+                        >
+                          {c.is_used ? "Used" : "Unused"}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="center" sx={{ color: "#7a869a" }}>
+                        {formatDate(c.created_at)}
+                      </TableCell>
+                      <TableCell align="center" sx={{ color: "#7a869a" }}>
+                        {c.used_at ? formatDate(c.used_at) : "—"}
+                      </TableCell>
+                      <TableCell align="center">
+                        <Stack
+                          direction="row"
+                          spacing={1}
+                          justifyContent="center"
+                        >
+                          <IconButton
+                            onClick={() => handleEdit(c)}
+                            color="primary"
+                          >
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton
+                            onClick={() => handleDelete(c.id)}
+                            color="error"
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Stack>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mt: 2,
+                pt: 2,
+                borderTop: "1px solid #eee",
+              }}
+            >
+              {/* LEFT */}
+              <Typography sx={{ fontSize: 12, color: "#777" }}>
+                Showing {(page - 1) * perPage + 1} to{" "}
+                {Math.min(page * perPage, filtered.length)} of {filtered.length}{" "}
+                codes
+              </Typography>
+
+              {/* PAGINATION */}
+              <Box sx={{ display: "flex", gap: 1 }}>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  disabled={page === 1}
+                  onClick={() => setPage(page - 1)}
+                  sx={{ minWidth: 32 }}
+                >
+                  {"<"}
+                </Button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (p) => (
+                    <Button
+                      key={p}
+                      size="small"
+                      variant={p === page ? "contained" : "outlined"}
+                      onClick={() => setPage(p)}
+                      sx={{
+                        minWidth: 32,
+                        backgroundColor: p === page ? "#2B5A9E" : "transparent",
+                        color: p === page ? "#fff" : "#2B5A9E",
+                        borderColor: "#dfe3e8",
+                      }}
+                    >
+                      {p}
+                    </Button>
+                  ),
+                )}
+
+                <Button
+                  size="small"
+                  variant="outlined"
+                  disabled={page === totalPages}
+                  onClick={() => setPage(page + 1)}
+                  sx={{ minWidth: 32 }}
+                >
+                  {">"}
+                </Button>
+              </Box>
+
+              {/* PER PAGE */}
+              <FormControl size="small">
+                <Select
+                  value={perPage}
+                  onChange={(e) => {
+                    setPerPage(e.target.value);
+                    setPage(1);
+                  }}
+                  sx={{
+                    fontSize: 12,
+                    borderRadius: "6px",
+                    height: 32,
+                  }}
+                >
+                  <MenuItem value={5}>5 per page</MenuItem>
+                  <MenuItem value={10}>10 per page</MenuItem>
+                  <MenuItem value={15}>15 per page</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+          </Paper>
         </Box>
 
         {/* ================= MOBILE CARDS ================= */}
@@ -490,7 +592,7 @@ export default function Codes() {
           )}
 
           <Stack spacing={2}>
-            {filtered.map((c) => (
+            {paginatedCodes.map((c) => (
               <Card
                 key={c.id}
                 variant="outlined"
