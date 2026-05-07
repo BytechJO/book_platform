@@ -8,7 +8,7 @@ export default function TopCodes({ codes }) {
   const latestCodes = codes
     ?.slice()
     ?.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-    ?.slice(0, 6);
+    ?.slice(0, 5);
 
   return (
     <Box
