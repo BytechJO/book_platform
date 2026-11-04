@@ -230,7 +230,8 @@ const getPuplicBookById = async (req, res) => {
         b.youtube_url,
         b.isbn
       FROM books b
-      WHERE b.id = $1 
+      WHERE b.id = $1
+        AND b.status = 'Published'
       ORDER BY b.created_at DESC`,
       [id],
     );

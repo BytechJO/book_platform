@@ -6,7 +6,6 @@ const {
   createCode,
   getAllCodes,
   importCodes,
-  getCodeByBookId,
   updateCodeValidity,
   deleteCode,
 } = require("../controller/code");
@@ -16,9 +15,6 @@ router.post("/create", authenticate, authorize("admin"), createCode);
 
 //http://localhost:5000/api/code/all(GET)
 router.get("/all-codes", authenticate, authorize("admin"), getAllCodes);
-
-//http://localhost:5000/api/code/:bookId(GET)
-router.get("/book/:bookId", getCodeByBookId);
 
 //http://localhost:5000/api/code/import(POST)
 router.post("/import", authenticate, authorize("admin"), importCodes);

@@ -187,7 +187,7 @@ export default function StudentBooks() {
               >
                 <MenuItem value="all">All</MenuItem>
                 <MenuItem value="active">Active</MenuItem>
-                <MenuItem value="inactive">Inactive</MenuItem>
+                <MenuItem value="inactive">Expired</MenuItem>
               </Select>
             </FormControl>
           </Box>
@@ -222,24 +222,51 @@ export default function StudentBooks() {
           {paginatedBooks.length > 0 ? (
             paginatedBooks.map((book, id) => {
               const isRTL = isArabic(book.title || book.description);
+              const isExpired = !book.is_active;
               return (
                 <Card
                   key={id}
-                  onClick={() => navigate(`/student/books/${book.id}`)}
+                  onClick={() => {
+                    if (!isExpired) navigate(`/student/books/${book.id}`);
+                  }}
+                  aria-disabled={isExpired}
                   sx={{
                     borderRadius: "16px",
-                    cursor: "pointer",
+                    cursor: isExpired ? "not-allowed" : "pointer",
                     backgroundColor: "#fff",
-
+                    opacity: isExpired ? 0.5 : 1,
+                    filter: isExpired ? "grayscale(35%)" : "none",
                     boxShadow: "0 0 12px rgba(0,0,0,0.06)",
                     transition: "0.2s ease",
                     overflow: "hidden",
+                    position: "relative",
 
-                    "&:hover": {
-                      boxShadow: "0 14px 30px rgba(0,0,0,0.10)",
-                    },
+                    "&:hover": isExpired
+                      ? {}
+                      : {
+                          boxShadow: "0 14px 30px rgba(0,0,0,0.10)",
+                        },
                   }}
                 >
+                  {isExpired && (
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        top: 12,
+                        right: 12,
+                        zIndex: 1,
+                        px: 1.5,
+                        py: 0.5,
+                        borderRadius: "999px",
+                        backgroundColor: "#6b7280",
+                        color: "#fff",
+                        fontSize: 11,
+                        fontWeight: 700,
+                      }}
+                    >
+                      Expired
+                    </Box>
+                  )}
                   <Box
                     sx={{
                       p: 1,

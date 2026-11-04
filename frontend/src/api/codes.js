@@ -28,26 +28,3 @@ export function useGetCodes() {
   return { ...memoizedValue, refetch };
 }
 
-export function useGetBookCodes(bookId) {
-  const URL = ENDPOINTS.Codes.getBookCodes(bookId);
-  const { data, isLoading, error, isValidating } = useSWR(
-    bookId ? URL : null,
-    fetcher,
-  );
-
-  const memoizedValue = useMemo(
-    () => ({
-      codes: data || [],
-      loading: isLoading,
-
-      error,
-      validating: isValidating,
-      empty: !isLoading && !data?.length,
-    }),
-    [data, error, isLoading, isValidating],
-  );
-  const refetch = async () => {
-    await mutate(URL);
-  };
-  return { ...memoizedValue, refetch };
-}

@@ -28,6 +28,21 @@ const createEvent = async (req, res) => {
 
     const { title, subject, date, time, book_id, class_id } = req.body;
 
+    const classResult = await pool.query(
+      `SELECT id
+       FROM classes
+       WHERE id = $1
+         AND book_id = $2
+         AND teacher_id = $3`,
+      [class_id, book_id, teacherId],
+    );
+
+    if (classResult.rowCount === 0) {
+      return res.status(403).json({
+        message: "You can only create events for your own classes",
+      });
+    }
+
     const result = await pool.query(
       `
   INSERT INTO events 
@@ -95,6 +110,21 @@ const updateEvent = async (req, res) => {
     const teacherId = req.user.id;
     const { id } = req.params;
     const { title, subject, date, time, book_id, class_id } = req.body;
+
+    const classResult = await pool.query(
+      `SELECT id
+       FROM classes
+       WHERE id = $1
+         AND book_id = $2
+         AND teacher_id = $3`,
+      [class_id, book_id, teacherId],
+    );
+
+    if (classResult.rowCount === 0) {
+      return res.status(403).json({
+        message: "You can only assign events to your own classes",
+      });
+    }
 
     const result = await pool.query(
       `

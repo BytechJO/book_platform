@@ -2,9 +2,6 @@ import {
   Box,
   Button,
   Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   TextField,
   Typography,
 } from "@mui/material";
@@ -27,7 +24,9 @@ export default function QuickActionsCard({ refetchClasses }) {
   const [loadingClass, setLoadingClass] = useState(false);
   const [classError, setClassError] = useState("");
   const { books, refetch } = useGetMyBooks();
-  const handleActivateClass = async () => {
+  const handleActivateClass = async (event) => {
+    event?.preventDefault();
+
     if (!classCode.trim()) {
       setClassError("Please enter class code");
       return;
@@ -250,55 +249,144 @@ export default function QuickActionsCard({ refetchClasses }) {
         onClose={() => setOpenClassDialog(false)}
         maxWidth="sm"
         fullWidth
+        BackdropProps={{
+          sx: { backgroundColor: "rgba(0,0,0,0.6)" },
+        }}
+        PaperProps={{
+          component: "form",
+          onSubmit: handleActivateClass,
+          sx: {
+            borderRadius: "20px",
+            p: { xs: 3, sm: 4 },
+            textAlign: "center",
+          },
+        }}
       >
-        <DialogTitle>Activate Class</DialogTitle>
+        <Box
+          sx={{
+            width: 70,
+            height: 70,
+            borderRadius: "50%",
+            background: "#e8f0fe",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            margin: "0 auto",
+            mb: 2,
+          }}
+        >
+          <GroupsIcon sx={{ color: "#2d5aa7", fontSize: 34 }} />
+        </Box>
 
-        <DialogContent>
-          <TextField
-            select
-            fullWidth
-            label="Select Book"
-            value={selectedBook}
-            onChange={(e) => setSelectedBook(e.target.value)}
-            sx={{ mt: 2 }}
-            SelectProps={{ native: true }}
-          >
-            <option value="">Select a book</option>
+        <Typography
+          sx={{ fontSize: 22, fontWeight: 700, color: "#2d5aa7", mb: 1 }}
+        >
+          Join Class
+        </Typography>
 
-            {books
-              .filter((b) => !b.class_name)
-              .map((b) => (
-                <option key={b.id} value={b.user_book_id}>
-                  {b.title}
-                </option>
-              ))}
-          </TextField>
+        <Typography sx={{ fontSize: 14, color: "#6b7280", mb: 3 }}>
+          Select your book and enter the class code provided by your teacher.
+        </Typography>
 
-          <TextField
-            fullWidth
-            label="Enter Class Code"
-            value={classCode}
-            onChange={(e) => {
-              setClassCode(e.target.value);
+        <Typography
+          sx={{ fontSize: 13, fontWeight: 600, mb: 1, textAlign: "left" }}
+        >
+          Select Book *
+        </Typography>
+        <TextField
+          select
+          fullWidth
+          value={selectedBook}
+          onChange={(e) => setSelectedBook(e.target.value)}
+          SelectProps={{ native: true }}
+          InputProps={{
+            sx: {
+              height: 50,
+              borderRadius: "10px",
+              backgroundColor: "#f9fbff",
+            },
+          }}
+        >
+          <option value="">Select a book</option>
 
-              if (classError) setClassError("");
-            }}
-            sx={{ mt: 2 }}
-            error={!!classError}
-            helperText={classError}
-          />
-        </DialogContent>
-        <DialogActions>
+          {books
+            .filter((b) => b.is_active && !b.class_name)
+            .map((b) => (
+              <option key={b.id} value={b.user_book_id}>
+                {b.title}
+              </option>
+            ))}
+        </TextField>
+
+        <Typography
+          sx={{
+            fontSize: 13,
+            fontWeight: 600,
+            mt: 2.5,
+            mb: 1,
+            textAlign: "left",
+          }}
+        >
+          Class Code *
+        </Typography>
+        <TextField
+          fullWidth
+          placeholder="Enter class code"
+          value={classCode}
+          onChange={(e) => {
+            setClassCode(e.target.value);
+
+            if (classError) setClassError("");
+          }}
+          error={!!classError}
+          helperText={classError}
+          InputProps={{
+            sx: {
+              height: 50,
+              borderRadius: "10px",
+              backgroundColor: "#f9fbff",
+            },
+          }}
+        />
+
+        <Box
+          sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 4 }}
+        >
           <LoadingButton
+            type="submit"
             loading={loadingClass}
-            onClick={handleActivateClass}
+            disabled={!selectedBook}
             variant="contained"
+            sx={{
+              px: 4,
+              py: 1.2,
+              borderRadius: "10px",
+              textTransform: "none",
+              fontWeight: 600,
+              backgroundColor: "#2d5aa7",
+              "&:hover": { backgroundColor: "#244a87" },
+            }}
           >
-            Activate
+            Join
           </LoadingButton>
 
-          <Button onClick={() => setOpenClassDialog(false)}>Cancel</Button>
-        </DialogActions>
+          <Button
+            onClick={() => setOpenClassDialog(false)}
+            variant="contained"
+            sx={{
+              px: 4,
+              py: 1.2,
+              borderRadius: "10px",
+              textTransform: "none",
+              fontWeight: 600,
+              backgroundColor: "#e5e7eb",
+              color: "#374151",
+              "&:hover": { backgroundColor: "#d1d5db" },
+            }}
+          >
+            Cancel
+          </Button>
+        </Box>
       </Dialog>
     </Box>
   );

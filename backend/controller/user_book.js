@@ -116,7 +116,12 @@ ORDER BY ub.activated_at DESC
       [userId],
     );
 
-    res.json(result.rows);
+    const books = result.rows.map((book) => ({
+      ...book,
+      online_book_url: book.is_active ? book.online_book_url : null,
+    }));
+
+    res.json(books);
   } catch (error) {
     console.error("Get my books error:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -265,12 +270,20 @@ const addBookClass = async (req, res) => {
 
   try {
     const existing = await pool.query(
-      `SELECT book_id FROM user_books WHERE id = $1 AND user_id = $2`,
+      `SELECT book_id, expires_at
+       FROM user_books
+       WHERE id = $1 AND user_id = $2`,
       [id, teacherId],
     );
 
     if (existing.rowCount === 0) {
       return res.status(404).json({ message: "Record not found" });
+    }
+
+    if (new Date(existing.rows[0].expires_at) <= new Date()) {
+      return res.status(403).json({
+        message: "Book access expired. Renew the book before creating a class.",
+      });
     }
 
     const bookId = existing.rows[0].book_id;
@@ -324,12 +337,20 @@ const activateClassCode = async (req, res) => {
 
     // ✅ تأكد الطالب عنده الكتاب
     const studentBook = await pool.query(
-      `SELECT book_id FROM user_books WHERE id = $1 AND user_id = $2`,
+      `SELECT book_id, expires_at
+       FROM user_books
+       WHERE id = $1 AND user_id = $2`,
       [id, userId],
     );
 
     if (studentBook.rowCount === 0) {
       return res.status(404).json({ message: "Book not found" });
+    }
+
+    if (new Date(studentBook.rows[0].expires_at) <= new Date()) {
+      return res.status(403).json({
+        message: "Book access expired. Renew the book before joining a class.",
+      });
     }
 
     const bookId = studentBook.rows[0].book_id;

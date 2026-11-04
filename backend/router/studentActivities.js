@@ -8,8 +8,19 @@ const {
 } = require("../controller/studentActivities");
 
 const { authenticate } = require("../middleware/authenticate");
+const authorize = require("../middleware/authorized");
 
-router.get("/my-activities", authenticate, getStudentActivities);
+router.get(
+  "/my-activities",
+  authenticate,
+  authorize("student"),
+  getStudentActivities,
+);
 
-router.get("/notifications", authenticate, getStudentNotifications);
+router.get(
+  "/notifications",
+  authenticate,
+  authorize("student"),
+  getStudentNotifications,
+);
 module.exports = router;

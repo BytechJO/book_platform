@@ -169,6 +169,10 @@ const login = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
+    if (user.status !== "active" || user.is_deleted) {
+      return res.status(403).json({ message: "Account inactive or unavailable" });
+    }
+
     // 4) Create token
     const token = jwt.sign(
       { id: user.id, role: user.role },
@@ -196,9 +200,13 @@ const me = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const result = await pool.query("SELECT * FROM users WHERE id = $1", [
-      userId,
-    ]);
+    const result = await pool.query(
+      `SELECT id, email, full_name, role, status, avatar_url,
+              created_at, updated_at
+       FROM users
+       WHERE id = $1`,
+      [userId],
+    );
 
     if (result.rows.length === 0) {
       return res.status(404).json({ message: "User not found" });

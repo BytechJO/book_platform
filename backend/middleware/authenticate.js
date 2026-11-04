@@ -14,12 +14,16 @@ const authenticate = async (req, res, next) => {
     
     // Get user from database
     const result = await pool.query(
-      'SELECT id, email, full_name, role FROM users WHERE id = $1',
+      `SELECT id, email, full_name, role
+       FROM users
+       WHERE id = $1
+         AND status = 'active'
+         AND is_deleted = FALSE`,
       [decoded.id]
     );
 
     if (result.rows.length === 0) {
-      return res.status(401).json({ error: 'User not found' });
+      return res.status(401).json({ error: 'Account inactive or unavailable' });
     }
 
     req.user = result.rows[0];

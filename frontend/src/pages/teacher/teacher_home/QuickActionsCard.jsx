@@ -2,9 +2,6 @@ import {
   Box,
   Button,
   Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   TextField,
   Typography,
 } from "@mui/material";
@@ -56,7 +53,11 @@ export default function QuickActionsCard() {
   const handleSelectBook = (bookId) => {
     setSelectedBook(bookId);
   };
-  const handleCreateClass = async () => {
+  const handleCreateClass = async (event) => {
+    event?.preventDefault();
+
+    if (!selectedBook || !className) return;
+
     try {
       setLoadingClass(true);
 
@@ -267,49 +268,137 @@ export default function QuickActionsCard() {
         onClose={() => setOpenClassDialog(false)}
         maxWidth="sm"
         fullWidth
+        BackdropProps={{
+          sx: { backgroundColor: "rgba(0,0,0,0.6)" },
+        }}
+        PaperProps={{
+          component: "form",
+          onSubmit: handleCreateClass,
+          sx: {
+            borderRadius: "20px",
+            p: { xs: 3, sm: 4 },
+            textAlign: "center",
+          },
+        }}
       >
-        <DialogTitle>Create Class</DialogTitle>
+        <Box
+          sx={{
+            width: 70,
+            height: 70,
+            borderRadius: "50%",
+            background: "#e8f0fe",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            margin: "0 auto",
+            mb: 2,
+          }}
+        >
+          <GroupsIcon sx={{ color: "#2d5aa7", fontSize: 34 }} />
+        </Box>
 
-        <DialogContent>
-          {/* SELECT BOOK */}
-          <TextField
-            select
-            fullWidth
-            label="Select Book"
-            value={selectedBook}
-            onChange={(e) => handleSelectBook(e.target.value)}
-            sx={{ mt: 2 }}
-            SelectProps={{ native: true }}
-          >
-            <option value="">Select a book</option>
-            {books.map((b) => (
+        <Typography
+          sx={{ fontSize: 22, fontWeight: 700, color: "#2d5aa7", mb: 1 }}
+        >
+          Create Class
+        </Typography>
+
+        <Typography sx={{ fontSize: 14, color: "#6b7280", mb: 3 }}>
+          Select a book to generate a new class for your students.
+        </Typography>
+
+        <Typography
+          sx={{ fontSize: 13, fontWeight: 600, mb: 1, textAlign: "left" }}
+        >
+          Select Book *
+        </Typography>
+        <TextField
+          select
+          fullWidth
+          value={selectedBook}
+          onChange={(e) => handleSelectBook(e.target.value)}
+          SelectProps={{ native: true }}
+          InputProps={{
+            sx: {
+              height: 50,
+              borderRadius: "10px",
+              backgroundColor: "#f9fbff",
+            },
+          }}
+        >
+          <option value="">Select a book</option>
+          {books
+            .filter((b) => b.is_active)
+            .map((b) => (
               <option key={b.id} value={b.id}>
                 {b.title}
               </option>
             ))}
-          </TextField>
+        </TextField>
 
-          {/* CLASS NAME */}
-          <TextField
-            fullWidth
-            label="Class Name"
-            value={className}
-            InputProps={{ readOnly: true }}
-            sx={{ mt: 2 }}
-          />
-        </DialogContent>
+        <Typography
+          sx={{
+            fontSize: 13,
+            fontWeight: 600,
+            mt: 2.5,
+            mb: 1,
+            textAlign: "left",
+          }}
+        >
+          Class Name
+        </Typography>
+        <TextField
+          fullWidth
+          value={className}
+          placeholder="Generated automatically"
+          InputProps={{
+            readOnly: true,
+            sx: {
+              height: 50,
+              borderRadius: "10px",
+              backgroundColor: "#f3f4f6",
+            },
+          }}
+        />
 
-        <DialogActions>
+        <Box
+          sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 4 }}
+        >
           <LoadingButton
+            type="submit"
             loading={loadingClass}
-            onClick={handleCreateClass}
+            disabled={!selectedBook || !className}
             variant="contained"
+            sx={{
+              px: 4,
+              py: 1.2,
+              borderRadius: "10px",
+              textTransform: "none",
+              fontWeight: 600,
+              backgroundColor: "#2d5aa7",
+              "&:hover": { backgroundColor: "#244a87" },
+            }}
           >
             Create
           </LoadingButton>
 
-          <Button onClick={() => setOpenClassDialog(false)}>Cancel</Button>
-        </DialogActions>
+          <Button
+            onClick={() => setOpenClassDialog(false)}
+            variant="contained"
+            sx={{
+              px: 4,
+              py: 1.2,
+              borderRadius: "10px",
+              textTransform: "none",
+              fontWeight: 600,
+              backgroundColor: "#e5e7eb",
+              color: "#374151",
+              "&:hover": { backgroundColor: "#d1d5db" },
+            }}
+          >
+            Cancel
+          </Button>
+        </Box>
       </Dialog>
     </Box>
   );

@@ -32,7 +32,6 @@ const ENDPOINTS = {
     Create: "/api/code/create",
     ALL: "/api/code/all-codes",
     Import: "/api/code/import",
-    getBookCodes: (bookId) => `/api/code/book/${bookId}`,
     DELETE: (codeId) => `/api/code/${codeId}`,
     UPDATE: (codeId) => `/api/code/${codeId}`,
   },

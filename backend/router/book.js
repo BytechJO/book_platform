@@ -40,7 +40,7 @@ router.get("/all-books-public/:id", getPuplicBookById);
 router.get("/all-books", authenticate, authorize("admin"), getAllBooks);
 
 //http://localhost:5000/api/books/:id(GET)
-router.get("/:id", getBookById);
+router.get("/:id", authenticate, authorize("admin"), getBookById);
 
 //http://localhost:5000/api/books/:id(DELETE)
 router.delete("/:id/delete", authenticate, authorize("admin"), deleteBook);
@@ -48,12 +48,12 @@ router.delete("/:id/delete", authenticate, authorize("admin"), deleteBook);
 //http://localhost:5000/api/books/:id/update(PUT)
 router.put(
   "/:id/update",
+  authenticate,
+  authorize("admin"),
   upload.fields([
     { name: "cover_short", maxCount: 1 },
     { name: "cover_long", maxCount: 1 },
   ]),
-  authenticate,
-  authorize("admin"),
   updateBook,
 );
 

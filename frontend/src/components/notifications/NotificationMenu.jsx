@@ -42,7 +42,7 @@ export default function NotificationMenu({
           color="error"
           invisible={unreadCount === 0}
         >
-          <BellIcon size={24} />
+          <BellIcon size={25} />
         </Badge>
       </IconButton>
 
