@@ -13,17 +13,35 @@ import axiosInstance from "../../../api/axios";
 import ENDPOINTS from "../../../api/endpoints";
 import KeyIcon from "@mui/icons-material/Key";
 import { useGetMyBooks } from "../../../api/user_books";
+import useRateLimitCountdown from "../../../hooks/useRateLimitCountdown";
 export default function QuickActionsCard({ refetchClasses }) {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedBook, setSelectedBook] = useState("");
   const [activationCode, setActivationCode] = useState("");
   const [activateLoading, setActivateLoading] = useState(false);
   const [activationError, setActivationError] = useState("");
+  const [showActivationRateLimit, setShowActivationRateLimit] = useState(false);
   const [openClassDialog, setOpenClassDialog] = useState(false);
   const [classCode, setClassCode] = useState("");
   const [loadingClass, setLoadingClass] = useState(false);
   const [classError, setClassError] = useState("");
+  const [showClassRateLimit, setShowClassRateLimit] = useState(false);
   const { books, refetch } = useGetMyBooks();
+  const bookActivationLimit = useRateLimitCountdown("book-activation");
+  const classCodeLimit = useRateLimitCountdown("class-code");
+  const closeActivationDialog = () => {
+    setOpenDialog(false);
+    setActivationCode("");
+    setActivationError("");
+    setShowActivationRateLimit(false);
+  };
+  const closeClassDialog = () => {
+    setOpenClassDialog(false);
+    setSelectedBook("");
+    setClassCode("");
+    setClassError("");
+    setShowClassRateLimit(false);
+  };
   const handleActivateClass = async (event) => {
     event?.preventDefault();
 
@@ -42,12 +60,17 @@ export default function QuickActionsCard({ refetchClasses }) {
           class_code: classCode,
         },
       );
+      classCodeLimit.clearRateLimit();
       await refetchClasses();
-      setOpenClassDialog(false);
-      setClassCode("");
-      setSelectedBook("");
+      closeClassDialog();
     } catch (err) {
       console.error(err);
+
+      if (classCodeLimit.startFromError(err)) {
+        setClassError("");
+        setShowClassRateLimit(true);
+        return;
+      }
 
       const message = err?.response?.data?.message || "Invalid class code";
 
@@ -71,12 +94,17 @@ export default function QuickActionsCard({ refetchClasses }) {
       await axiosInstance.post(ENDPOINTS.User_book.Create, {
         code: activationCode,
       });
+      bookActivationLimit.clearRateLimit();
       refetch();
-
-      setOpenDialog(false);
-      setActivationCode("");
+      closeActivationDialog();
     } catch (err) {
       console.error(err);
+
+      if (bookActivationLimit.startFromError(err)) {
+        setActivationError("");
+        setShowActivationRateLimit(true);
+        return;
+      }
 
       const message = err.response?.data?.message || "Invalid activation code";
 
@@ -109,7 +137,7 @@ export default function QuickActionsCard({ refetchClasses }) {
       </Box>
       <Dialog
         open={openDialog}
-        onClose={() => setOpenDialog(false)}
+        onClose={closeActivationDialog}
         maxWidth="sm"
         fullWidth
         BackdropProps={{
@@ -185,8 +213,15 @@ export default function QuickActionsCard({ refetchClasses }) {
             if (activationError) setActivationError("");
           }}
           placeholder="Enter activation code"
-          error={Boolean(activationError)}
-          helperText={activationError}
+          error={
+            Boolean(activationError) ||
+            (showActivationRateLimit && bookActivationLimit.isRateLimited)
+          }
+          helperText={
+            showActivationRateLimit && bookActivationLimit.isRateLimited
+              ? bookActivationLimit.message
+              : activationError
+          }
           InputProps={{
             sx: {
               height: 50,
@@ -225,7 +260,7 @@ export default function QuickActionsCard({ refetchClasses }) {
           </LoadingButton>
 
           <Button
-            onClick={() => setOpenDialog(false)}
+            onClick={closeActivationDialog}
             variant="contained"
             sx={{
               px: 4,
@@ -246,7 +281,7 @@ export default function QuickActionsCard({ refetchClasses }) {
       </Dialog>
       <Dialog
         open={openClassDialog}
-        onClose={() => setOpenClassDialog(false)}
+        onClose={closeClassDialog}
         maxWidth="sm"
         fullWidth
         BackdropProps={{
@@ -338,8 +373,15 @@ export default function QuickActionsCard({ refetchClasses }) {
 
             if (classError) setClassError("");
           }}
-          error={!!classError}
-          helperText={classError}
+          error={
+            !!classError ||
+            (showClassRateLimit && classCodeLimit.isRateLimited)
+          }
+          helperText={
+            showClassRateLimit && classCodeLimit.isRateLimited
+              ? classCodeLimit.message
+              : classError
+          }
           InputProps={{
             sx: {
               height: 50,
@@ -371,7 +413,7 @@ export default function QuickActionsCard({ refetchClasses }) {
           </LoadingButton>
 
           <Button
-            onClick={() => setOpenClassDialog(false)}
+            onClick={closeClassDialog}
             variant="contained"
             sx={{
               px: 4,

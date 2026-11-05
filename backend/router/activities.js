@@ -12,5 +12,10 @@ const authorize = require("../middleware/authorized");
 
 router.get("/all", authenticate, authorize("admin"), getAllActivities);
 router.post("/read-all", authenticate, markAllActivitiesAsRead);
-router.get("/notifications", authenticate, getMyNotifications);
+router.get(
+  "/notifications",
+  authenticate,
+  authorize("admin"),
+  getMyNotifications,
+);
 module.exports = router;

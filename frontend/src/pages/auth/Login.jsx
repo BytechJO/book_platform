@@ -1,7 +1,7 @@
-/* eslint-disable react-hooks/immutability */
+/* eslint-disable react-hooks/immutability, react-hooks/purity */
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import {
   Box,
   Grid,
@@ -14,6 +14,7 @@ import {
   InputAdornment,
   IconButton,
   CircularProgress,
+  Alert,
   keyframes,
 } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -25,6 +26,51 @@ import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+
+const LOGIN_RATE_LIMITS_KEY = "loginRateLimits";
+const LEGACY_LOGIN_RATE_LIMIT_KEY = "loginRateLimitUntil";
+
+const normalizeEmail = (email) => String(email || "").trim().toLowerCase();
+
+const loadLoginRateLimits = () => {
+  localStorage.removeItem(LEGACY_LOGIN_RATE_LIMIT_KEY);
+
+  try {
+    const storedLimits = JSON.parse(
+      localStorage.getItem(LOGIN_RATE_LIMITS_KEY) || "{}",
+    );
+    const activeLimits = Object.fromEntries(
+      Object.entries(storedLimits).filter(
+        ([email, lockUntil]) =>
+          email && Number(lockUntil) > Date.now(),
+      ),
+    );
+
+    localStorage.setItem(LOGIN_RATE_LIMITS_KEY, JSON.stringify(activeLimits));
+    return activeLimits;
+  } catch {
+    localStorage.removeItem(LOGIN_RATE_LIMITS_KEY);
+    return {};
+  }
+};
+
+const saveLoginRateLimits = (limits) => {
+  if (Object.keys(limits).length === 0) {
+    localStorage.removeItem(LOGIN_RATE_LIMITS_KEY);
+    return;
+  }
+
+  localStorage.setItem(LOGIN_RATE_LIMITS_KEY, JSON.stringify(limits));
+};
+
+const getRemainingSeconds = (lockUntil) =>
+  Math.max(0, Math.ceil((lockUntil - Date.now()) / 1000));
+
+const formatCountdown = (totalSeconds) => {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+};
 
 // تعريف الأنيميشنز
 const fadeInUp = keyframes`
@@ -44,6 +90,9 @@ const fadeInRight = keyframes`
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState("");
+  const [rateLimits, setRateLimits] = useState(loadLoginRateLimits);
+  const [remainingSeconds, setRemainingSeconds] = useState(0);
 
   const schema = yup.object().shape({
     email: yup
@@ -60,8 +109,16 @@ export default function Login() {
     register,
     handleSubmit,
     setError,
+    clearErrors,
+    control,
     formState: { errors, isSubmitting },
   } = useForm({ resolver: yupResolver(schema) });
+
+  const currentEmail = normalizeEmail(
+    useWatch({ control, name: "email", defaultValue: "" }),
+  );
+  const lockUntil = Number(rateLimits[currentEmail]) || 0;
+  const isRateLimited = remainingSeconds > 0;
 
   const navigate = useNavigate();
 
@@ -77,18 +134,42 @@ export default function Login() {
     }
   }, [navigate]);
 
+  useEffect(() => {
+    const updateCountdown = () => {
+      const remaining = getRemainingSeconds(lockUntil);
+      setRemainingSeconds(remaining);
+
+      if (remaining === 0 && lockUntil && currentEmail) {
+        setRateLimits((currentLimits) => {
+          const nextLimits = { ...currentLimits };
+          delete nextLimits[currentEmail];
+          saveLoginRateLimits(nextLimits);
+          return nextLimits;
+        });
+      }
+    };
+
+    updateCountdown();
+    if (!lockUntil) return undefined;
+
+    const intervalId = window.setInterval(updateCountdown, 1000);
+    return () => window.clearInterval(intervalId);
+  }, [currentEmail, lockUntil]);
+
   const onSubmit = async (data) => {
+    if (isRateLimited) return;
+
+    setLoginError("");
+
     try {
       const response = await axiosInstance.post(ENDPOINTS.AUTH.LOGIN, data);
-      if (response.data.user.status === "inactive") {
-        setError("email", {
-          type: "server",
-          message:
-            "Your account is inactive. Please contact the administrator.",
-        });
-        return;
-      }
       const { token, user } = response.data;
+      setRateLimits((currentLimits) => {
+        const nextLimits = { ...currentLimits };
+        delete nextLimits[normalizeEmail(data.email)];
+        saveLoginRateLimits(nextLimits);
+        return nextLimits;
+      });
       localStorage.setItem("token", token);
       localStorage.setItem("role", user.role);
       axiosInstance.defaults.headers.common["Authorization"] =
@@ -102,6 +183,40 @@ export default function Login() {
       else navigate("/", { replace: true });
     } catch (error) {
       const message = error.response?.data?.message;
+      if (error.response?.status === 429) {
+        const retryAfterSeconds = Number(
+          error.response?.data?.retry_after_seconds ||
+            error.response?.headers?.["retry-after"] ||
+            15 * 60,
+        );
+        // The server response starts a real-time lock outside React rendering.
+        const nextLockUntil = Date.now() + retryAfterSeconds * 1000;
+        const limitedEmail = normalizeEmail(data.email);
+
+        clearErrors();
+        setRateLimits((currentLimits) => {
+          const nextLimits = {
+            ...currentLimits,
+            [limitedEmail]: nextLockUntil,
+          };
+          saveLoginRateLimits(nextLimits);
+          return nextLimits;
+        });
+        setRemainingSeconds(retryAfterSeconds);
+        return;
+      }
+
+      if (
+        error.response?.status === 403 &&
+        message === "Account inactive or unavailable"
+      ) {
+        clearErrors();
+        setLoginError(
+          "Your account is inactive. Please contact the administrator.",
+        );
+        return;
+      }
+
       if (message === "Invalid credentials") {
         setError("email", { type: "server" });
         setError("password", {
@@ -209,13 +324,36 @@ export default function Login() {
                   autoComplete="on"
                   style={{ width: "100%" }}
                 >
+                  {isRateLimited && (
+                    <Alert
+                      severity="error"
+                      sx={{ mb: 3, alignItems: "center" }}
+                    >
+                      <Typography variant="body2" fontWeight={700}>
+                        Login temporarily locked
+                      </Typography>
+                      <Typography variant="body2">
+                        Too many failed attempts. Try again in{" "}
+                        <Box component="span" fontWeight={700}>
+                          {formatCountdown(remainingSeconds)}
+                        </Box>
+                      </Typography>
+                    </Alert>
+                  )}
+                  {loginError && !isRateLimited && (
+                    <Alert severity="error" sx={{ mb: 3 }}>
+                      {loginError}
+                    </Alert>
+                  )}
                   <TextField
                     fullWidth
                     variant="standard"
                     label="Email"
                     type="email"
                     autoComplete="email"
-                    {...register("email")}
+                    {...register("email", {
+                      onChange: () => setLoginError(""),
+                    })}
                     error={!!errors.email}
                     helperText={errors.email?.message}
                     sx={{ mb: 4 }}
@@ -229,6 +367,7 @@ export default function Login() {
                     {...register("password")}
                     error={!!errors.password}
                     helperText={errors.password?.message}
+                    disabled={isRateLimited}
                     sx={{ mb: 2 }}
                     slotProps={{
                       input: {
@@ -237,6 +376,7 @@ export default function Login() {
                             <IconButton
                               onClick={() => setShowPassword(!showPassword)}
                               edge="end"
+                              disabled={isRateLimited}
                             >
                               {showPassword ? (
                                 <VisibilityOff />
@@ -250,7 +390,9 @@ export default function Login() {
                     }}
                   />
                   <FormControlLabel
-                    control={<Checkbox size="small" />}
+                    control={
+                      <Checkbox size="small" disabled={isRateLimited} />
+                    }
                     label="Remember username"
                     sx={{ mb: 2 }}
                   />
@@ -269,7 +411,7 @@ export default function Login() {
                     fullWidth
                     type="submit"
                     variant="contained"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isRateLimited}
                     sx={{
                       backgroundColor: "#234a8b",
                       py: 1.8,
@@ -281,10 +423,12 @@ export default function Login() {
                         backgroundColor: "#1b3766",
                         transform: "scale(1.02)",
                       },
-                      "&:disabled": { backgroundColor: "#234a8b" },
+                      "&:disabled": { backgroundColor: "#9AAAC2" },
                     }}
                   >
-                    {isSubmitting ? (
+                    {isRateLimited ? (
+                      `TRY AGAIN IN ${formatCountdown(remainingSeconds)}`
+                    ) : isSubmitting ? (
                       <CircularProgress size={22} sx={{ color: "white" }} />
                     ) : (
                       "CONTINUE"

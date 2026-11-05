@@ -37,6 +37,10 @@ export default function ViewTeacherBook() {
   const [open, setOpen] = useState(false);
   const [classInput, setClassInput] = useState("");
   const [expanded, setExpanded] = useState(false);
+  const closeClassDialog = () => {
+    setOpen(false);
+    setClassInput("");
+  };
   const shortText = book.description?.slice(0, 200) || "";
   if (loading) {
     return <CurveLoader />;
@@ -68,8 +72,7 @@ export default function ViewTeacherBook() {
 
       await refetch();
 
-      setOpen(false);
-      setClassInput("");
+      closeClassDialog();
     } catch (err) {
       console.error(err);
     } finally {
@@ -535,7 +538,7 @@ export default function ViewTeacherBook() {
             alrowadpub.com
           </Typography>
         </Box>
-        <Dialog open={open} onClose={() => setOpen(false)}>
+        <Dialog open={open} onClose={closeClassDialog}>
           <DialogTitle>Set Class</DialogTitle>
 
           <DialogContent>

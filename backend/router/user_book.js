@@ -12,12 +12,16 @@ const {
 } = require("../controller/user_book");
 const { authenticate } = require("../middleware/authenticate");
 const authorize = require("../middleware/authorized");
+const {
+  bookActivationLimiter,
+  classCodeLimiter,
+} = require("../middleware/rateLimiters");
 
 //http://localhost:5000/api/user-books/create(POST)
 router.post(
   "/create",
   authenticate,
-
+  bookActivationLimiter,
   activateBookCode,
 );
 
@@ -41,6 +45,7 @@ router.post(
   "/:id/class/student",
   authenticate,
   authorize("student"),
+  classCodeLimiter,
   activateClassCode,
 );
 

@@ -26,6 +26,7 @@ import { useGetStudentBook } from "../../../api/user_books";
 import CurveLoader from "../../../components/CurveLoader";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import useRateLimitCountdown from "../../../hooks/useRateLimitCountdown";
 
 export default function ViewStudentBook() {
   const { id } = useParams();
@@ -38,6 +39,14 @@ export default function ViewStudentBook() {
   const { book, loading, error, refetch } = useGetStudentBook(id);
   const [expanded, setExpanded] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [showClassRateLimit, setShowClassRateLimit] = useState(false);
+  const classCodeLimit = useRateLimitCountdown("class-code");
+  const closeClassDialog = () => {
+    setOpen(false);
+    setClassCode("");
+    setErrorMsg("");
+    setShowClassRateLimit(false);
+  };
 
   const shortText = book.description?.slice(0, 200) || "";
   const handleActivateClass = async () => {
@@ -52,11 +61,17 @@ export default function ViewStudentBook() {
         },
       );
 
+      classCodeLimit.clearRateLimit();
       refetch();
-      setOpen(false);
-      setClassCode("");
+      closeClassDialog();
     } catch (err) {
       console.error(err);
+
+      if (classCodeLimit.startFromError(err)) {
+        setErrorMsg("");
+        setShowClassRateLimit(true);
+        return;
+      }
 
       const message = err?.response?.data?.message || "Something went wrong";
 
@@ -479,7 +494,7 @@ export default function ViewStudentBook() {
             alrowadpub.com
           </Typography>
         </Box>
-        <Dialog open={open} onClose={() => setOpen(false)}>
+        <Dialog open={open} onClose={closeClassDialog}>
           <DialogTitle>Activate Class</DialogTitle>
 
           <DialogContent>
@@ -488,9 +503,22 @@ export default function ViewStudentBook() {
               label="Enter Class Code"
               value={classCode}
               onChange={(e) => setClassCode(e.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  handleActivateClass();
+                }
+              }}
               sx={{ mt: 2 }}
-              error={!!errorMsg}
-              helperText={errorMsg}
+              error={
+                !!errorMsg ||
+                (showClassRateLimit && classCodeLimit.isRateLimited)
+              }
+              helperText={
+                showClassRateLimit && classCodeLimit.isRateLimited
+                  ? classCodeLimit.message
+                  : errorMsg
+              }
             />
             <Button
               sx={{ mt: 2 }}

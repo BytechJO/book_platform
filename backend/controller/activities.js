@@ -43,6 +43,8 @@ const getMyNotifications = async (req, res) => {
         a.actor_id = $1
       )
 
+      AND a.type IN ('user', 'book', 'code')
+
       ORDER BY a.created_at DESC
       `,
       [userId],

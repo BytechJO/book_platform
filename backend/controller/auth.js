@@ -44,7 +44,13 @@ const register = async (req, res) => {
 
     // 3️⃣ Lock and check activation code
     const codeResult = await client.query(
-      "SELECT * FROM book_codes WHERE code = $1 FOR UPDATE",
+      `
+      SELECT bc.*, b.status AS book_status
+      FROM book_codes bc
+      JOIN books b ON b.id = bc.book_id
+      WHERE bc.code = $1
+      FOR UPDATE OF bc
+      `,
       [code],
     );
 
@@ -54,6 +60,14 @@ const register = async (req, res) => {
     }
 
     const bookCode = codeResult.rows[0];
+
+    if (bookCode.book_status !== "Published") {
+      await client.query("ROLLBACK");
+      return res.status(403).json({
+        message:
+          "This book is not published yet. The activation code cannot be used.",
+      });
+    }
 
     if (bookCode.is_used) {
       await client.query("ROLLBACK");

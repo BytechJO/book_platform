@@ -14,17 +14,31 @@ import ENDPOINTS from "../../../api/endpoints";
 import KeyIcon from "@mui/icons-material/Key";
 import { useGetMyBooks } from "../../../api/user_books";
 import { useGetClassesByBook } from "../../../api/Classes";
+import useRateLimitCountdown from "../../../hooks/useRateLimitCountdown";
 export default function QuickActionsCard() {
   const [openDialog, setOpenDialog] = useState(false);
   const [activationCode, setActivationCode] = useState("");
   const [activateLoading, setActivateLoading] = useState(false);
   const [activationError, setActivationError] = useState("");
+  const [showActivationRateLimit, setShowActivationRateLimit] = useState(false);
   const [openClassDialog, setOpenClassDialog] = useState(false);
   const [selectedBook, setSelectedBook] = useState("");
   const [className, setClassName] = useState("");
   const [loadingClass, setLoadingClass] = useState(false);
   const { classes } = useGetClassesByBook(selectedBook);
   const { books } = useGetMyBooks();
+  const bookActivationLimit = useRateLimitCountdown("book-activation");
+  const closeActivationDialog = () => {
+    setOpenDialog(false);
+    setActivationCode("");
+    setActivationError("");
+    setShowActivationRateLimit(false);
+  };
+  const closeClassDialog = () => {
+    setOpenClassDialog(false);
+    setSelectedBook("");
+    setClassName("");
+  };
   const generateClassName = (classes = [], id) => {
     const letters = classes.map((c) => c.class_name?.split("-")[0]);
 
@@ -69,9 +83,7 @@ export default function QuickActionsCard() {
         },
       );
 
-      setOpenClassDialog(false);
-      setSelectedBook("");
-      setClassName("");
+      closeClassDialog();
     } catch (err) {
       console.error(err);
     } finally {
@@ -93,10 +105,16 @@ export default function QuickActionsCard() {
       await axiosInstance.post(ENDPOINTS.User_book.Create, {
         code: activationCode,
       });
-      setOpenDialog(false);
-      setActivationCode("");
+      bookActivationLimit.clearRateLimit();
+      closeActivationDialog();
     } catch (err) {
       console.error(err);
+
+      if (bookActivationLimit.startFromError(err)) {
+        setActivationError("");
+        setShowActivationRateLimit(true);
+        return;
+      }
 
       const message = err.response?.data?.message || "Invalid activation code";
 
@@ -128,7 +146,7 @@ export default function QuickActionsCard() {
       </Box>
       <Dialog
         open={openDialog}
-        onClose={() => setOpenDialog(false)}
+        onClose={closeActivationDialog}
         maxWidth="sm"
         fullWidth
         BackdropProps={{
@@ -204,8 +222,15 @@ export default function QuickActionsCard() {
             if (activationError) setActivationError("");
           }}
           placeholder="Enter activation code"
-          error={Boolean(activationError)}
-          helperText={activationError}
+          error={
+            Boolean(activationError) ||
+            (showActivationRateLimit && bookActivationLimit.isRateLimited)
+          }
+          helperText={
+            showActivationRateLimit && bookActivationLimit.isRateLimited
+              ? bookActivationLimit.message
+              : activationError
+          }
           InputProps={{
             sx: {
               height: 50,
@@ -244,7 +269,7 @@ export default function QuickActionsCard() {
           </LoadingButton>
 
           <Button
-            onClick={() => setOpenDialog(false)}
+            onClick={closeActivationDialog}
             variant="contained"
             sx={{
               px: 4,
@@ -265,7 +290,7 @@ export default function QuickActionsCard() {
       </Dialog>
       <Dialog
         open={openClassDialog}
-        onClose={() => setOpenClassDialog(false)}
+        onClose={closeClassDialog}
         maxWidth="sm"
         fullWidth
         BackdropProps={{
@@ -383,7 +408,7 @@ export default function QuickActionsCard() {
           </LoadingButton>
 
           <Button
-            onClick={() => setOpenClassDialog(false)}
+            onClick={closeClassDialog}
             variant="contained"
             sx={{
               px: 4,

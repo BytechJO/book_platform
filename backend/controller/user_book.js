@@ -7,7 +7,12 @@ const activateBookCode = async (req, res) => {
 
   try {
     const result = await pool.query(
-      `SELECT * FROM book_codes WHERE code = $1`,
+      `
+      SELECT bc.*, b.status AS book_status, b.title AS book_title
+      FROM book_codes bc
+      JOIN books b ON b.id = bc.book_id
+      WHERE bc.code = $1
+      `,
       [code],
     );
 
@@ -16,6 +21,13 @@ const activateBookCode = async (req, res) => {
     }
 
     const bookCode = result.rows[0];
+
+    if (bookCode.book_status !== "Published") {
+      return res.status(403).json({
+        message:
+          "This book is not published yet. The activation code cannot be used.",
+      });
+    }
 
     if (bookCode.is_used) {
       return res.status(400).json({ message: "Code already used" });
@@ -61,13 +73,15 @@ const activateBookCode = async (req, res) => {
       `,
       [userId, bookCode.id],
     );
+    const firstName = req.user.full_name?.trim().split(/\s+/)[0] || "A user";
+
     await logActivity({
       type: "book",
       action: "activated",
 
       title: "Book Activated",
 
-      description: `Activated book ${bookCode.book_id}`,
+      description: `${firstName} activated “${bookCode.book_title}”`,
 
       actor_id: userId,
       actor_role: userRole,

@@ -31,11 +31,13 @@ import KeyIcon from "@mui/icons-material/Key";
 import { useGetTeacherNotifications } from "../../api/teacherActivities";
 import NotificationMenu from "../notifications/NotificationMenu";
 import { useGetStudentNotifications } from "../../api/studentActivities";
+import useRateLimitCountdown from "../../hooks/useRateLimitCountdown";
 
 export default function TeachBar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const location = useLocation();
   const [activationError, setActivationError] = useState("");
+  const [showActivationRateLimit, setShowActivationRateLimit] = useState(false);
   const { refetch } = useGetMyBooks();
   const isExactActive = (path) => location.pathname === path;
   const isStartsWithActive = (path) => location.pathname.startsWith(path);
@@ -63,6 +65,13 @@ export default function TeachBar() {
   };
   const [activationCode, setActivationCode] = useState("");
   const [activateLoading, setActivateLoading] = useState(false);
+  const bookActivationLimit = useRateLimitCountdown("book-activation");
+  const closeActivationDialog = () => {
+    setOpenDialog(false);
+    setActivationCode("");
+    setActivationError("");
+    setShowActivationRateLimit(false);
+  };
   const handleActivateCode = async (e) => {
     e.preventDefault();
 
@@ -78,11 +87,17 @@ export default function TeachBar() {
       await axiosInstance.post(ENDPOINTS.User_book.Create, {
         code: activationCode,
       });
+      bookActivationLimit.clearRateLimit();
       refetch();
-      setOpenDialog(false);
-      setActivationCode("");
+      closeActivationDialog();
     } catch (err) {
       console.error(err);
+
+      if (bookActivationLimit.startFromError(err)) {
+        setActivationError("");
+        setShowActivationRateLimit(true);
+        return;
+      }
 
       const message = err.response?.data?.message || "Invalid activation code";
 
@@ -335,7 +350,7 @@ export default function TeachBar() {
         </Box>
         <Dialog
           open={openDialog}
-          onClose={() => setOpenDialog(false)}
+          onClose={closeActivationDialog}
           maxWidth="sm"
           fullWidth
           BackdropProps={{
@@ -411,8 +426,15 @@ export default function TeachBar() {
               if (activationError) setActivationError("");
             }}
             placeholder="Enter activation code"
-            error={Boolean(activationError)}
-            helperText={activationError}
+            error={
+              Boolean(activationError) ||
+              (showActivationRateLimit && bookActivationLimit.isRateLimited)
+            }
+            helperText={
+              showActivationRateLimit && bookActivationLimit.isRateLimited
+                ? bookActivationLimit.message
+                : activationError
+            }
             InputProps={{
               sx: {
                 height: 50,
@@ -451,7 +473,7 @@ export default function TeachBar() {
             </LoadingButton>
 
             <Button
-              onClick={() => setOpenDialog(false)}
+              onClick={closeActivationDialog}
               variant="contained"
               sx={{
                 px: 4,

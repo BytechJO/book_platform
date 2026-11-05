@@ -108,7 +108,9 @@ export default function Register() {
         setError("email", { type: "server", message: "Email already exists" });
       } else if (
         message === "Invalid code" ||
-        message === "Code already used"
+        message === "Code already used" ||
+        message ===
+          "This book is not published yet. The activation code cannot be used."
       ) {
         setError("code", { type: "server", message });
       }

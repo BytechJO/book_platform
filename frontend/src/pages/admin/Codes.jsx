@@ -34,6 +34,8 @@ import { formatDate, roleLabel } from "src/utils/codesUtils";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import DownloadIcon from "@mui/icons-material/Download";
+import { exportCodesExcel } from "src/utils/exportCodesExcel";
+import { buildFilteredExportFileName } from "src/utils/exportFileName";
 
 export default function Codes() {
   const { codes = [], loading, error, refetch } = useGetCodes();
@@ -111,20 +113,18 @@ export default function Codes() {
 
   const paginatedCodes = filtered.slice((page - 1) * perPage, page * perPage);
   const handleExportExcel = () => {
-    const data = filtered.map((c) => ({
-      "Book Name": c.book_title || "—",
-      Code: c.code,
-      "Validity (Months)": c.validity_months,
-      Role: roleLabel(c.allowed_role),
-      Status: c.is_used ? "Used" : "Unused",
-      Created: formatDate(c.created_at),
-      Used: c.used_at ? formatDate(c.used_at) : "—",
-    }));
+    const selectedBook = books.find(
+      (book) => String(book.id) === String(bookId),
+    );
+    const fileName = buildFilteredExportFileName("book-codes", {
+      search: search.trim() || null,
+      book: bookId !== "all" ? selectedBook?.title : null,
+      status: status !== "all" ? status : null,
+      role: role !== "all" ? role : null,
+      year: year !== "all" ? year : null,
+    });
 
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Codes");
-    XLSX.writeFile(workbook, "codes.xlsx");
+    exportCodesExcel(filtered, { fileName });
   };
 
   const handleImportExcel = (event) => {
@@ -136,15 +136,46 @@ export default function Codes() {
       try {
         setImportLoading(true);
         const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: "array" });
+        const workbook = XLSX.read(data, { type: "array", cellDates: true });
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+        const sheetRows = XLSX.utils.sheet_to_json(worksheet, {
+          header: 1,
+          defval: "",
+        });
+        const headerRowIndex = sheetRows.findIndex(
+          (row) => row.includes("Book Name") && row.includes("Code"),
+        );
 
-        const parseDate = (dateStr) => {
-          if (!dateStr || dateStr === "—") return null;
-          const [day, month, year] = dateStr.split("/");
-          return new Date(`${year}-${month}-${day}`);
+        if (headerRowIndex === -1) {
+          throw new Error("The Excel file does not contain a valid codes table");
+        }
+
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, {
+          range: headerRowIndex,
+          defval: "",
+        });
+
+        const parseDate = (dateValue) => {
+          if (!dateValue || dateValue === "—") return null;
+          if (dateValue instanceof Date) return dateValue;
+
+          if (typeof dateValue === "number") {
+            const parsed = XLSX.SSF.parse_date_code(dateValue);
+            return parsed
+              ? new Date(parsed.y, parsed.m - 1, parsed.d)
+              : null;
+          }
+
+          const dateString = String(dateValue).trim();
+          const parts = dateString.split("/");
+          if (parts.length === 3) {
+            const [day, month, yearValue] = parts;
+            return new Date(`${yearValue}-${month}-${day}`);
+          }
+
+          const parsedDate = new Date(dateString);
+          return Number.isNaN(parsedDate.getTime()) ? null : parsedDate;
         };
 
         const formattedCodes = jsonData.map((row) => {
@@ -152,7 +183,7 @@ export default function Codes() {
           const matchedBook = books.find(
             (b) => b.title.toLowerCase() === bookName?.toLowerCase(),
           );
-          const codeValue = row.Code?.trim();
+          const codeValue = String(row.Code || "").trim();
           const isDuplicate = codes.some(
             (existing) =>
               existing.code?.toLowerCase() === codeValue?.toLowerCase(),
@@ -163,8 +194,9 @@ export default function Codes() {
             validity_months: Number(row["Validity (Months)"]) || 0,
             allowed_role: row.Role?.toLowerCase(),
             is_used: row.Status === "Used",
-            created_at: new Date(),
-            used_at: parseDate(row.Used),
+            created_at:
+              parseDate(row["Created Date"] ?? row.Created) || new Date(),
+            used_at: parseDate(row["Used Date"] ?? row.Used),
             book_id: matchedBook?.id || null,
             isDuplicate,
           };

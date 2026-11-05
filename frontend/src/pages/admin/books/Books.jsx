@@ -51,8 +51,8 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import PublishIcon from "@mui/icons-material/Publish";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CancelIcon from "@mui/icons-material/Cancel";
-import * as XLSX from "xlsx";
-import { saveAs } from "file-saver";
+import { exportBooksExcel } from "src/utils/exportBooksExcel";
+import { buildFilteredExportFileName } from "src/utils/exportFileName";
 import { useGetCategories } from "../../../api/categories";
 import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
 import AutoStoriesRoundedIcon from "@mui/icons-material/AutoStoriesRounded";
@@ -94,34 +94,18 @@ export default function Books() {
     }
   };
   const handleExport = () => {
-    const data = filteredBooks.map((b) => ({
-      Title: b.title,
-      ISBN: b.isbn,
-      Author: b.created_by_name,
-      Category: b.category_name,
-      Language: b.language,
-      Status: b.status,
-      "Published On": b.published_at
-        ? new Date(b.published_at).toLocaleDateString()
-        : "",
-      Views: b.views,
-    }));
-
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Books");
-
-    const excelBuffer = XLSX.write(workbook, {
-      bookType: "xlsx",
-      type: "array",
+    const selectedCategory = categories.find(
+      (category) => String(category.id) === String(categoryFilter),
+    );
+    const fileName = buildFilteredExportFileName("books", {
+      search: search.trim() || null,
+      status: statusFilter !== "all" ? statusFilter : null,
+      category:
+        categoryFilter !== "all" ? selectedCategory?.name : null,
+      language: languageFilter !== "all" ? languageFilter : null,
     });
 
-    const file = new Blob([excelBuffer], {
-      type: "application/octet-stream",
-    });
-
-    saveAs(file, "books.xlsx");
+    exportBooksExcel(filteredBooks, { fileName });
   };
   const filteredBooks = useMemo(() => {
     let result = [...books];

@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import {
   Box,
   Typography,
@@ -24,9 +23,8 @@ import {
 import { LoadingButton } from "@mui/lab";
 import axiosInstance from "src/api/axios";
 import ENDPOINTS from "src/api/endpoints";
-import { formatDate, roleLabel } from "src/utils/codesUtils";
 import CurveLoader from "../../components/CurveLoader";
-import * as XLSX from "xlsx";
+import { exportCodesExcel } from "src/utils/exportCodesExcel";
 export default function CodesDialogs({
   books,
   refetch,
@@ -87,18 +85,15 @@ export default function CodesDialogs({
     const data = generatedCodes.map((c) => {
       const book = books.find((b) => b.id === c.book_id);
       return {
-        "Book Name": book?.title || "—",
-        Code: c.code,
-        "Validity (Months)": c.validity_months,
-        Role: roleLabel(c.allowed_role),
-        Status: c.is_used ? "Used" : "Unused",
-        Created: formatDate(c.created_at),
+        ...c,
+        book_title: book?.title || "—",
       };
     });
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Generated Codes");
-    XLSX.writeFile(workbook, "generated_codes.xlsx");
+    exportCodesExcel(data, {
+      title: "Generated Book Activation Codes",
+      sheetName: "Generated Codes",
+      fileName: `generated-codes-${new Date().toISOString().slice(0, 10)}.xlsx`,
+    });
   };
 
   // Import Handlers
