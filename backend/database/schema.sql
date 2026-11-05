@@ -178,10 +178,13 @@ CREATE INDEX class_students_joined_at_idx ON class_students(joined_at);
 
 CREATE TABLE events (
     id SERIAL PRIMARY KEY,
+    type VARCHAR(20) NOT NULL DEFAULT 'event'
+        CHECK (type IN ('event', 'note')),
+    is_pinned BOOLEAN NOT NULL DEFAULT FALSE,
     title VARCHAR(255) NOT NULL,
     subject TEXT,
-    date DATE NOT NULL,
-    time TIME NOT NULL,
+    date DATE,
+    time TIME,
     teacher_id INTEGER NOT NULL
         REFERENCES users(id) ON DELETE CASCADE,
     book_id INTEGER NOT NULL
@@ -189,13 +192,19 @@ CREATE TABLE events (
     class_id INTEGER NOT NULL
         REFERENCES classes(id) ON DELETE CASCADE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CHECK (
+        (type = 'event' AND date IS NOT NULL AND time IS NOT NULL)
+        OR (type = 'note' AND date IS NULL AND time IS NULL)
+    )
 );
 
 CREATE INDEX events_teacher_id_idx ON events(teacher_id);
 CREATE INDEX events_class_id_idx ON events(class_id);
 CREATE INDEX events_book_id_idx ON events(book_id);
 CREATE INDEX events_date_time_idx ON events(date, time);
+CREATE INDEX events_type_class_idx ON events(type, class_id);
+CREATE INDEX events_class_pinned_idx ON events(class_id, is_pinned DESC);
 
 -- =========================================================
 -- Activities and notifications

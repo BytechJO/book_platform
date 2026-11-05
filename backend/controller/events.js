@@ -9,7 +9,7 @@ const getMyEvents = async (req, res) => {
     const result = await pool.query(
       `SELECT *
        FROM events
-       WHERE teacher_id = $1
+       WHERE teacher_id = $1 AND type = 'event'
        ORDER BY date ASC, time ASC`,
       [teacherId],
     );
@@ -91,7 +91,7 @@ const getStudentEvents = async (req, res) => {
       JOIN class_students cs
         ON cs.class_id = e.class_id
 
-      WHERE cs.student_id = $1
+      WHERE cs.student_id = $1 AND e.type = 'event'
 
       ORDER BY e.date ASC, e.time ASC
       `,
@@ -110,6 +110,23 @@ const updateEvent = async (req, res) => {
     const teacherId = req.user.id;
     const { id } = req.params;
     const { title, subject, date, time, book_id, class_id } = req.body;
+
+    const eventResult = await pool.query(
+      `SELECT id, (date + time) <= CURRENT_TIMESTAMP AS is_ended
+         FROM events
+        WHERE id = $1 AND teacher_id = $2 AND type = 'event'`,
+      [id, teacherId],
+    );
+
+    if (eventResult.rowCount === 0) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    if (eventResult.rows[0].is_ended) {
+      return res.status(400).json({
+        message: "Ended events cannot be edited",
+      });
+    }
 
     const classResult = await pool.query(
       `SELECT id
@@ -135,7 +152,7 @@ const updateEvent = async (req, res) => {
           time = $4,
           book_id = $5,
           class_id = $6
-      WHERE id = $7 AND teacher_id = $8
+      WHERE id = $7 AND teacher_id = $8 AND type = 'event'
       RETURNING *
       `,
       [title, subject, date, time, book_id, class_id, id, teacherId],
@@ -180,7 +197,7 @@ const deleteEvent = async (req, res) => {
     const result = await pool.query(
       `
       DELETE FROM events
-      WHERE id = $1 AND teacher_id = $2
+      WHERE id = $1 AND teacher_id = $2 AND type = 'event'
       RETURNING *
       `,
       [id, teacherId],

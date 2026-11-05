@@ -438,8 +438,12 @@ export default function ViewTeacherBook() {
                     >
                       {book.classes.map((c, index) => (
                         <Chip
-                          key={index}
+                          key={c.class_id ?? c.id ?? index}
                           label={c.class_name}
+                          clickable
+                          onClick={() =>
+                            navigate(`/teacher/classes/${c.class_id ?? c.id}`)
+                          }
                           sx={{
                             backgroundColor: "#E3F2FD",
                             color: "#1565C0",
@@ -448,9 +452,14 @@ export default function ViewTeacherBook() {
                             borderRadius: "8px",
                             py: 2.5,
                             border: "1px solid #BBDEFB",
+                            cursor: "pointer",
                             transition: "all 0.2s ease-in-out",
                             "&:hover": {
                               backgroundColor: "#BBDEFB",
+                            },
+                            "&:focus-visible": {
+                              outline: "3px solid #2563eb",
+                              outlineOffset: "3px",
                             },
                           }}
                         />

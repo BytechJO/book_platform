@@ -32,7 +32,7 @@ export default function TeacherBooks() {
 
   const [sortBy, setSortBy] = useState("latest");
   const [searchTerm, setSearchTerm] = useState("");
-  const [status, setStatus] = useState("all");
+  const [status, setStatus] = useState("active");
   const [page, setPage] = useState(1);
 
   const booksPerPage = 4;

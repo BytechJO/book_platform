@@ -75,3 +75,52 @@ export function useGetStudentClasses() {
 
   return { ...memoizedValue, refetch };
 }
+
+export function useGetTeacherClassDetails(classId) {
+  const URL = classId ? ENDPOINTS.Classes.TeacherClassDetails(classId) : null;
+  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+
+  return {
+    details: data || null,
+    loading: isLoading,
+    error,
+    validating: isValidating,
+    refetch: () => (URL ? mutate(URL) : Promise.resolve()),
+  };
+}
+
+export function useGetStudentClassDetails(classId) {
+  const URL = classId ? ENDPOINTS.Classes.StudentClassDetails(classId) : null;
+  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+
+  return {
+    details: data || null,
+    loading: isLoading,
+    error,
+    validating: isValidating,
+    refetch: () => (URL ? mutate(URL) : Promise.resolve()),
+  };
+}
+
+export async function createClassNote(classId, values) {
+  await axiosInstance.post(ENDPOINTS.Classes.ClassNotes(classId), values);
+  await mutate(ENDPOINTS.Classes.TeacherClassDetails(classId));
+}
+
+export async function updateClassNote(classId, noteId, values) {
+  await axiosInstance.put(ENDPOINTS.Classes.ClassNote(classId, noteId), values);
+  await mutate(ENDPOINTS.Classes.TeacherClassDetails(classId));
+}
+
+export async function deleteClassNote(classId, noteId) {
+  await axiosInstance.delete(ENDPOINTS.Classes.ClassNote(classId, noteId));
+  await mutate(ENDPOINTS.Classes.TeacherClassDetails(classId));
+}
+
+export async function setClassItemPinned(classId, itemId, isPinned) {
+  await axiosInstance.patch(ENDPOINTS.Classes.ClassItemPin(classId, itemId), {
+    is_pinned: isPinned,
+  });
+  await mutate(ENDPOINTS.Classes.TeacherClassDetails(classId));
+  await mutate(ENDPOINTS.Classes.StudentClassDetails(classId));
+}

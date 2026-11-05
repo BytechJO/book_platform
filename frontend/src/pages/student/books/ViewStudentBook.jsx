@@ -402,8 +402,14 @@ export default function ViewStudentBook() {
 
                 {book.class_name ? (
                   <Box
+                    component="button"
+                    type="button"
+                    onClick={() =>
+                      navigate(`/student/classes/${book.class_id}`)
+                    }
                     sx={{
                       p: 2.5,
+                      width: "100%",
                       backgroundColor: "#ffffff",
                       borderRadius: "12px",
                       border: "1px solid #E1E1E1",
@@ -411,6 +417,18 @@ export default function ViewStudentBook() {
                       flexDirection: { xs: "column", sm: "row" },
                       gap: 3,
                       boxShadow: "0 4px 10px rgba(0,0,0,0.03)",
+                      cursor: "pointer",
+                      textAlign: "left",
+                      fontFamily: "inherit",
+                      transition: "all 0.2s ease-in-out",
+                      "&:hover": {
+                        backgroundColor: "#f8fafc",
+                        boxShadow: "0 6px 15px rgba(0,0,0,0.08)",
+                      },
+                      "&:focus-visible": {
+                        outline: "3px solid #2563eb",
+                        outlineOffset: "3px",
+                      },
                     }}
                   >
                     <Box>
@@ -423,6 +441,7 @@ export default function ViewStudentBook() {
                         {book.class_name}
                       </Typography>
                     </Box>
+
                     <Box>
                       <Typography sx={{ fontSize: 12, color: "#777", mb: 0.5 }}>
                         Teacher

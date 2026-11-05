@@ -14,8 +14,10 @@ import ClassProgressCard from "./ClassProgressCard";
 import QuickActionsCard from "./QuickActionsCard";
 import WelcomeBanner from "../WelcomeBanner";
 import { useGetStudentClasses } from "../../../api/Classes";
+import { useNavigate } from "react-router-dom";
 export default function Dashboard() {
   const { stats, loading } = useStudentDashboard();
+  const navigate = useNavigate();
   dayjs.extend(utc);
   dayjs.extend(timezone);
   const {
@@ -50,6 +52,7 @@ export default function Dashboard() {
           subtitle="Active classes"
           growth={stats.growth.classes}
           icon={GroupsIcon}
+          onClick={() => navigate("/student/classes")}
         />
 
         <StatCard
@@ -58,6 +61,7 @@ export default function Dashboard() {
           subtitle="Books"
           growth={stats.growth.books}
           icon={MenuBookIcon}
+          onClick={() => navigate("/student/books")}
         />
       </Box>
       <Box
@@ -97,12 +101,19 @@ export default function Dashboard() {
 }
 
 // eslint-disable-next-line no-unused-vars
-function StatCard({ title, value, subtitle, growth, icon: Icon }) {
+function StatCard({ title, value, subtitle, growth, icon: Icon, onClick }) {
   const isPositive = growth >= 0;
 
   return (
     <Box
+      component="button"
+      type="button"
+      onClick={onClick}
       sx={{
+        width: "100%",
+        textAlign: "left",
+        font: "inherit",
+        border: "none",
         background: "#fff",
         borderRadius: "16px",
         p: 2,
@@ -110,6 +121,15 @@ function StatCard({ title, value, subtitle, growth, icon: Icon }) {
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
+        cursor: "pointer",
+        transition: "box-shadow 0.2s ease",
+        "&:hover": {
+          boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
+        },
+        "&:focus-visible": {
+          outline: "3px solid #2563eb",
+          outlineOffset: "3px",
+        },
       }}
     >
       {/* TOP ROW */}

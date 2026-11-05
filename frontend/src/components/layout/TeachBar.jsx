@@ -40,7 +40,8 @@ export default function TeachBar() {
   const [showActivationRateLimit, setShowActivationRateLimit] = useState(false);
   const { refetch } = useGetMyBooks();
   const isExactActive = (path) => location.pathname === path;
-  const isStartsWithActive = (path) => location.pathname.startsWith(path);
+  const isStartsWithActive = (path) =>
+    location.pathname.toLowerCase().startsWith(path.toLowerCase());
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
@@ -238,15 +239,15 @@ export default function TeachBar() {
               Help
             </Box>
             <Box
-              onClick={() => navigate(`/${role}/Events`)}
+              onClick={() => navigate(`/${role}/events`)}
               sx={{
                 px: 2,
                 py: 0.5,
                 borderRadius: "20px",
-                backgroundColor: isStartsWithActive(`/${role}/Events`)
+                backgroundColor: isStartsWithActive(`/${role}/events`)
                   ? "white"
                   : "transparent",
-                color: isStartsWithActive(`/${role}/Events`)
+                color: isStartsWithActive(`/${role}/events`)
                   ? "#1A4D96"
                   : "white",
                 fontWeight: 500,
@@ -254,7 +255,7 @@ export default function TeachBar() {
                 transition: "0.2s",
                 fontSize: 13,
                 "&:hover": {
-                  backgroundColor: isStartsWithActive(`/${role}/Events`)
+                  backgroundColor: isStartsWithActive(`/${role}/events`)
                     ? "white"
                     : "rgba(255,255,255,0.1)",
                 },

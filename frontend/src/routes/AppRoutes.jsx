@@ -42,6 +42,8 @@ import ViewUser from "../pages/admin/ViewUser";
 import CreateEvent from "../pages/teacher/events/CreateEvent";
 import ViewEvents from "../pages/teacher/events/ViewEvents";
 import ViewEventsStudent from "../pages/student/student_home/ViewEvents";
+import TeacherClassDetails from "../pages/teacher/ClassDetails";
+import StudentClassDetails from "../pages/student/ClassDetails";
 
 export default function AppRoutes() {
   return (
@@ -97,6 +99,7 @@ export default function AppRoutes() {
         <Route path="books/:id" element={<ViewTeacherBook />} />
         <Route path="help" element={<Help />} />
         <Route path="classes" element={<TeacherClasses />} />
+        <Route path="classes/:id" element={<TeacherClassDetails />} />
         <Route path="activities" element={<TeacherActivities />} />
         <Route path="profile" element={<UserProfileTeacher />} />
       </Route>
@@ -113,6 +116,7 @@ export default function AppRoutes() {
         <Route path="events" element={<ViewEventsStudent />} />
         <Route path="books/:id" element={<ViewStudentBook />} />
         <Route path="classes" element={<StudentClasses />} />
+        <Route path="classes/:id" element={<StudentClassDetails />} />
         <Route path="activities" element={<StudentActivities />} />
         <Route path="help" element={<HelpStudent />} />
         <Route path="profile" element={<UserProfileStudent />} />

@@ -8,6 +8,7 @@ import {
   Divider,
   IconButton,
   Tooltip,
+  Button,
 } from "@mui/material";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import EditCalendarRoundedIcon from "@mui/icons-material/EditCalendarRounded";
@@ -16,6 +17,7 @@ import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
 import ClassRoundedIcon from "@mui/icons-material/ClassRounded";
 import SubjectRoundedIcon from "@mui/icons-material/SubjectRounded";
 import CalendarTodayRoundedIcon from "@mui/icons-material/CalendarTodayRounded";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
 
 import {
   DateCalendar,
@@ -163,7 +165,9 @@ export default function ViewEvents() {
   const [date, setDate] = useState(
     location.state?.selectedDate ? dayjs(location.state.selectedDate) : dayjs(),
   );
-  const [selectedEventId, setSelectedEventId] = useState(null);
+  const [selectedEventId, setSelectedEventId] = useState(
+    location.state?.selectedEventId ?? null,
+  );
 
   const selectedEvents = events
     .filter(
@@ -172,6 +176,11 @@ export default function ViewEvents() {
     .sort((a, b) => a.time.localeCompare(b.time));
 
   const selectedEvent = events.find((e) => e.id === selectedEventId);
+  const selectedEventEnded = selectedEvent
+    ? dayjs(
+        `${dayjs(selectedEvent.date).format("YYYY-MM-DD")}T${selectedEvent.time}`,
+      ).isBefore(dayjs())
+    : false;
   useEffect(() => {
     const dayEvents = events
       .filter(
@@ -179,11 +188,15 @@ export default function ViewEvents() {
       )
       .sort((a, b) => a.time.localeCompare(b.time));
 
-    if (dayEvents.length > 0) {
+    const selectedEventIsOnThisDay = dayEvents.some(
+      (event) => event.id === selectedEventId,
+    );
+
+    if (!selectedEventIsOnThisDay && dayEvents.length > 0) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedEventId(dayEvents[0].id);
     }
-  }, [date, events]);
+  }, [date, events, selectedEventId]);
   const totalMonthEvents = useMemo(() => {
     const month = date.format("YYYY-MM");
     return events.filter((e) => dayjs(e.date).format("YYYY-MM") === month)
@@ -291,23 +304,42 @@ export default function ViewEvents() {
               View and manage your scheduled events
             </Typography>
           </Box>
-          <Chip
-            icon={<CalendarTodayRoundedIcon sx={{ fontSize: 14 }} />}
-            label={`${totalMonthEvents} this month`}
-            size="small"
-            sx={{
-              fontSize: 12,
-              fontWeight: 600,
-              height: 32,
-              px: 0.5,
-              bgcolor: "rgba(99, 102, 241, 0.08)",
-              color: "#2B5A9E",
-              border: "1px solid rgba(99, 102, 241, 0.15)",
-              "& .MuiChip-icon": {
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
+            <Button
+              variant="contained"
+              startIcon={<AddRoundedIcon />}
+              onClick={() =>
+                navigate("/teacher/events/create", {
+                  state: { selectedDate: date.format("YYYY-MM-DD") },
+                })
+              }
+              sx={{
+                height: 36,
+                borderRadius: 2.5,
+                px: 2,
+                textTransform: "none",
+                fontWeight: 700,
+                bgcolor: "#2B5A9E",
+              }}
+            >
+              Add event
+            </Button>
+            <Chip
+              icon={<CalendarTodayRoundedIcon sx={{ fontSize: 14 }} />}
+              label={`${totalMonthEvents} this month`}
+              size="small"
+              sx={{
+                fontSize: 12,
+                fontWeight: 600,
+                height: 32,
+                px: 0.5,
+                bgcolor: "rgba(99, 102, 241, 0.08)",
                 color: "#2B5A9E",
-              },
-            }}
-          />
+                border: "1px solid rgba(99, 102, 241, 0.15)",
+                "& .MuiChip-icon": { color: "#2B5A9E" },
+              }}
+            />
+          </Box>
         </Box>
 
         <Paper
@@ -686,8 +718,17 @@ export default function ViewEvents() {
 
                     {/* Action buttons */}
                     <Box sx={{ display: "flex", gap: 1, ml: 2, mt: 3 }}>
-                      <Tooltip title="Edit event" arrow>
+                      <Tooltip
+                        title={
+                          selectedEventEnded
+                            ? "Ended events cannot be edited"
+                            : "Edit event"
+                        }
+                        arrow
+                      >
+                        <span>
                         <IconButton
+                          disabled={selectedEventEnded}
                           onClick={() =>
                             navigate("/teacher/events/create", {
                               state: {
@@ -713,6 +754,7 @@ export default function ViewEvents() {
                         >
                           <EditCalendarRoundedIcon sx={{ fontSize: 18 }} />
                         </IconButton>
+                        </span>
                       </Tooltip>
                       <Tooltip title="Delete event" arrow>
                         <IconButton

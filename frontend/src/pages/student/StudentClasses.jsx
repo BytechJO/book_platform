@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -20,6 +21,7 @@ import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import { useGetStudentClasses } from "../../api/Classes";
 
 export default function StudentClasses() {
+  const navigate = useNavigate();
   const { classes, loading } = useGetStudentClasses();
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
@@ -189,6 +191,7 @@ export default function StudentClasses() {
         {paginatedClasses.map((cls, idx) => (
           <Box key={cls.id}>
             <Box
+              onClick={() => navigate(`/student/classes/${cls.id}`)}
               sx={{
                 px: 2.5,
                 py: 1.8,

@@ -158,7 +158,9 @@ export default function ViewEvents() {
   const [date, setDate] = useState(
     location.state?.selectedDate ? dayjs(location.state.selectedDate) : dayjs(),
   );
-  const [selectedEventId, setSelectedEventId] = useState(null);
+  const [selectedEventId, setSelectedEventId] = useState(
+    location.state?.selectedEventId ?? null,
+  );
 
   const selectedEvents = events
     .filter(
@@ -174,11 +176,15 @@ export default function ViewEvents() {
       .length;
   }, [events, date]);
   useEffect(() => {
-    if (selectedEvents.length > 0) {
+    const selectedEventIsOnThisDay = selectedEvents.some(
+      (event) => event.id === selectedEventId,
+    );
+
+    if (!selectedEventIsOnThisDay && selectedEvents.length > 0) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedEventId(selectedEvents[0].id);
     }
-  }, [date, events]);
+  }, [date, events, selectedEventId, selectedEvents]);
   // Auto-select first event when date changes
   const handleDateChange = (newDate) => {
     setDate(newDate);

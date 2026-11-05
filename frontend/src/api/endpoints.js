@@ -54,7 +54,14 @@ const ENDPOINTS = {
   },
   Classes: {
     TeacherClasses: "/api/classes/teacherClasses",
+    TeacherClassDetails: (classId) => `/api/classes/teacherClasses/${classId}`,
     StudentClasses: "/api/classes/student-classes",
+    StudentClassDetails: (classId) => `/api/classes/student-classes/${classId}`,
+    ClassNotes: (classId) => `/api/classes/teacherClasses/${classId}/notes`,
+    ClassNote: (classId, noteId) =>
+      `/api/classes/teacherClasses/${classId}/notes/${noteId}`,
+    ClassItemPin: (classId, itemId) =>
+      `/api/classes/teacherClasses/${classId}/items/${itemId}/pin`,
     MyClassesByBook: (bookId) => `/api/classes/myClassesByBook/${bookId}`,
   },
   EVENTS: {
