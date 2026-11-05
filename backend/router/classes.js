@@ -14,6 +14,13 @@ const {
 } = require("../controller/classes");
 const { authenticate } = require("../middleware/authenticate");
 const authorize = require("../middleware/authorized");
+const uploadResourceFile = require("../middleware/resourceUpload");
+const {
+  createClassResource,
+  updateClassResource,
+  deleteClassResource,
+  downloadClassResource,
+} = require("../controller/classResources");
 
 router.get(
   "/teacherClasses",
@@ -50,6 +57,32 @@ router.patch(
   authenticate,
   authorize("teacher"),
   setClassItemPinned,
+);
+router.post(
+  "/teacherClasses/:classId/resources",
+  authenticate,
+  authorize("teacher"),
+  uploadResourceFile,
+  createClassResource,
+);
+router.put(
+  "/teacherClasses/:classId/resources/:resourceId",
+  authenticate,
+  authorize("teacher"),
+  uploadResourceFile,
+  updateClassResource,
+);
+router.delete(
+  "/teacherClasses/:classId/resources/:resourceId",
+  authenticate,
+  authorize("teacher"),
+  deleteClassResource,
+);
+router.get(
+  "/resources/:resourceId/download",
+  authenticate,
+  authorize("teacher", "student"),
+  downloadClassResource,
 );
 router.get(
   "/myClassesByBook/:bookId",

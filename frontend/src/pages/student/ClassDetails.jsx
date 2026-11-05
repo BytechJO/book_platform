@@ -24,6 +24,7 @@ import PushPinIcon from "@mui/icons-material/PushPin";
 
 import { useGetStudentClassDetails } from "../../api/Classes";
 import CurveLoader from "../../components/CurveLoader";
+import ClassResourcesSection from "../../components/ClassResourcesSection";
 
 const formatDate = (value, withTime = false) =>
   value
@@ -357,6 +358,13 @@ export default function ClassDetails() {
             </Table>
           </TableContainer>
         </Paper>
+      </Box>
+
+      <Box sx={{ mt: 3 }}>
+        <ClassResourcesSection
+          classId={id}
+          resources={details.resources || []}
+        />
       </Box>
     </Box>
   );

@@ -124,3 +124,53 @@ export async function setClassItemPinned(classId, itemId, isPinned) {
   await mutate(ENDPOINTS.Classes.TeacherClassDetails(classId));
   await mutate(ENDPOINTS.Classes.StudentClassDetails(classId));
 }
+
+const buildResourceFormData = (values) => {
+  const formData = new FormData();
+  formData.append("resource_type", values.resource_type);
+  formData.append("title", values.title);
+  formData.append("description", values.description || "");
+  formData.append("resource_url", values.resource_url || "");
+  if (values.file) formData.append("file", values.file);
+  return formData;
+};
+
+export async function createClassResource(classId, values) {
+  await axiosInstance.post(
+    ENDPOINTS.Classes.ClassResources(classId),
+    buildResourceFormData(values),
+  );
+  await mutate(ENDPOINTS.Classes.TeacherClassDetails(classId));
+}
+
+export async function updateClassResource(classId, resourceId, values) {
+  await axiosInstance.put(
+    ENDPOINTS.Classes.ClassResource(classId, resourceId),
+    buildResourceFormData(values),
+  );
+  await mutate(ENDPOINTS.Classes.TeacherClassDetails(classId));
+}
+
+export async function deleteClassResource(classId, resourceId) {
+  await axiosInstance.delete(
+    ENDPOINTS.Classes.ClassResource(classId, resourceId),
+  );
+  await mutate(ENDPOINTS.Classes.TeacherClassDetails(classId));
+}
+
+export async function downloadClassResource(resource) {
+  const response = await axiosInstance.get(
+    ENDPOINTS.Classes.ClassResourceDownload(resource.id),
+    { responseType: "blob" },
+  );
+
+  const objectUrl = window.URL.createObjectURL(response.data);
+  const downloadLink = document.createElement("a");
+  downloadLink.href = objectUrl;
+  downloadLink.download =
+    resource.original_file_name || `resource-${resource.id}`;
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  downloadLink.remove();
+  window.setTimeout(() => window.URL.revokeObjectURL(objectUrl), 1000);
+}

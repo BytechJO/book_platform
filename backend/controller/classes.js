@@ -128,12 +128,17 @@ const getTeacherClassDetails = async (req, res) => {
     const classData = await findTeacherClass(req.params.classId, req.user.id);
     if (!classData) return res.status(404).json({ message: "Class not found" });
 
-    const [studentsResult, activitiesResult, notesResult, eventsResult] =
+    const [
+      studentsResult,
+      activitiesResult,
+      notesResult,
+      eventsResult,
+      resourcesResult,
+    ] =
       await Promise.all([
         pool.query(
           `SELECT u.id, u.full_name, u.email, u.avatar_url, u.status,
                   cs.joined_at, ub.activated_at, ub.expires_at,
-                  ub.last_opened_at,
                   (SELECT COUNT(*)::int FROM activities a
                     WHERE a.class_id = cs.class_id AND a.actor_id = u.id)
                     AS activity_count
@@ -172,6 +177,15 @@ const getTeacherClassDetails = async (req, res) => {
             ORDER BY is_pinned DESC, date DESC, time DESC`,
           [classData.id, req.user.id],
         ),
+        pool.query(
+          `SELECT id, class_id, teacher_id, resource_type, title, description,
+                  resource_url, original_file_name, mime_type, file_size,
+                  created_at, updated_at
+             FROM class_resources
+            WHERE class_id = $1 AND teacher_id = $2
+            ORDER BY created_at DESC`,
+          [classData.id, req.user.id],
+        ),
       ]);
 
     res.json({
@@ -180,6 +194,7 @@ const getTeacherClassDetails = async (req, res) => {
       activities: activitiesResult.rows,
       notes: notesResult.rows,
       events: eventsResult.rows,
+      resources: resourcesResult.rows,
     });
   } catch (error) {
     console.error("Get teacher class details error:", error);
@@ -204,7 +219,7 @@ const getStudentClassDetails = async (req, res) => {
     const classData = classResult.rows[0];
     if (!classData) return res.status(404).json({ message: "Class not found" });
 
-    const [notesResult, eventsResult] = await Promise.all([
+    const [notesResult, eventsResult, resourcesResult] = await Promise.all([
       pool.query(
         `SELECT n.id, n.title, n.subject AS content, n.is_pinned,
                 n.created_at, n.updated_at,
@@ -221,12 +236,22 @@ const getStudentClassDetails = async (req, res) => {
           ORDER BY is_pinned DESC, date DESC, time DESC`,
         [classData.id],
       ),
+      pool.query(
+        `SELECT id, class_id, resource_type, title, description,
+                resource_url, original_file_name, mime_type, file_size,
+                created_at, updated_at
+           FROM class_resources
+          WHERE class_id = $1
+          ORDER BY created_at DESC`,
+        [classData.id],
+      ),
     ]);
 
     res.json({
       class: classData,
       notes: notesResult.rows,
       events: eventsResult.rows,
+      resources: resourcesResult.rows,
     });
   } catch (error) {
     console.error("Get student class details error:", error);

@@ -44,6 +44,7 @@ import {
 } from "../../api/Classes";
 import { getStudentProgress } from "../../data/defaultClassProgress";
 import CurveLoader from "../../components/CurveLoader";
+import ClassResourcesSection from "../../components/ClassResourcesSection";
 
 const formatDate = (value) =>
   value ? dayjs(value).format("DD MMM YYYY") : "—";
@@ -262,7 +263,6 @@ export default function ClassDetails() {
                   <TableCell>Status</TableCell>
                   <TableCell>Progress</TableCell>
                   <TableCell>Joined</TableCell>
-                  <TableCell>Last opened</TableCell>
                   <TableCell>Book expires</TableCell>
                   <TableCell>Activity</TableCell>
                 </TableRow>
@@ -270,6 +270,9 @@ export default function ClassDetails() {
               <TableBody>
                 {details.students.map((student, index) => {
                   const progress = getStudentProgress(student, index);
+                  const bookExpired =
+                    Boolean(student.expires_at) &&
+                    dayjs(student.expires_at).isBefore(dayjs());
                   return (
                     <TableRow key={student.id} hover>
                       <TableCell>
@@ -317,10 +320,32 @@ export default function ClassDetails() {
                         </Stack>
                       </TableCell>
                       <TableCell>{formatDate(student.joined_at)}</TableCell>
-                      <TableCell>
-                        {formatDate(student.last_opened_at)}
+                      <TableCell
+                        sx={{
+                          bgcolor: bookExpired ? "#fef2f2" : "transparent",
+                          borderLeft: bookExpired
+                            ? "3px solid #ef4444"
+                            : undefined,
+                        }}
+                      >
+                        <Stack direction="row" spacing={0.8} alignItems="center">
+                          <Typography
+                            variant="body2"
+                            fontWeight={bookExpired ? 700 : 400}
+                            color={bookExpired ? "error.main" : "inherit"}
+                          >
+                            {formatDate(student.expires_at)}
+                          </Typography>
+                          {bookExpired && (
+                            <Chip
+                              size="small"
+                              label="Expired"
+                              color="error"
+                              variant="outlined"
+                            />
+                          )}
+                        </Stack>
                       </TableCell>
-                      <TableCell>{formatDate(student.expires_at)}</TableCell>
                       <TableCell>{student.activity_count ?? 0}</TableCell>
                     </TableRow>
                   );
@@ -328,7 +353,7 @@ export default function ClassDetails() {
                 {!details.students.length && (
                   <TableRow>
                     <TableCell
-                      colSpan={7}
+                      colSpan={6}
                       align="center"
                       sx={{ py: 6, color: "text.secondary" }}
                     >
@@ -568,6 +593,12 @@ export default function ClassDetails() {
             </Stack>
           </Paper>
         </Box>
+
+        <ClassResourcesSection
+          classId={id}
+          resources={details.resources || []}
+          editable
+        />
       </Stack>
 
       <Dialog
@@ -575,12 +606,17 @@ export default function ClassDetails() {
         onClose={closeNoteDialog}
         fullWidth
         maxWidth="sm"
+        slotProps={{
+          paper: {
+            sx: { overflowX: "hidden" },
+          },
+        }}
       >
         <DialogTitle fontWeight={800}>
           {editingNote ? "Edit class note" : "Publish a class note"}
         </DialogTitle>
-        <DialogContent>
-          <Stack spacing={2} sx={{ mt: 1 }}>
+        <DialogContent sx={{ overflowX: "hidden" }}>
+          <Stack spacing={2} sx={{ mt: 1, width: "100%", minWidth: 0 }}>
             <TextField
               label="Title"
               value={form.title}
