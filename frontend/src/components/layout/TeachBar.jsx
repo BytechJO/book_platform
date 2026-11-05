@@ -32,6 +32,7 @@ import { useGetTeacherNotifications } from "../../api/teacherActivities";
 import NotificationMenu from "../notifications/NotificationMenu";
 import { useGetStudentNotifications } from "../../api/studentActivities";
 import useRateLimitCountdown from "../../hooks/useRateLimitCountdown";
+import QrScanButton from "../QrScanButton";
 
 export default function TeachBar() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -437,6 +438,16 @@ export default function TeachBar() {
                 : activationError
             }
             InputProps={{
+              endAdornment: (
+                <QrScanButton
+                  kind="book"
+                  title="Scan book QR code"
+                  onScan={({ code }) => {
+                    setActivationCode(code);
+                    setActivationError("");
+                  }}
+                />
+              ),
               sx: {
                 height: 50,
                 borderRadius: "10px",

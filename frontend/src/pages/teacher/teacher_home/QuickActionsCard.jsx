@@ -15,6 +15,7 @@ import KeyIcon from "@mui/icons-material/Key";
 import { useGetMyBooks } from "../../../api/user_books";
 import { useGetClassesByBook } from "../../../api/Classes";
 import useRateLimitCountdown from "../../../hooks/useRateLimitCountdown";
+import QrScanButton from "../../../components/QrScanButton";
 export default function QuickActionsCard() {
   const [openDialog, setOpenDialog] = useState(false);
   const [activationCode, setActivationCode] = useState("");
@@ -232,6 +233,16 @@ export default function QuickActionsCard() {
               : activationError
           }
           InputProps={{
+            endAdornment: (
+              <QrScanButton
+                kind="book"
+                title="Scan book QR code"
+                onScan={({ code }) => {
+                  setActivationCode(code);
+                  setActivationError("");
+                }}
+              />
+            ),
             sx: {
               height: 50,
               borderRadius: "10px",

@@ -14,6 +14,7 @@ import ENDPOINTS from "../../../api/endpoints";
 import KeyIcon from "@mui/icons-material/Key";
 import { useGetMyBooks } from "../../../api/user_books";
 import useRateLimitCountdown from "../../../hooks/useRateLimitCountdown";
+import QrScanButton from "../../../components/QrScanButton";
 export default function QuickActionsCard({ refetchClasses }) {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedBook, setSelectedBook] = useState("");
@@ -223,6 +224,16 @@ export default function QuickActionsCard({ refetchClasses }) {
               : activationError
           }
           InputProps={{
+            endAdornment: (
+              <QrScanButton
+                kind="book"
+                title="Scan book QR code"
+                onScan={({ code }) => {
+                  setActivationCode(code);
+                  setActivationError("");
+                }}
+              />
+            ),
             sx: {
               height: 50,
               borderRadius: "10px",
@@ -383,6 +394,24 @@ export default function QuickActionsCard({ refetchClasses }) {
               : classError
           }
           InputProps={{
+            endAdornment: (
+              <QrScanButton
+                kind="class"
+                title="Scan class QR code"
+                onScan={({ code, bookId }) => {
+                  setClassCode(code);
+                  setClassError("");
+                  if (bookId) {
+                    const matchedBook = books.find(
+                      (item) => String(item.id) === String(bookId),
+                    );
+                    if (matchedBook?.is_active && !matchedBook.class_name) {
+                      setSelectedBook(matchedBook.user_book_id);
+                    }
+                  }
+                }}
+              />
+            ),
             sx: {
               height: 50,
               borderRadius: "10px",

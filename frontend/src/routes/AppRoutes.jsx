@@ -44,10 +44,13 @@ import ViewEvents from "../pages/teacher/events/ViewEvents";
 import ViewEventsStudent from "../pages/student/student_home/ViewEvents";
 import TeacherClassDetails from "../pages/teacher/ClassDetails";
 import StudentClassDetails from "../pages/student/ClassDetails";
+import QrActionPage from "../pages/QrActionPage";
 
 export default function AppRoutes() {
   return (
     <Routes>
+      <Route path="/activate-book" element={<QrActionPage action="book" />} />
+      <Route path="/join-class" element={<QrActionPage action="class" />} />
       {/*  Public Pages */}
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />

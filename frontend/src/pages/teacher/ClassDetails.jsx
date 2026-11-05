@@ -34,6 +34,7 @@ import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
 import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
 import PushPinIcon from "@mui/icons-material/PushPin";
 import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
+import QrCode2Icon from "@mui/icons-material/QrCode2";
 
 import {
   createClassNote,
@@ -45,6 +46,8 @@ import {
 import { getStudentProgress } from "../../data/defaultClassProgress";
 import CurveLoader from "../../components/CurveLoader";
 import ClassResourcesSection from "../../components/ClassResourcesSection";
+import QrCodeDialog from "../../components/QrCodeDialog";
+import { buildClassQrUrl } from "../../utils/qrCodes";
 
 const formatDate = (value) =>
   value ? dayjs(value).format("DD MMM YYYY") : "—";
@@ -64,6 +67,7 @@ export default function ClassDetails() {
   const [formError, setFormError] = useState("");
   const [visibleNotes, setVisibleNotes] = useState(5);
   const [visibleEvents, setVisibleEvents] = useState(5);
+  const [qrOpen, setQrOpen] = useState(false);
 
   const averageProgress = useMemo(() => {
     if (!details?.students?.length) return 0;
@@ -197,6 +201,23 @@ export default function ClassDetails() {
             </Typography>
           </Box>
           <Stack direction="row" spacing={1.5}>
+            <Button
+              variant="outlined"
+              startIcon={<QrCode2Icon />}
+              onClick={() => setQrOpen(true)}
+              sx={{
+                alignSelf: "center",
+                color: "white",
+                borderColor: "rgba(255,255,255,.55)",
+                textTransform: "none",
+                "&:hover": {
+                  borderColor: "white",
+                  bgcolor: "rgba(255,255,255,.1)",
+                },
+              }}
+            >
+              Class QR
+            </Button>
             <Box
               sx={{
                 px: 2,
@@ -647,6 +668,16 @@ export default function ClassDetails() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <QrCodeDialog
+        open={qrOpen}
+        onClose={() => setQrOpen(false)}
+        title={classInfo.class_name}
+        subtitle={classInfo.book_title}
+        code={classInfo.class_name}
+        value={buildClassQrUrl(classInfo.book_id, classInfo.class_name)}
+        fileName={`class-${classInfo.class_name}`}
+      />
     </Box>
   );
 }

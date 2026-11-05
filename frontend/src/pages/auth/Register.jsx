@@ -24,6 +24,7 @@ import ENDPOINTS from "../../api/endpoints";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Helmet } from "react-helmet-async";
+import QrScanButton from "../../components/QrScanButton";
 
 // ─── الأنيميشنز ───
 const slideInLeft = keyframes`
@@ -79,6 +80,8 @@ export default function Register() {
     register,
     handleSubmit,
     setError,
+    setValue,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm({ resolver: yupResolver(schema) });
 
@@ -349,6 +352,25 @@ export default function Register() {
                       error={!!errors.code}
                       helperText={errors.code?.message}
                       sx={{ mb: 2 }}
+                      slotProps={{
+                        input: {
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <QrScanButton
+                                kind="book"
+                                title="Scan book QR code"
+                                onScan={({ code }) => {
+                                  setValue("code", code, {
+                                    shouldDirty: true,
+                                    shouldValidate: true,
+                                  });
+                                  clearErrors("code");
+                                }}
+                              />
+                            </InputAdornment>
+                          ),
+                        },
+                      }}
                     />
                   </Box>
 

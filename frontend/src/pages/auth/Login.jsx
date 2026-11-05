@@ -175,6 +175,12 @@ export default function Login() {
       axiosInstance.defaults.headers.common["Authorization"] =
         `Bearer ${token}`;
 
+      const pendingQrAction = sessionStorage.getItem("pendingQrAction");
+      if (pendingQrAction) {
+        navigate(pendingQrAction, { replace: true });
+        return;
+      }
+
       if (user.role === "admin")
         navigate("/admin/dashboard", { replace: true });
       else if (user.role === "teacher") navigate("/teacher", { replace: true });

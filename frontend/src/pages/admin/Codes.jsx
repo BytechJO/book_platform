@@ -36,6 +36,12 @@ import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import DownloadIcon from "@mui/icons-material/Download";
 import { exportCodesExcel } from "src/utils/exportCodesExcel";
 import { buildFilteredExportFileName } from "src/utils/exportFileName";
+import QrCode2Icon from "@mui/icons-material/QrCode2";
+import QrCodeDialog from "src/components/QrCodeDialog";
+import {
+  buildBookQrUrl,
+  downloadQrPdf,
+} from "src/utils/qrCodes";
 
 export default function Codes() {
   const { codes = [], loading, error, refetch } = useGetCodes();
@@ -66,6 +72,8 @@ export default function Codes() {
 
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const [qrCode, setQrCode] = useState(null);
+  const [qrExporting, setQrExporting] = useState(false);
 
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -125,6 +133,24 @@ export default function Codes() {
     });
 
     exportCodesExcel(filtered, { fileName });
+  };
+
+  const handleExportQrPdf = async () => {
+    if (!filtered.length) return;
+    try {
+      setQrExporting(true);
+      await downloadQrPdf(
+        filtered.map((item) => ({
+          value: buildBookQrUrl(item.code),
+          title: item.book_title || "Book activation",
+          code: item.code,
+          subtitle: `${roleLabel(item.allowed_role)} · ${item.validity_months} months`,
+        })),
+        `book-codes-qr-${new Date().toISOString().slice(0, 10)}.pdf`,
+      );
+    } finally {
+      setQrExporting(false);
+    }
   };
 
   const handleImportExcel = (event) => {
@@ -275,6 +301,15 @@ export default function Codes() {
             alignItems="center"
             sx={{ width: { xs: "100%", sm: "auto" } }}
           >
+            <Button
+              variant="outlined"
+              startIcon={<QrCode2Icon />}
+              disabled={!filtered.length || qrExporting}
+              onClick={handleExportQrPdf}
+              sx={{ height: 36, px: 2, borderRadius: "6px", textTransform: "none", fontWeight: 500, borderColor: "#2B5A9E", color: "#2B5A9E" }}
+            >
+              {qrExporting ? "Preparing..." : "QR PDF"}
+            </Button>
             <Button
               variant="outlined"
               startIcon={<UploadFileIcon />} // 🔥
@@ -510,6 +545,13 @@ export default function Codes() {
                           justifyContent="center"
                         >
                           <IconButton
+                            onClick={() => setQrCode(c)}
+                            color="primary"
+                            title="View QR code"
+                          >
+                            <QrCode2Icon />
+                          </IconButton>
+                          <IconButton
                             onClick={() => handleEdit(c)}
                             color="primary"
                           >
@@ -725,6 +767,13 @@ export default function Codes() {
                     <IconButton
                       size="small"
                       color="primary"
+                      onClick={() => setQrCode(c)}
+                    >
+                      <QrCode2Icon fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      color="primary"
                       onClick={() => handleEdit(c)}
                     >
                       <EditIcon fontSize="small" />
@@ -769,6 +818,16 @@ export default function Codes() {
         deleteOpen={deleteOpen}
         setDeleteOpen={setDeleteOpen}
         deleteId={deleteId}
+      />
+
+      <QrCodeDialog
+        open={Boolean(qrCode)}
+        onClose={() => setQrCode(null)}
+        title={qrCode?.book_title || "Book activation QR"}
+        subtitle={`${roleLabel(qrCode?.allowed_role)} · ${qrCode?.validity_months || ""} months`}
+        code={qrCode?.code || ""}
+        value={qrCode ? buildBookQrUrl(qrCode.code) : ""}
+        fileName={`book-code-${qrCode?.code || "qr"}`}
       />
 
       <Snackbar

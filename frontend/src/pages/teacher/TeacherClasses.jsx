@@ -10,6 +10,8 @@ import {
   Chip,
   IconButton,
   Divider,
+  Button,
+  Stack,
 } from "@mui/material";
 
 import SearchIcon from "@mui/icons-material/Search";
@@ -17,8 +19,11 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
+import QrCode2Icon from "@mui/icons-material/QrCode2";
 
 import { useGetTeacherClasses } from "../../api/Classes";
+import QrCodeDialog from "../../components/QrCodeDialog";
+import { buildClassQrUrl, downloadQrPdf } from "../../utils/qrCodes";
 
 export default function TeacherClasses() {
   const navigate = useNavigate();
@@ -26,6 +31,8 @@ export default function TeacherClasses() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
+  const [qrClass, setQrClass] = useState(null);
+  const [qrExporting, setQrExporting] = useState(false);
   const classesPerPage = 8;
 
   const filteredClasses = useMemo(() => {
@@ -43,6 +50,24 @@ export default function TeacherClasses() {
     const start = (page - 1) * classesPerPage;
     return filteredClasses.slice(start, start + classesPerPage);
   }, [filteredClasses, page]);
+
+  const exportClassQrs = async () => {
+    if (!filteredClasses.length) return;
+    try {
+      setQrExporting(true);
+      await downloadQrPdf(
+        filteredClasses.map((item) => ({
+          value: buildClassQrUrl(item.book_id, item.class_name),
+          title: item.class_name,
+          code: item.class_name,
+          subtitle: item.book_title,
+        })),
+        `class-qr-codes-${new Date().toISOString().slice(0, 10)}.pdf`,
+      );
+    } finally {
+      setQrExporting(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -119,7 +144,11 @@ export default function TeacherClasses() {
         </Box>
 
         {/* SEARCH */}
-        <TextField
+        <Stack direction="row" spacing={1}>
+          <Button variant="outlined" startIcon={<QrCode2Icon />} onClick={exportClassQrs} disabled={!filteredClasses.length || qrExporting} sx={{ borderRadius: "10px", textTransform: "none" }}>
+            {qrExporting ? "Preparing..." : "QR PDF"}
+          </Button>
+          <TextField
           size="small"
           placeholder="Search..."
           value={searchTerm}
@@ -151,7 +180,8 @@ export default function TeacherClasses() {
               },
             },
           }}
-        />
+          />
+        </Stack>
       </Box>
 
       {/* ── LIST ── */}
@@ -283,6 +313,17 @@ export default function TeacherClasses() {
               {/* arrow */}
               <IconButton
                 size="small"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setQrClass(cls);
+                }}
+                sx={{ color: "#6366f1", "&:hover": { background: "#eef2ff" } }}
+                title="View class QR code"
+              >
+                <QrCode2Icon sx={{ fontSize: 18 }} />
+              </IconButton>
+              <IconButton
+                size="small"
                 sx={{
                   color: "#cbd5e1",
                   transition: "0.15s",
@@ -354,6 +395,16 @@ export default function TeacherClasses() {
           />
         </Box>
       )}
+
+      <QrCodeDialog
+        open={Boolean(qrClass)}
+        onClose={() => setQrClass(null)}
+        title={qrClass?.class_name || "Class QR"}
+        subtitle={qrClass?.book_title || ""}
+        code={qrClass?.class_name || ""}
+        value={qrClass ? buildClassQrUrl(qrClass.book_id, qrClass.class_name) : ""}
+        fileName={`class-${qrClass?.class_name || "qr"}`}
+      />
     </Box>
   );
 }

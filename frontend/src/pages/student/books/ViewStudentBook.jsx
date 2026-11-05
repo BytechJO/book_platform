@@ -27,6 +27,7 @@ import CurveLoader from "../../../components/CurveLoader";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import useRateLimitCountdown from "../../../hooks/useRateLimitCountdown";
+import QrScanButton from "../../../components/QrScanButton";
 
 export default function ViewStudentBook() {
   const { id } = useParams();
@@ -538,6 +539,22 @@ export default function ViewStudentBook() {
                   ? classCodeLimit.message
                   : errorMsg
               }
+              InputProps={{
+                endAdornment: (
+                  <QrScanButton
+                    kind="class"
+                    title="Scan class QR code"
+                    onScan={({ code, bookId }) => {
+                      if (bookId && String(bookId) !== String(book.id)) {
+                        setErrorMsg("This class QR code belongs to another book.");
+                        return;
+                      }
+                      setClassCode(code);
+                      setErrorMsg("");
+                    }}
+                  />
+                ),
+              }}
             />
             <Button
               sx={{ mt: 2 }}
