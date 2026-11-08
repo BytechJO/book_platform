@@ -22,9 +22,11 @@ import {
 } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import "dayjs/locale/ar";
 import { useLocation } from "react-router-dom";
 
 import { useGetStudentEvents } from "../../../api/events";
+import { useDashboardLanguage } from "../../../contexts/dashboardLanguage";
 
 function ServerDay(props) {
   const { events = [], day, outsideCurrentMonth, ...other } = props;
@@ -153,6 +155,7 @@ function DetailRow({ icon, label, value }) {
 }
 
 export default function ViewEvents() {
+  const { language, t } = useDashboardLanguage();
   const location = useLocation();
   const { events } = useGetStudentEvents();
 
@@ -281,15 +284,15 @@ export default function ViewEvents() {
                 letterSpacing: "-0.5px",
               }}
             >
-              My Events
+              {t("My Events")}
             </Typography>
             <Typography sx={{ fontSize: 14, color: "#94a3b8", mt: 0.5 }}>
-              View and manage your scheduled events
+              {t("View and manage your scheduled events")}
             </Typography>
           </Box>
           <Chip
             icon={<CalendarTodayRoundedIcon sx={{ fontSize: 14 }} />}
-            label={`${totalMonthEvents} this month`}
+            label={t("{count} this month", { count: totalMonthEvents })}
             size="small"
             sx={{
               fontSize: 12,
@@ -331,7 +334,7 @@ export default function ViewEvents() {
           >
             {/* Calendar */}
             <Box sx={{ p: 3, pb: 2 }}>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={language}>
                 <DateCalendar
                   value={date}
                   onChange={handleDateChange}
@@ -368,7 +371,7 @@ export default function ViewEvents() {
                   {date.format("MMM D, YYYY")}
                 </Typography>
                 <Chip
-                  label={`${selectedEvents.length} event${selectedEvents.length !== 1 ? "s" : ""}`}
+                  label={t("{count} events", { count: selectedEvents.length })}
                   size="small"
                   sx={{
                     fontSize: 11,
@@ -416,7 +419,7 @@ export default function ViewEvents() {
                         fontWeight: 500,
                       }}
                     >
-                      No events scheduled
+                      {t("No events scheduled")}
                     </Typography>
                     <Typography
                       sx={{
@@ -425,7 +428,7 @@ export default function ViewEvents() {
                         mt: 0.5,
                       }}
                     >
-                      Select another date or create a new event
+                      {t("Select another date or create a new event")}
                     </Typography>
                   </Box>
                 </Fade>
@@ -617,7 +620,7 @@ export default function ViewEvents() {
                       mb: 0.5,
                     }}
                   >
-                    Select an event
+                    {t("Select an event")}
                   </Typography>
                   <Typography
                     sx={{
@@ -627,7 +630,7 @@ export default function ViewEvents() {
                       lineHeight: 1.6,
                     }}
                   >
-                    Click on any event from the list to view its full details
+                    {t("Click on any event from the list to view its full details")}
                   </Typography>
                 </Box>
               </Fade>
@@ -671,7 +674,7 @@ export default function ViewEvents() {
                           mb: 0.5,
                         }}
                       >
-                        Event Details
+                        {t("Event details")}
                       </Typography>
                       <Typography
                         sx={{
@@ -697,31 +700,31 @@ export default function ViewEvents() {
                   >
                     <DetailRow
                       icon={<ScheduleRoundedIcon />}
-                      label="Time"
+                      label={t("Time")}
                       value={dayjs(selectedEvent.time, "HH:mm:ss").format(
                         "h:mm A",
                       )}
                     />
                     <DetailRow
                       icon={<CalendarTodayRoundedIcon />}
-                      label="Date"
+                      label={t("Date")}
                       value={dayjs(selectedEvent.date).format(
                         "dddd, MMMM D, YYYY",
                       )}
                     />
                     <DetailRow
                       icon={<MenuBookRoundedIcon />}
-                      label="Book"
+                      label={t("Book")}
                       value={parseEventTitle(selectedEvent.title).book}
                     />
                     <DetailRow
                       icon={<ClassRoundedIcon />}
-                      label="Class"
+                      label={t("Class")}
                       value={parseEventTitle(selectedEvent.title).className}
                     />
                     <DetailRow
                       icon={<SubjectRoundedIcon />}
-                      label="Subject"
+                      label={t("Subject")}
                       value={selectedEvent.subject}
                     />
                   </Box>

@@ -1,7 +1,9 @@
 import { Box, Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useDashboardLanguage } from "../contexts/dashboardLanguage";
 
 export default function AccessMessage({ type }) {
+  const { t } = useDashboardLanguage();
   const navigate = useNavigate();
 const role=localStorage.getItem("role")
   const messages = {
@@ -31,18 +33,18 @@ const role=localStorage.getItem("role")
       }}
     >
       <Typography variant="h4" sx={{ mb: 2 }}>
-        {message.title}
+        {t(message.title)}
       </Typography>
 
       <Typography sx={{ color: "text.secondary", mb: 4 }}>
-        {message.description}
+        {t(message.description)}
       </Typography>
 
       <Button
         variant="contained"
         onClick={() => navigate(`/${role}/books`)}
       >
-        Back to My Books
+        {t("Back to My Books")}
       </Button>
     </Box>
   );

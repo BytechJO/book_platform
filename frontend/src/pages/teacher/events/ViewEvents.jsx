@@ -26,11 +26,13 @@ import {
 } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import "dayjs/locale/ar";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { useGetTeacherEvents } from "../../../api/events";
 import ENDPOINTS from "../../../api/endpoints";
 import axiosInstance from "../../../api/axios";
+import { useDashboardLanguage } from "../../../contexts/dashboardLanguage";
 
 function ServerDay(props) {
   const { events = [], day, outsideCurrentMonth, ...other } = props;
@@ -159,6 +161,7 @@ function DetailRow({ icon, label, value }) {
 }
 
 export default function ViewEvents() {
+  const { language, t } = useDashboardLanguage();
   const location = useLocation();
   const navigate = useNavigate();
   const { events, refetch } = useGetTeacherEvents();
@@ -299,10 +302,10 @@ export default function ViewEvents() {
                 letterSpacing: "-0.5px",
               }}
             >
-              My Events
+              {t("My Events")}
             </Typography>
             <Typography sx={{ fontSize: 14, color: "#94a3b8", mt: 0.5 }}>
-              View and manage your scheduled events
+              {t("View and manage your scheduled events")}
             </Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
@@ -323,11 +326,11 @@ export default function ViewEvents() {
                 bgcolor: "#2B5A9E",
               }}
             >
-              Add event
+              {t("Add event")}
             </Button>
             <Chip
               icon={<CalendarTodayRoundedIcon sx={{ fontSize: 14 }} />}
-              label={`${totalMonthEvents} this month`}
+              label={t("{count} this month", { count: totalMonthEvents })}
               size="small"
               sx={{
                 fontSize: 12,
@@ -367,7 +370,10 @@ export default function ViewEvents() {
           >
             {/* Calendar */}
             <Box sx={{ p: 3, pb: 2 }}>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <LocalizationProvider
+                dateAdapter={AdapterDayjs}
+                adapterLocale={language}
+              >
                 <DateCalendar
                   value={date}
                   onChange={handleDateChange}
@@ -404,7 +410,15 @@ export default function ViewEvents() {
                   {date.format("MMM D, YYYY")}
                 </Typography>
                 <Chip
-                  label={`${selectedEvents.length} event${selectedEvents.length !== 1 ? "s" : ""}`}
+                  label={`${selectedEvents.length} ${
+                    language === "ar"
+                      ? selectedEvents.length === 1
+                        ? t("event")
+                        : t("events")
+                      : selectedEvents.length === 1
+                        ? "event"
+                        : "events"
+                  }`}
                   size="small"
                   sx={{
                     fontSize: 11,
@@ -451,7 +465,7 @@ export default function ViewEvents() {
                         fontWeight: 500,
                       }}
                     >
-                      No events scheduled
+                      {t("No events scheduled")}
                     </Typography>
                     <Typography
                       sx={{
@@ -460,7 +474,7 @@ export default function ViewEvents() {
                         mt: 0.5,
                       }}
                     >
-                      Select another date or create a new event
+                      {t("Select another date or create a new event")}
                     </Typography>
                   </Box>
                 </Fade>
@@ -518,7 +532,9 @@ export default function ViewEvents() {
                               py: 0.5,
                               px: 1,
                               borderRadius: 2,
-                              bgcolor: isSelected ? "rgba(99,102,241,0.12)" : "action.hover",
+                              bgcolor: isSelected
+                                ? "rgba(99,102,241,0.12)"
+                                : "action.hover",
                               border: "1px solid",
                               borderColor: isSelected
                                 ? "rgba(99, 102, 241, 0.12)"
@@ -554,7 +570,9 @@ export default function ViewEvents() {
                               sx={{
                                 fontSize: 13,
                                 fontWeight: isSelected ? 700 : 600,
-                                color: isSelected ? "primary.main" : "text.primary",
+                                color: isSelected
+                                  ? "primary.main"
+                                  : "text.primary",
                                 overflow: "hidden",
                                 textOverflow: "ellipsis",
                                 whiteSpace: "nowrap",
@@ -648,7 +666,7 @@ export default function ViewEvents() {
                       mb: 0.5,
                     }}
                   >
-                    Select an event
+                    {t("Select an event")}
                   </Typography>
                   <Typography
                     sx={{
@@ -658,7 +676,9 @@ export default function ViewEvents() {
                       lineHeight: 1.6,
                     }}
                   >
-                    Click on any event from the list to view its full details
+                    {t(
+                      "Click on any event from the list to view its full details",
+                    )}
                   </Typography>
                 </Box>
               </Fade>
@@ -702,7 +722,7 @@ export default function ViewEvents() {
                           mb: 0.5,
                         }}
                       >
-                        Event Details
+                        {t("Event details")}
                       </Typography>
                       <Typography
                         sx={{
@@ -724,43 +744,43 @@ export default function ViewEvents() {
                       <Tooltip
                         title={
                           selectedEventEnded
-                            ? "Ended events cannot be edited"
-                            : "Edit event"
+                            ? t("Ended events cannot be edited")
+                            : t("Edit event")
                         }
                         arrow
                       >
                         <span>
-                        <IconButton
-                          disabled={selectedEventEnded}
-                          onClick={() =>
-                            navigate("/teacher/events/create", {
-                              state: {
-                                selectedDate: selectedEvent.date,
-                                editEvent: selectedEvent,
+                          <IconButton
+                            disabled={selectedEventEnded}
+                            onClick={() =>
+                              navigate("/teacher/events/create", {
+                                state: {
+                                  selectedDate: selectedEvent.date,
+                                  editEvent: selectedEvent,
+                                },
+                              })
+                            }
+                            sx={{
+                              width: 36,
+                              height: 36,
+                              borderRadius: 2.5,
+                              border: "1.5px solid",
+                              borderColor: "divider",
+                              bgcolor: "background.paper",
+                              color: "#64748b",
+                              transition: "all 0.15s ease",
+                              "&:hover": {
+                                bgcolor: "action.hover",
+                                borderColor: "#cbd5e1",
+                                color: "#475569",
                               },
-                            })
-                          }
-                          sx={{
-                            width: 36,
-                            height: 36,
-                            borderRadius: 2.5,
-                            border: "1.5px solid",
-                            borderColor: "divider",
-                            bgcolor: "background.paper",
-                            color: "#64748b",
-                            transition: "all 0.15s ease",
-                            "&:hover": {
-                              bgcolor: "action.hover",
-                              borderColor: "#cbd5e1",
-                              color: "#475569",
-                            },
-                          }}
-                        >
-                          <EditCalendarRoundedIcon sx={{ fontSize: 18 }} />
-                        </IconButton>
+                            }}
+                          >
+                            <EditCalendarRoundedIcon sx={{ fontSize: 18 }} />
+                          </IconButton>
                         </span>
                       </Tooltip>
-                      <Tooltip title="Delete event" arrow>
+                      <Tooltip title={t("Delete event")} arrow>
                         <IconButton
                           onClick={async () => {
                             await axiosInstance.delete(
@@ -809,31 +829,31 @@ export default function ViewEvents() {
                   >
                     <DetailRow
                       icon={<ScheduleRoundedIcon />}
-                      label="Time"
+                      label={t("Time")}
                       value={dayjs(selectedEvent.time, "HH:mm:ss").format(
                         "h:mm A",
                       )}
                     />
                     <DetailRow
                       icon={<CalendarTodayRoundedIcon />}
-                      label="Date"
+                      label={t("Date")}
                       value={dayjs(selectedEvent.date).format(
                         "dddd, MMMM D, YYYY",
                       )}
                     />
                     <DetailRow
                       icon={<MenuBookRoundedIcon />}
-                      label="Book"
+                      label={t("Book")}
                       value={parseEventTitle(selectedEvent.title).book}
                     />
                     <DetailRow
                       icon={<ClassRoundedIcon />}
-                      label="Class"
+                      label={t("Class")}
                       value={parseEventTitle(selectedEvent.title).className}
                     />
                     <DetailRow
                       icon={<SubjectRoundedIcon />}
-                      label="Subject"
+                      label={t("Subject")}
                       value={selectedEvent.subject}
                     />
                   </Box>

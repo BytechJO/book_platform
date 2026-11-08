@@ -2,7 +2,6 @@ import {
   Box,
   Typography,
   Stack,
-  Card,
   Divider,
   Dialog,
   DialogTitle,
@@ -13,7 +12,6 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import ISPNIconButton from "src/components/icons/ISPNIcon";
 import PrinterIcon from "src/components/icons/PrinterIcon";
-import Icon from "src/assets/icon/icone.svg";
 import AppleCircleIcon from "src/components/icons/AppleCircleIcon";
 import AndroidCircleIcon from "src/components/icons/AndroidCircleIcon";
 import onlineIcon1 from "src/assets/icon/onlineIcon.png";
@@ -25,23 +23,24 @@ import ENDPOINTS from "../../../api/endpoints";
 import { useGetStudentBook } from "../../../api/user_books";
 import CurveLoader from "../../../components/CurveLoader";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import useRateLimitCountdown from "../../../hooks/useRateLimitCountdown";
 import QrScanButton from "../../../components/QrScanButton";
+import { useDashboardLanguage } from "../../../contexts/dashboardLanguage";
 
 export default function ViewStudentBook() {
+  const { t, language } = useDashboardLanguage();
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
   const [classCode, setClassCode] = useState("");
   const [loadingClass, setLoadingClass] = useState(false);
-  const isArabic = (text) => /[\u0600-\u06FF]/.test(text);
+  const isArabic = (text) => /[\u0600-\u06FF]/.test(text || "");
   const { book, loading, error, refetch } = useGetStudentBook(id);
   const [expanded, setExpanded] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [showClassRateLimit, setShowClassRateLimit] = useState(false);
-  const classCodeLimit = useRateLimitCountdown("class-code");
+  const classCodeLimit = useRateLimitCountdown("class-code", t);
   const closeClassDialog = () => {
     setOpen(false);
     setClassCode("");
@@ -49,7 +48,7 @@ export default function ViewStudentBook() {
     setShowClassRateLimit(false);
   };
 
-  const shortText = book.description?.slice(0, 200) || "";
+  const shortText = book?.description?.slice(0, 200) || "";
   const handleActivateClass = async () => {
     try {
       setLoadingClass(true);
@@ -74,7 +73,7 @@ export default function ViewStudentBook() {
         return;
       }
 
-      const message = err?.response?.data?.message || "Something went wrong";
+      const message = err?.response?.data?.message || t("Something went wrong");
 
       setErrorMsg(message);
     } finally {
@@ -101,19 +100,20 @@ export default function ViewStudentBook() {
 
   if (!book) return null;
 
-  const isRTL = isArabic(book.title);
   return (
     <>
       <Helmet>
-        <title>Book details - Student Dashboard</title>
+        <title>{t("Book details")} - Student Dashboard</title>
       </Helmet>
       <Box
+        dir="ltr"
         sx={{
           display: "flex",
           justifyContent: "center",
+          direction: "ltr",
         }}
       >
-        <Box sx={{ maxWidth: 1200, mx: "auto", px: 1 }}>
+        <Box sx={{ maxWidth: 1200, width: "100%", mx: "auto", px: 1 }}>
           <Typography
             onClick={() => navigate("/Student/books")}
             sx={{
@@ -131,17 +131,19 @@ export default function ViewStudentBook() {
             }}
           >
             <ArrowBackIcon sx={{ fontSize: 18 }} />
-            Back to Books
+            {t("Back to Books")}
           </Typography>
           <Stack
-            direction={{ xs: "column", md: isRTL ? "row" : "row-reverse" }}
-            spacing={6}
+            direction={{ xs: "column", md: "row" }}
             alignItems="flex-start"
+            sx={{ direction: "ltr", gap: 6, width: "100%" }}
           >
             {/* LEFT SIDE */}
             <Box
               sx={{
                 width: { xs: "100%", md: 420 },
+                flexShrink: 0,
+                direction: "ltr",
                 position: "relative",
                 height: "auto",
               }}
@@ -188,7 +190,7 @@ export default function ViewStudentBook() {
                     mb: 1,
                   }}
                 >
-                  Information
+                  {t("Information")}
                 </Typography>
 
                 <Box
@@ -233,10 +235,10 @@ export default function ViewStudentBook() {
                 <Typography
                   sx={{ fontWeight: 600, mb: 2, color: "primary.main" }}
                 >
-                  Available on
+                  {t("Available on")}
                 </Typography>
 
-                <Stack direction="row" spacing={2}>
+                <Stack direction="row" sx={{ direction: "ltr", gap: 2 }}>
                   {book.app_store_url && (
                     <Box
                       onClick={() => window.open(book.app_store_url, "_blank")}
@@ -286,7 +288,9 @@ export default function ViewStudentBook() {
                         src={onlineIcon1}
                         sx={{ width: 40 }}
                       />
-                      <Typography variant="caption">Online book</Typography>
+                      <Typography variant="caption">
+                        {t("Online book")}
+                      </Typography>
                     </Box>
                   )}
                 </Stack>
@@ -298,15 +302,18 @@ export default function ViewStudentBook() {
             <Box
               sx={{
                 flex: 1,
+                minWidth: 0,
                 pt: 2,
-                textAlign: isRTL ? "right" : "left",
-                direction: isRTL ? "rtl" : "ltr",
+                textAlign: "right",
+                direction: "ltr",
               }}
             >
               {/* TITLE SECTION */}
               <Box sx={{ mb: 4 }}>
                 <Typography
+                  dir={isArabic(book.title) ? "rtl" : "ltr"}
                   sx={{
+                    textAlign: "right",
                     fontSize: 30,
                     fontWeight: 700,
                     color: "primary.main",
@@ -333,7 +340,13 @@ export default function ViewStudentBook() {
                 }}
               >
                 <Box
-                  sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row-reverse",
+                    alignItems: "center",
+                    gap: 1,
+                    mb: 2,
+                  }}
                 >
                   <Box
                     sx={{
@@ -350,14 +363,15 @@ export default function ViewStudentBook() {
                       fontSize: 16,
                     }}
                   >
-                    Description
+                    {t("Description")}
                   </Typography>
                 </Box>
 
                 <Typography
                   sx={{
                     lineHeight: 2,
-                    textAlign: "justify",
+                    textAlign: "right",
+                    direction: isArabic(book.description) ? "rtl" : "ltr",
                     fontSize: 16,
                     color: "text.secondary",
                   }}
@@ -368,30 +382,44 @@ export default function ViewStudentBook() {
                 </Typography>
 
                 {book.description?.length > 200 && (
-                  <Button
-                    onClick={() => setExpanded(!expanded)}
+                  <Box
                     sx={{
-                      mt: 1,
-                      p: 0,
-                      color: "primary.main",
-                      fontWeight: 600,
-                      fontSize: 14,
-                      textTransform: "none",
-                      "&:hover": {
-                        backgroundColor: "transparent",
-                        textDecoration: "underline",
-                      },
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      direction: "ltr",
                     }}
                   >
-                    {expanded ? "Show less" : "Read more"}
-                  </Button>
+                    <Button
+                      onClick={() => setExpanded(!expanded)}
+                      sx={{
+                        mt: 1,
+                        p: 0,
+                        color: "primary.main",
+                        fontWeight: 600,
+                        fontSize: 14,
+                        textTransform: "none",
+                        "&:hover": {
+                          backgroundColor: "transparent",
+                          textDecoration: "underline",
+                        },
+                      }}
+                    >
+                      {t(expanded ? "Show less" : "Read more")}
+                    </Button>
+                  </Box>
                 )}
               </Box>
 
               {/* 🟣 CLASS SECTION */}
               <Box>
                 <Box
-                  sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row-reverse",
+                    alignItems: "center",
+                    gap: 1,
+                    mb: 2,
+                  }}
                 >
                   <Box
                     sx={{
@@ -408,7 +436,7 @@ export default function ViewStudentBook() {
                       fontSize: 16,
                     }}
                   >
-                    Class
+                    {t("Class")}
                   </Typography>
                 </Box>
 
@@ -431,7 +459,8 @@ export default function ViewStudentBook() {
                       gap: 3,
                       boxShadow: "0 4px 10px rgba(0,0,0,0.03)",
                       cursor: "pointer",
-                      textAlign: "left",
+                      textAlign: "right",
+                      direction: "rtl",
                       fontFamily: "inherit",
                       transition: "all 0.2s ease-in-out",
                       "&:hover": {
@@ -444,11 +473,11 @@ export default function ViewStudentBook() {
                       },
                     }}
                   >
-                    <Box>
+                    <Box sx={{ textAlign: "right" }}>
                       <Typography
                         sx={{ fontSize: 12, color: "text.secondary", mb: 0.5 }}
                       >
-                        Class Name
+                        {t("Class Name")}
                       </Typography>
                       <Typography
                         sx={{
@@ -461,11 +490,11 @@ export default function ViewStudentBook() {
                       </Typography>
                     </Box>
 
-                    <Box>
+                    <Box sx={{ textAlign: "right" }}>
                       <Typography
                         sx={{ fontSize: 12, color: "text.secondary", mb: 0.5 }}
                       >
-                        Teacher
+                        {t("Teacher")}
                       </Typography>
                       <Typography
                         sx={{
@@ -490,9 +519,10 @@ export default function ViewStudentBook() {
                       flexDirection: { xs: "column", sm: "row" },
                       gap: 2,
                       backgroundColor: "rgba(26, 77, 150, 0.02)",
+                      direction: "ltr",
                     }}
                   >
-                    <Box>
+                    <Box sx={{ textAlign: "right" }}>
                       <Typography
                         sx={{
                           fontSize: 15,
@@ -500,12 +530,12 @@ export default function ViewStudentBook() {
                           fontWeight: 600,
                         }}
                       >
-                        No class assigned yet
+                        {t("No class assigned yet")}
                       </Typography>
                       <Typography
                         sx={{ fontSize: 13, color: "text.secondary", mt: 0.5 }}
                       >
-                        Activate a code to join your class.
+                        {t("Activate a code to join your class.")}
                       </Typography>
                     </Box>
                     <Button
@@ -524,7 +554,7 @@ export default function ViewStudentBook() {
                         },
                       }}
                     >
-                      Activate Class Code
+                      {t("Activate Class Code")}
                     </Button>
                   </Box>
                 )}
@@ -545,12 +575,14 @@ export default function ViewStudentBook() {
           </Typography>
         </Box>
         <Dialog open={open} onClose={closeClassDialog}>
-          <DialogTitle>Activate Class</DialogTitle>
+          <DialogTitle sx={{ textAlign: language === "ar" ? "right" : "left" }}>
+            {t("Activate Class")}
+          </DialogTitle>
 
           <DialogContent>
             <TextField
               fullWidth
-              label="Enter Class Code"
+              label={t("Enter Class Code")}
               value={classCode}
               onChange={(e) => setClassCode(e.target.value)}
               onKeyDown={(event) => {
@@ -559,7 +591,18 @@ export default function ViewStudentBook() {
                   handleActivateClass();
                 }
               }}
-              sx={{ mt: 2 }}
+              dir={language === "ar" ? "rtl" : "ltr"}
+              sx={{
+                mt: 2,
+                "& .MuiInputLabel-root": {
+                  left: language === "ar" ? "auto" : 0,
+                  right: language === "ar" ? 0 : "auto",
+                  transformOrigin: language === "ar" ? "top right" : "top left",
+                },
+                "& .MuiInputBase-input": {
+                  textAlign: language === "ar" ? "right" : "left",
+                },
+              }}
               error={
                 !!errorMsg ||
                 (showClassRateLimit && classCodeLimit.isRateLimited)
@@ -573,11 +616,11 @@ export default function ViewStudentBook() {
                 endAdornment: (
                   <QrScanButton
                     kind="class"
-                    title="Scan class QR code"
+                    title={t("Scan class QR code")}
                     onScan={({ code, bookId }) => {
                       if (bookId && String(bookId) !== String(book.id)) {
                         setErrorMsg(
-                          "This class QR code belongs to another book.",
+                          t("This class QR code belongs to another book."),
                         );
                         return;
                       }
@@ -594,7 +637,7 @@ export default function ViewStudentBook() {
               onClick={handleActivateClass}
               disabled={loadingClass}
             >
-              {loadingClass ? "Activating..." : "Activate"}
+              {loadingClass ? `${t("Activating")}...` : t("Activate")}
             </Button>
           </DialogContent>
         </Dialog>

@@ -9,7 +9,9 @@ import KeyIcon from "@mui/icons-material/Key";
 import { useGetMyBooks } from "../../../api/user_books";
 import useRateLimitCountdown from "../../../hooks/useRateLimitCountdown";
 import QrScanButton from "../../../components/QrScanButton";
+import { useDashboardLanguage } from "../../../contexts/dashboardLanguage";
 export default function QuickActionsCard({ refetchClasses }) {
+  const { t } = useDashboardLanguage();
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedBook, setSelectedBook] = useState("");
   const [activationCode, setActivationCode] = useState("");
@@ -22,8 +24,8 @@ export default function QuickActionsCard({ refetchClasses }) {
   const [classError, setClassError] = useState("");
   const [showClassRateLimit, setShowClassRateLimit] = useState(false);
   const { books, refetch } = useGetMyBooks();
-  const bookActivationLimit = useRateLimitCountdown("book-activation");
-  const classCodeLimit = useRateLimitCountdown("class-code");
+  const bookActivationLimit = useRateLimitCountdown("book-activation", t);
+  const classCodeLimit = useRateLimitCountdown("class-code", t);
   const closeActivationDialog = () => {
     setOpenDialog(false);
     setActivationCode("");
@@ -41,7 +43,7 @@ export default function QuickActionsCard({ refetchClasses }) {
     event?.preventDefault();
 
     if (!classCode.trim()) {
-      setClassError("Please enter class code");
+      setClassError(t("Enter class code"));
       return;
     }
 
@@ -67,7 +69,7 @@ export default function QuickActionsCard({ refetchClasses }) {
         return;
       }
 
-      const message = err?.response?.data?.message || "Invalid class code";
+      const message = err?.response?.data?.message || t("Invalid class code");
 
       setClassError(message);
     } finally {
@@ -78,7 +80,7 @@ export default function QuickActionsCard({ refetchClasses }) {
     e.preventDefault();
 
     if (!activationCode.trim()) {
-      setActivationError("Please enter a valid activation code");
+      setActivationError(t("Please enter a valid activation code"));
       return;
     }
 
@@ -101,7 +103,7 @@ export default function QuickActionsCard({ refetchClasses }) {
         return;
       }
 
-      const message = err.response?.data?.message || "Invalid activation code";
+      const message = err.response?.data?.message || t("Invalid activation code");
 
       setActivationError(message);
     } finally {
@@ -110,7 +112,7 @@ export default function QuickActionsCard({ refetchClasses }) {
   };
   return (
     <Box sx={cardStyle}>
-      <Typography sx={title}>Quick Actions</Typography>
+      <Typography sx={title}>{t("Quick Actions")}</Typography>
 
       <Box sx={actionsWrapper}>
         {/* Assign Book */}
@@ -118,7 +120,7 @@ export default function QuickActionsCard({ refetchClasses }) {
           <Box sx={iconBox}>
             <MenuBookIcon />
           </Box>
-          <Typography sx={label}>Assign Book</Typography>
+          <Typography sx={label}>{t("Assign Book")}</Typography>
         </Box>
 
         {/* Create Class */}
@@ -127,7 +129,7 @@ export default function QuickActionsCard({ refetchClasses }) {
             <GroupsIcon />
           </Box>
 
-          <Typography sx={label}>Add Class</Typography>
+          <Typography sx={label}>{t("Add Class")}</Typography>
         </Box>
       </Box>
       <Dialog
@@ -173,7 +175,7 @@ export default function QuickActionsCard({ refetchClasses }) {
             mb: 1,
           }}
         >
-          Activate Code
+          {t("Activate Code")}
         </Typography>
 
         {/* DESCRIPTION */}
@@ -184,7 +186,7 @@ export default function QuickActionsCard({ refetchClasses }) {
             mb: 3,
           }}
         >
-          Enter your activation code to access your class or content.
+          {t("Enter your activation code to access your class or content.")}
         </Typography>
 
         {/* INPUT LABEL */}
@@ -193,10 +195,10 @@ export default function QuickActionsCard({ refetchClasses }) {
             fontSize: 13,
             fontWeight: 600,
             mb: 1,
-            textAlign: "left",
+            textAlign: "start",
           }}
         >
-          Activation Code *
+          {t("Activation Code *")}
         </Typography>
 
         {/* INPUT */}
@@ -207,7 +209,7 @@ export default function QuickActionsCard({ refetchClasses }) {
             setActivationCode(e.target.value);
             if (activationError) setActivationError("");
           }}
-          placeholder="Enter activation code"
+          placeholder={t("Enter activation code")}
           error={
             Boolean(activationError) ||
             (showActivationRateLimit && bookActivationLimit.isRateLimited)
@@ -221,7 +223,7 @@ export default function QuickActionsCard({ refetchClasses }) {
             endAdornment: (
               <QrScanButton
                 kind="book"
-                title="Scan book QR code"
+                title={t("Scan book QR code")}
                 onScan={({ code }) => {
                   setActivationCode(code);
                   setActivationError("");
@@ -261,7 +263,7 @@ export default function QuickActionsCard({ refetchClasses }) {
               },
             }}
           >
-            Activate
+            {t("Activate")}
           </LoadingButton>
 
           <Button
@@ -280,7 +282,7 @@ export default function QuickActionsCard({ refetchClasses }) {
               },
             }}
           >
-            Cancel
+            {t("Cancel")}
           </Button>
         </Box>
       </Dialog>
@@ -321,17 +323,17 @@ export default function QuickActionsCard({ refetchClasses }) {
         <Typography
           sx={{ fontSize: 22, fontWeight: 700, color: "primary.main", mb: 1 }}
         >
-          Join Class
+          {t("Join a class")}
         </Typography>
 
         <Typography sx={{ fontSize: 14, color: "text.secondary", mb: 3 }}>
-          Select your book and enter the class code provided by your teacher.
+          {t("Select your book and enter the class code provided by your teacher.")}
         </Typography>
 
         <Typography
-          sx={{ fontSize: 13, fontWeight: 600, mb: 1, textAlign: "left" }}
+          sx={{ fontSize: 13, fontWeight: 600, mb: 1, textAlign: "start" }}
         >
-          Select Book *
+          {t("Select a book")} *
         </Typography>
         <TextField
           select
@@ -347,7 +349,7 @@ export default function QuickActionsCard({ refetchClasses }) {
             },
           }}
         >
-          <option value="">Select a book</option>
+          <option value="">{t("Select a book")}</option>
 
           {books
             .filter((b) => b.is_active && !b.class_name)
@@ -364,14 +366,14 @@ export default function QuickActionsCard({ refetchClasses }) {
             fontWeight: 600,
             mt: 2.5,
             mb: 1,
-            textAlign: "left",
+            textAlign: "start",
           }}
         >
-          Class Code *
+          {t("Class Code")} *
         </Typography>
         <TextField
           fullWidth
-          placeholder="Enter class code"
+          placeholder={t("Enter class code")}
           value={classCode}
           onChange={(e) => {
             setClassCode(e.target.value);
@@ -390,7 +392,7 @@ export default function QuickActionsCard({ refetchClasses }) {
             endAdornment: (
               <QrScanButton
                 kind="class"
-                title="Scan class QR code"
+                title={t("Scan class QR code")}
                 onScan={({ code, bookId }) => {
                   setClassCode(code);
                   setClassError("");
@@ -429,7 +431,7 @@ export default function QuickActionsCard({ refetchClasses }) {
               "&:hover": { backgroundColor: "#244a87" },
             }}
           >
-            Join
+            {t("Join")}
           </LoadingButton>
 
           <Button
@@ -446,7 +448,7 @@ export default function QuickActionsCard({ refetchClasses }) {
               "&:hover": { backgroundColor: "action.hover" },
             }}
           >
-            Cancel
+            {t("Cancel")}
           </Button>
         </Box>
       </Dialog>

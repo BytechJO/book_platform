@@ -35,7 +35,7 @@ export const formatRateLimitCountdown = (totalSeconds) => {
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 };
 
-export default function useRateLimitCountdown(scope) {
+export default function useRateLimitCountdown(scope, translate = (text) => text) {
   const storageKey = useMemo(
     () => `rateLimit:${getUserId()}:${scope}`,
     [scope],
@@ -129,7 +129,7 @@ export default function useRateLimitCountdown(scope) {
     countdown,
     message:
       remainingSeconds > 0
-        ? `${RATE_LIMIT_MESSAGES[scope] || "Too many attempts."} Try again in ${countdown} (minutes:seconds).`
+        ? `${translate(RATE_LIMIT_MESSAGES[scope] || "Too many attempts.")} ${translate("Try again in {countdown} (minutes:seconds).", { countdown })}`
         : "",
     startFromError,
     clearRateLimit: () => updateLock(0),

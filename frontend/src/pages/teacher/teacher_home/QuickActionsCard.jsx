@@ -1,10 +1,4 @@
-import {
-  Box,
-  Button,
-  Dialog,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Dialog, TextField, Typography } from "@mui/material";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import GroupsIcon from "@mui/icons-material/Groups";
 import { useEffect, useState } from "react";
@@ -16,7 +10,9 @@ import { useGetMyBooks } from "../../../api/user_books";
 import { useGetClassesByBook } from "../../../api/Classes";
 import useRateLimitCountdown from "../../../hooks/useRateLimitCountdown";
 import QrScanButton from "../../../components/QrScanButton";
+import { useDashboardLanguage } from "../../../contexts/dashboardLanguage";
 export default function QuickActionsCard() {
+  const { t } = useDashboardLanguage();
   const [openDialog, setOpenDialog] = useState(false);
   const [activationCode, setActivationCode] = useState("");
   const [activateLoading, setActivateLoading] = useState(false);
@@ -28,7 +24,7 @@ export default function QuickActionsCard() {
   const [loadingClass, setLoadingClass] = useState(false);
   const { classes } = useGetClassesByBook(selectedBook);
   const { books } = useGetMyBooks();
-  const bookActivationLimit = useRateLimitCountdown("book-activation");
+  const bookActivationLimit = useRateLimitCountdown("book-activation", t);
   const closeActivationDialog = () => {
     setOpenDialog(false);
     setActivationCode("");
@@ -95,7 +91,7 @@ export default function QuickActionsCard() {
     e.preventDefault();
 
     if (!activationCode.trim()) {
-      setActivationError("Please enter a valid activation code");
+      setActivationError(t("Please enter a valid activation code"));
       return;
     }
 
@@ -117,7 +113,8 @@ export default function QuickActionsCard() {
         return;
       }
 
-      const message = err.response?.data?.message || "Invalid activation code";
+      const message =
+        err.response?.data?.message || t("Invalid activation code");
 
       setActivationError(message);
     } finally {
@@ -126,7 +123,7 @@ export default function QuickActionsCard() {
   };
   return (
     <Box sx={cardStyle}>
-      <Typography sx={title}>Quick Actions</Typography>
+      <Typography sx={title}>{t("Quick Actions")}</Typography>
 
       <Box sx={actionsWrapper}>
         {/* Assign Book */}
@@ -134,7 +131,7 @@ export default function QuickActionsCard() {
           <Box sx={iconBox}>
             <MenuBookIcon />
           </Box>
-          <Typography sx={label}>Assign Book</Typography>
+          <Typography sx={label}>{t("Assign Book")}</Typography>
         </Box>
 
         {/* Create Class */}
@@ -142,7 +139,7 @@ export default function QuickActionsCard() {
           <Box sx={iconBox}>
             <GroupsIcon />
           </Box>
-          <Typography sx={label}>Create Class</Typography>
+          <Typography sx={label}>{t("Create Class")}</Typography>
         </Box>
       </Box>
       <Dialog
@@ -188,7 +185,7 @@ export default function QuickActionsCard() {
             mb: 1,
           }}
         >
-          Activate Code
+          {t("Activate Code")}
         </Typography>
 
         {/* DESCRIPTION */}
@@ -199,7 +196,7 @@ export default function QuickActionsCard() {
             mb: 3,
           }}
         >
-          Enter your activation code to access your class or content.
+          {t("Enter your activation code to access your class or content.")}
         </Typography>
 
         {/* INPUT LABEL */}
@@ -208,10 +205,10 @@ export default function QuickActionsCard() {
             fontSize: 13,
             fontWeight: 600,
             mb: 1,
-            textAlign: "left",
+            textAlign: "start",
           }}
         >
-          Activation Code *
+          {t("Activation Code *")}
         </Typography>
 
         {/* INPUT */}
@@ -222,7 +219,7 @@ export default function QuickActionsCard() {
             setActivationCode(e.target.value);
             if (activationError) setActivationError("");
           }}
-          placeholder="Enter activation code"
+          placeholder={t("Enter activation code")}
           error={
             Boolean(activationError) ||
             (showActivationRateLimit && bookActivationLimit.isRateLimited)
@@ -236,7 +233,7 @@ export default function QuickActionsCard() {
             endAdornment: (
               <QrScanButton
                 kind="book"
-                title="Scan book QR code"
+                title={t("Scan book QR code")}
                 onScan={({ code }) => {
                   setActivationCode(code);
                   setActivationError("");
@@ -276,7 +273,7 @@ export default function QuickActionsCard() {
               },
             }}
           >
-            Activate
+            {t("Activate")}
           </LoadingButton>
 
           <Button
@@ -295,7 +292,7 @@ export default function QuickActionsCard() {
               },
             }}
           >
-            Cancel
+            {t("Cancel")}
           </Button>
         </Box>
       </Dialog>
@@ -336,17 +333,17 @@ export default function QuickActionsCard() {
         <Typography
           sx={{ fontSize: 22, fontWeight: 700, color: "primary.main", mb: 1 }}
         >
-          Create Class
+          {t("Create Class")}
         </Typography>
 
         <Typography sx={{ fontSize: 14, color: "text.secondary", mb: 3 }}>
-          Select a book to generate a new class for your students.
+          {t("Select a book to generate a new class for your students.")}
         </Typography>
 
         <Typography
-          sx={{ fontSize: 13, fontWeight: 600, mb: 1, textAlign: "left" }}
+          sx={{ fontSize: 13, fontWeight: 600, mb: 1, textAlign: "start" }}
         >
-          Select Book *
+          {t("Select a book")} *
         </Typography>
         <TextField
           select
@@ -362,7 +359,7 @@ export default function QuickActionsCard() {
             },
           }}
         >
-          <option value="">Select a book</option>
+          <option value="">{t("Select a book")}</option>
           {books
             .filter((b) => b.is_active)
             .map((b) => (
@@ -378,15 +375,15 @@ export default function QuickActionsCard() {
             fontWeight: 600,
             mt: 2.5,
             mb: 1,
-            textAlign: "left",
+            textAlign: "start",
           }}
         >
-          Class Name
+          {t("Class Name")}
         </Typography>
         <TextField
           fullWidth
           value={className}
-          placeholder="Generated automatically"
+          placeholder={t("Generated automatically")}
           InputProps={{
             readOnly: true,
             sx: {
@@ -397,9 +394,7 @@ export default function QuickActionsCard() {
           }}
         />
 
-        <Box
-          sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 4 }}
-        >
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 4 }}>
           <LoadingButton
             type="submit"
             loading={loadingClass}
@@ -415,7 +410,7 @@ export default function QuickActionsCard() {
               "&:hover": { backgroundColor: "#244a87" },
             }}
           >
-            Create
+            {t("Create")}
           </LoadingButton>
 
           <Button
@@ -432,7 +427,7 @@ export default function QuickActionsCard() {
               "&:hover": { backgroundColor: "action.hover" },
             }}
           >
-            Cancel
+            {t("Cancel")}
           </Button>
         </Box>
       </Dialog>

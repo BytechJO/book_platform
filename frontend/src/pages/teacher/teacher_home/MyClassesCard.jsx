@@ -10,7 +10,9 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useGetTeacherClasses } from "../../../api/Classes";
 import CurveLoader from "../../../components/CurveLoader";
 import { useNavigate } from "react-router-dom";
+import { useDashboardLanguage } from "../../../contexts/dashboardLanguage";
 export default function MyClassesCard() {
+  const { t } = useDashboardLanguage();
   const { classes, loading } = useGetTeacherClasses();
   const progressValues = [72, 65, 80, 60, 90];
   const navigate = useNavigate();
@@ -19,7 +21,7 @@ export default function MyClassesCard() {
   }
   return (
     <Box sx={cardStyle}>
-      <Typography sx={titleStyle}>My Classes</Typography>
+      <Typography sx={titleStyle}>{t("My Classes")}</Typography>
 
       {classes?.length === 0 ? (
         <Box
@@ -42,7 +44,7 @@ export default function MyClassesCard() {
               fontWeight: 600,
             }}
           >
-            No Classes Yet
+            {t("No Classes Yet")}
           </Typography>
 
           <Typography
@@ -51,7 +53,7 @@ export default function MyClassesCard() {
               mt: 0.5,
             }}
           >
-            Your classes will appear here
+            {t("Your classes will appear here")}
           </Typography>
         </Box>
       ) : (
@@ -77,7 +79,7 @@ export default function MyClassesCard() {
                 <Box sx={studentsRow}>
                   <GroupsIcon sx={{ fontSize: 14, color: "text.secondary" }} />
                   <Typography sx={studentsText}>
-                    {Number(cls.total_students)} Students
+                    {Number(cls.total_students)} {t("Students")}
                   </Typography>
                 </Box>
               </Box>
@@ -133,7 +135,7 @@ export default function MyClassesCard() {
               },
             }}
           >
-            View all classes
+            {t("View all classes")}
           </Typography>
 
           <ArrowForwardIosIcon
@@ -141,6 +143,11 @@ export default function MyClassesCard() {
               fontSize: 12,
               color: "primary.main",
               ml: 0.5,
+              transform: "rotate(0deg)",
+
+              '[dir="rtl"] &': {
+                transform: "rotate(180deg)",
+              },
             }}
           />
         </Box>

@@ -16,8 +16,10 @@ import PlayCircleOutlineOutlinedIcon from "@mui/icons-material/PlayCircleOutline
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import SendIcon from "@mui/icons-material/Send";
 import ShieldOutlinedIcon from "@mui/icons-material/ShieldOutlined";
+import { useDashboardLanguage } from "../../contexts/dashboardLanguage";
 
 export default function Help() {
+  const { t, language } = useDashboardLanguage();
   const [formData, setFormData] = useState({
     fullName: "",
     mobile: "",
@@ -46,7 +48,7 @@ export default function Help() {
         "r1lFJUGHCFNblzlAs",
       );
 
-      alert("Message sent successfully!");
+      alert(t("Message sent successfully!"));
 
       setFormData({
         fullName: "",
@@ -56,7 +58,7 @@ export default function Help() {
       });
     } catch (error) {
       console.log(error);
-      alert("Failed to send message");
+      alert(t("Failed to send message"));
     }
   };
   return (
@@ -123,7 +125,7 @@ export default function Help() {
                   lineHeight: 1.2,
                 }}
               >
-                Fill out the form
+                {t("Fill out the form")}
               </Typography>
 
               <Typography
@@ -134,7 +136,7 @@ export default function Help() {
                   fontWeight: 500,
                 }}
               >
-                and we’ll contact you soon
+                {t("and we’ll contact you soon")}
               </Typography>
             </Box>
           </Box>
@@ -150,14 +152,14 @@ export default function Help() {
           >
             {/* FULL NAME */}
             <Box>
-              <Typography sx={labelStyle}>Full Name</Typography>
+              <Typography sx={labelStyle}>{t("Full Name")}</Typography>
 
               <TextField
                 fullWidth
                 name="fullName"
                 value={formData.fullName}
                 onChange={handleChange}
-                placeholder="Enter your full name"
+                placeholder={t("Enter your full name")}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -173,11 +175,11 @@ export default function Help() {
 
             {/* MOBILE */}
             <Box>
-              <Typography sx={labelStyle}>Mobile</Typography>
+              <Typography sx={labelStyle}>{t("Mobile")}</Typography>
 
               <TextField
                 fullWidth
-                placeholder="Enter your mobile number"
+                placeholder={t("Enter your mobile number")}
                 name="mobile"
                 value={formData.mobile}
                 onChange={handleChange}
@@ -196,11 +198,11 @@ export default function Help() {
 
             {/* EMAIL */}
             <Box>
-              <Typography sx={labelStyle}>E-mail</Typography>
+              <Typography sx={labelStyle}>{t("E-mail")}</Typography>
 
               <TextField
                 fullWidth
-                placeholder="Enter your e-mail address"
+                placeholder={t("Enter your e-mail address")}
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
@@ -219,7 +221,7 @@ export default function Help() {
 
             {/* MESSAGE */}
             <Box>
-              <Typography sx={labelStyle}>Message</Typography>
+              <Typography sx={labelStyle}>{t("Message")}</Typography>
 
               <TextField
                 fullWidth
@@ -228,7 +230,7 @@ export default function Help() {
                 value={formData.message}
                 onChange={handleChange}
                 rows={2}
-                placeholder="Type your message here..."
+                placeholder={t("Type your message here...")}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment
@@ -245,11 +247,17 @@ export default function Help() {
               />
             </Box>
 
-            {/* BUTTON */}
             <Button
               variant="contained"
               onClick={sendEmail}
-              endIcon={<SendIcon sx={{ fontSize: 16 }} />}
+              endIcon={
+                <SendIcon
+                  sx={{
+                    fontSize: 16,
+                    transform: language === "ar" ? "scaleX(-1)" : "none",
+                  }}
+                />
+              }
               sx={{
                 mt: 1,
                 height: 44,
@@ -260,6 +268,11 @@ export default function Help() {
                 fontWeight: 700,
                 boxShadow: "none",
 
+                "& .MuiButton-endIcon": {
+                  marginLeft: language === "ar" ? 0 : "8px",
+                  marginRight: language === "ar" ? "8px" : 0,
+                },
+
                 "&:hover": {
                   background:
                     "linear-gradient(90deg, #1d4ed8 0%, #1e40af 100%)",
@@ -267,7 +280,7 @@ export default function Help() {
                 },
               }}
             >
-              Send
+              {t("Send")}
             </Button>
             {/* FOOTER */}
             <Box
@@ -293,7 +306,9 @@ export default function Help() {
                   lineHeight: 1.5,
                 }}
               >
-                We respect your privacy. Your information is safe with us.
+                {t(
+                  "We respect your privacy. Your information is safe with us.",
+                )}
               </Typography>
             </Box>
           </Box>
@@ -342,7 +357,7 @@ export default function Help() {
                   lineHeight: 1.2,
                 }}
               >
-                Watch how to use the platform
+                {t("Watch how to use the platform")}
               </Typography>
 
               <Typography
@@ -353,7 +368,7 @@ export default function Help() {
                   fontWeight: 500,
                 }}
               >
-                A quick video guide to help you get started
+                {t("A quick video guide to help you get started")}
               </Typography>
             </Box>
           </Box>
@@ -402,9 +417,9 @@ export default function Help() {
                 lineHeight: 1.5,
               }}
             >
-              Learn how to explore books, activate codes,
-              <br />
-              and make the most of the platform.
+              {t(
+                "Learn how to explore books, activate codes, and make the most of the platform.",
+              )}
             </Typography>
           </Box>
         </Paper>

@@ -24,9 +24,11 @@ import {
 } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import "dayjs/locale/ar";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import axiosInstance from "../../../api/axios";
+import { useDashboardLanguage } from "../../../contexts/dashboardLanguage";
 import ENDPOINTS from "../../../api/endpoints";
 
 import { useGetMyBooks } from "../../../api/user_books";
@@ -91,6 +93,7 @@ function Badge(props) {
 }
 
 export default function CreateEvent() {
+  const { language, t } = useDashboardLanguage();
   const location = useLocation();
   const editEvent = location.state?.editEvent;
   const navigate = useNavigate();
@@ -271,10 +274,10 @@ export default function CreateEvent() {
               letterSpacing: "-0.5px",
             }}
           >
-            {editEvent ? "Update Event" : "Create Event"}
+            {t(editEvent ? "Update Event" : "Create Event")}
           </Typography>
           <Typography sx={{ fontSize: 14, color: "#94a3b8", mt: 0.5 }}>
-            Schedule a new event for your classes
+            {t("Schedule a new event for your classes")}
           </Typography>
         </Box>
 
@@ -302,7 +305,7 @@ export default function CreateEvent() {
           >
             {/* Calendar */}
             <Box sx={{ p: 3, pb: 2 }}>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={language}>
                 <DateCalendar
                   value={date}
                   onChange={setDate}
@@ -429,7 +432,7 @@ export default function CreateEvent() {
                         fontWeight: 500,
                       }}
                     >
-                      No events scheduled
+                      {t("No events scheduled")}
                     </Typography>
                     <Typography
                       sx={{
@@ -565,7 +568,7 @@ export default function CreateEvent() {
                 mb: 0.5,
               }}
             >
-              Event Details
+              {t("Event Details")}
             </Typography>
             <Typography
               sx={{
@@ -598,13 +601,13 @@ export default function CreateEvent() {
                     gap: 0.5,
                   }}
                 >
-                  <span style={{ color: "#2B5A9E" }}>●</span> Book
+                  <span style={{ color: "#2B5A9E" }}>●</span> {t("Book")}
                 </Typography>
                 <FormControl fullWidth sx={selectStyles}>
-                  <InputLabel>Select a book</InputLabel>
+                  <InputLabel>{t("Select a book")}</InputLabel>
                   <Select
                     value={selectedBook}
-                    label="Select a book"
+                    label={t("Select a book")}
                     onChange={(e) => {
                       setSelectedBook(e.target.value);
                       setSelectedClass("");
@@ -657,7 +660,7 @@ export default function CreateEvent() {
                     gap: 0.5,
                   }}
                 >
-                  <span style={{ color: "#2B5A9E" }}>●</span> Class
+                  <span style={{ color: "#2B5A9E" }}>●</span> {t("Class")}
                 </Typography>
                 <FormControl
                   fullWidth
@@ -668,8 +671,8 @@ export default function CreateEvent() {
                     {classesLoading
                       ? "Loading..."
                       : !selectedBook
-                        ? "Select a book first"
-                        : "Select a class"}
+                        ? t("Select a book first")
+                        : t("Select class")}
                   </InputLabel>
                   <Select
                     value={selectedClass}
@@ -677,8 +680,8 @@ export default function CreateEvent() {
                       classesLoading
                         ? "Loading..."
                         : !selectedBook
-                          ? "Select a book first"
-                          : "Select a class"
+                          ? t("Select a book first")
+                          : t("Select class")
                     }
                     onChange={(e) => setSelectedClass(e.target.value)}
                     MenuProps={{
@@ -718,7 +721,7 @@ export default function CreateEvent() {
                           }}
                         >
                           <CircularProgress size={14} />
-                          <span>Loading classes...</span>
+                          <span>{t("Loading classes")}...</span>
                         </Box>
                       </MenuItem>
                     ) : (
@@ -745,7 +748,7 @@ export default function CreateEvent() {
                     gap: 0.5,
                   }}
                 >
-                  <span style={{ color: "#2B5A9E" }}>●</span> Subject{" "}
+                  <span style={{ color: "#2B5A9E" }}>●</span> {t("Subject")}{" "}
                   <Typography
                     component="span"
                     sx={{
@@ -758,7 +761,7 @@ export default function CreateEvent() {
                   </Typography>
                 </Typography>
                 <TextField
-                  placeholder="e.g. Chapter 5 Review"
+                  placeholder={t("e.g. Chapter 5 Review")}
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
                   fullWidth
@@ -779,14 +782,14 @@ export default function CreateEvent() {
                     gap: 0.5,
                   }}
                 >
-                  <span style={{ color: "#2B5A9E" }}>●</span> Time
+                  <span style={{ color: "#2B5A9E" }}>●</span> {t("Time")}
                 </Typography>
                 <Box sx={{ display: "flex", gap: 1.5 }}>
                   <FormControl fullWidth sx={selectStyles}>
-                    <InputLabel>Hour</InputLabel>
+                    <InputLabel>{t("Hour")}</InputLabel>
                     <Select
                       value={time.hour}
-                      label="Hour"
+                      label={t("Hour")}
                       onChange={(e) =>
                         setTime({ ...time, hour: e.target.value })
                       }
@@ -824,10 +827,10 @@ export default function CreateEvent() {
                   </FormControl>
 
                   <FormControl fullWidth sx={selectStyles}>
-                    <InputLabel>Min</InputLabel>
+                    <InputLabel>{t("Min")}</InputLabel>
                     <Select
                       value={time.minute}
-                      label="Min"
+                      label={t("Min")}
                       onChange={(e) =>
                         setTime({ ...time, minute: e.target.value })
                       }
@@ -865,10 +868,10 @@ export default function CreateEvent() {
                   </FormControl>
 
                   <FormControl fullWidth sx={selectStyles}>
-                    <InputLabel>AM/PM</InputLabel>
+                    <InputLabel>{t("AM/PM")}</InputLabel>
                     <Select
                       value={time.period}
-                      label="AM/PM"
+                      label={t("AM/PM")}
                       onChange={(e) =>
                         setTime({ ...time, period: e.target.value })
                       }
@@ -896,8 +899,8 @@ export default function CreateEvent() {
                         },
                       }}
                     >
-                      <MenuItem value="AM">AM</MenuItem>
-                      <MenuItem value="PM">PM</MenuItem>
+                      <MenuItem value="AM">{t("AM")}</MenuItem>
+                      <MenuItem value="PM">{t("PM")}</MenuItem>
                     </Select>
                   </FormControl>
                 </Box>
@@ -949,12 +952,12 @@ export default function CreateEvent() {
                     }}
                   >
                     <CircularProgress size={16} sx={{ color: "inherit" }} />
-                    Creating...
+                    {t("Creating")}...
                   </Box>
                 ) : editEvent ? (
-                  "Update Event"
+                  t("Update Event")
                 ) : (
-                  "Create Event"
+                  t("Create Event")
                 )}
               </Button>
             </Box>
@@ -986,8 +989,8 @@ export default function CreateEvent() {
           }}
         >
           {editEvent
-            ? "Event updated successfully"
-            : "Event created successfully"}
+            ? t("Event updated successfully")
+            : t("Event created successfully")}
         </Alert>
       </Snackbar>
     </Box>

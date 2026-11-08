@@ -1,6 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const { register, login, me, updateProfile } = require("../controller/auth");
+const {
+  register,
+  login,
+  me,
+  updateProfile,
+  updatePreferences,
+} = require("../controller/auth");
 const { authenticate } = require("../middleware/authenticate");
 const upload = require("../middleware/upload");
 const { loginLimiter } = require("../middleware/rateLimiters");
@@ -15,4 +21,5 @@ router.post("/login", loginLimiter, login);
 router.get("/me", authenticate, me);
 
 router.put("/profile", authenticate, upload.single("avatar"), updateProfile);
+router.patch("/preferences", authenticate, updatePreferences);
 module.exports = router;

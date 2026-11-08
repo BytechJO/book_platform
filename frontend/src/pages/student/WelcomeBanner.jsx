@@ -1,8 +1,10 @@
 import { Box, Typography, Avatar } from "@mui/material";
 import { useAuthMe } from "../../api/auth";
+import { useDashboardLanguage } from "../../contexts/dashboardLanguage";
 
 export default function WelcomeBanner({ variant = "home" }) {
-  const today = new Date().toLocaleDateString("en-US", {
+  const { language, t } = useDashboardLanguage();
+  const today = new Date().toLocaleDateString(language === "ar" ? "ar-JO" : "en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -62,7 +64,7 @@ export default function WelcomeBanner({ variant = "home" }) {
             fontWeight: 700,
           }}
         >
-          Welcome back, Student {firstName} !
+          {t("Welcome back")}, {t("Student")} {firstName}!
         </Typography>
         <Typography
           sx={{
@@ -72,8 +74,8 @@ export default function WelcomeBanner({ variant = "home" }) {
           }}
         >
           {variant === "home"
-            ? "Here's what's happening with your classes today."
-            : "Manage your books and assign them to your classes."}
+            ? t("Here's what's happening with your classes today.")
+            : t("Manage your books and assign them to your classes.")}
         </Typography>
       </Box>
     </Box>

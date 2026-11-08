@@ -5,10 +5,13 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { PickersDay } from "@mui/x-date-pickers/PickersDay";
 import { useState } from "react";
 import dayjs from "dayjs";
+import "dayjs/locale/ar";
 import { useGetStudentEvents } from "../../../api/events";
 import { useNavigate } from "react-router-dom";
+import { useDashboardLanguage } from "../../../contexts/dashboardLanguage";
 
 export default function UpcomingScheduleCard() {
+  const { language, t } = useDashboardLanguage();
   const navigate = useNavigate();
 
   const { events } = useGetStudentEvents();
@@ -23,10 +26,10 @@ export default function UpcomingScheduleCard() {
   const hiddenCount = selectedEvents.length - 1;
   return (
     <Box sx={cardStyle}>
-      <Typography sx={titleStyle}>Upcoming Schedule</Typography>
+      <Typography sx={titleStyle}>{t("Upcoming Schedule")}</Typography>
 
       {/* Calendar */}
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={language}>
         <DateCalendar
           value={selectedDate}
           onChange={(newValue) => setSelectedDate(newValue)}
@@ -132,7 +135,7 @@ export default function UpcomingScheduleCard() {
           >
             {/* LEFT */}
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
-              No events for this day
+              {t("No events for this day")}
             </Typography>
           </Box>
         ) : (
@@ -167,7 +170,7 @@ export default function UpcomingScheduleCard() {
                     color: isPast ? "text.secondary" : "#1976d2",
                   }}
                 >
-                  {isPast ? "Finished" : "Upcoming"}
+                  {t(isPast ? "Finished" : "Upcoming")}
                 </Box>
               </Box>
             );
@@ -199,7 +202,7 @@ export default function UpcomingScheduleCard() {
                 color: "primary.main",
               }}
             >
-              Show {hiddenCount} more
+              {t("Show {count} more", { count: hiddenCount })}
             </Typography>
           </Box>
         )}

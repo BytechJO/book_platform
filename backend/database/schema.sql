@@ -21,6 +21,10 @@ CREATE TABLE users (
         CHECK (status IN ('active', 'inactive')),
     avatar_url VARCHAR(500),
     avatar_public_id VARCHAR(255),
+    preferred_language VARCHAR(2) NOT NULL DEFAULT 'en'
+        CHECK (preferred_language IN ('en', 'ar')),
+    preferred_theme VARCHAR(10) NOT NULL DEFAULT 'light'
+        CHECK (preferred_theme IN ('light', 'dark')),
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP

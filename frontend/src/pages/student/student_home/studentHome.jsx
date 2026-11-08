@@ -15,7 +15,9 @@ import QuickActionsCard from "./QuickActionsCard";
 import WelcomeBanner from "../WelcomeBanner";
 import { useGetStudentClasses } from "../../../api/Classes";
 import { useNavigate } from "react-router-dom";
+import { useDashboardLanguage } from "../../../contexts/dashboardLanguage";
 export default function Dashboard() {
+  const { t } = useDashboardLanguage();
   const { stats, loading } = useStudentDashboard();
   const navigate = useNavigate();
   dayjs.extend(utc);
@@ -47,18 +49,18 @@ export default function Dashboard() {
         }}
       >
         <StatCard
-          title="My Classes"
+          title={t("My Classes")}
           value={stats.total_classes}
-          subtitle="Active classes"
+          subtitle={t("Active classes")}
           growth={stats.growth.classes}
           icon={GroupsIcon}
           onClick={() => navigate("/student/classes")}
         />
 
         <StatCard
-          title="Books Assigned"
+          title={t("Books Assigned")}
           value={stats.total_books}
-          subtitle="Books"
+          subtitle={t("Books")}
           growth={stats.growth.books}
           icon={MenuBookIcon}
           onClick={() => navigate("/student/books")}
@@ -102,6 +104,7 @@ export default function Dashboard() {
 
 // eslint-disable-next-line no-unused-vars
 function StatCard({ title, value, subtitle, growth, icon: Icon, onClick }) {
+  const { t } = useDashboardLanguage();
   const isPositive = growth >= 0;
 
   return (
@@ -111,7 +114,7 @@ function StatCard({ title, value, subtitle, growth, icon: Icon, onClick }) {
       onClick={onClick}
       sx={{
         width: "100%",
-        textAlign: "left",
+        textAlign: "start",
         font: "inherit",
         border: "none",
         bgcolor: "background.paper",
@@ -196,7 +199,7 @@ function StatCard({ title, value, subtitle, growth, icon: Icon, onClick }) {
 
         {/* RIGHT */}
         <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
-          vs last 30 days
+          {t("vs last 30 days")}
         </Typography>
       </Box>
     </Box>

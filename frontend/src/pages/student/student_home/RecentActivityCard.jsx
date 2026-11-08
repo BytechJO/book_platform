@@ -6,8 +6,10 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CurveLoader from "../../../components/CurveLoader";
 import { useGetStudentActivities } from "../../../api/studentActivities";
 import { useNavigate } from "react-router-dom";
+import { useDashboardLanguage } from "../../../contexts/dashboardLanguage";
 
 export default function RecentActivityCard() {
+  const { t } = useDashboardLanguage();
   const navigate = useNavigate();
 
   const { activities, loading } = useGetStudentActivities();
@@ -44,7 +46,7 @@ export default function RecentActivityCard() {
 
   return (
     <Box sx={cardStyle}>
-      <Typography sx={titleStyle}>Recent Activity</Typography>
+      <Typography sx={titleStyle}>{t("Recent Activity")}</Typography>
 
       {activities?.length === 0 ? (
         <Box
@@ -67,7 +69,7 @@ export default function RecentActivityCard() {
               fontWeight: 600,
             }}
           >
-            No Activity Yet
+            {t("No Activity Yet")}
           </Typography>
 
           <Typography
@@ -76,7 +78,7 @@ export default function RecentActivityCard() {
               mt: 0.5,
             }}
           >
-            Your recent activity will appear here
+            {t("Your recent activity will appear here")}
           </Typography>
         </Box>
       ) : (
@@ -125,7 +127,7 @@ export default function RecentActivityCard() {
             },
           }}
         >
-          View all Activities
+          {t("View all Activities")}
         </Typography>
 
         <ArrowForwardIosIcon
@@ -133,6 +135,11 @@ export default function RecentActivityCard() {
             fontSize: 12,
             color: "primary.main",
             ml: 0.5,
+            transform: "rotate(0deg)",
+
+            '[dir="rtl"] &': {
+              transform: "rotate(180deg)",
+            },
           }}
         />
       </Box>

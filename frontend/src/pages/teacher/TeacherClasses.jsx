@@ -24,8 +24,10 @@ import { useGetTeacherClasses } from "../../api/Classes";
 import QrCodeDialog from "../../components/QrCodeDialog";
 import { buildClassQrUrl, downloadQrPdf } from "../../utils/qrCodes";
 import CurveLoader from "../../components/CurveLoader";
+import { useDashboardLanguage } from "../../contexts/dashboardLanguage";
 
 export default function TeacherClasses() {
+  const { t } = useDashboardLanguage();
   const navigate = useNavigate();
   const { classes, loading } = useGetTeacherClasses();
 
@@ -34,13 +36,13 @@ export default function TeacherClasses() {
   const [qrClass, setQrClass] = useState(null);
   const [qrExporting, setQrExporting] = useState(false);
   const classesPerPage = 8;
-
+  const { language } = useDashboardLanguage();
   const filteredClasses = useMemo(() => {
     if (!classes) return [];
     return classes.filter(
       (cls) =>
         cls.class_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        cls.book_title?.toLowerCase().includes(searchTerm.toLowerCase())
+        cls.book_title?.toLowerCase().includes(searchTerm.toLowerCase()),
     );
   }, [classes, searchTerm]);
 
@@ -116,7 +118,7 @@ export default function TeacherClasses() {
                 letterSpacing: "-0.5px",
               }}
             >
-              My Classes
+              {t("My Classes")}
             </Typography>
           </Box>
           <Typography
@@ -128,48 +130,70 @@ export default function TeacherClasses() {
               fontWeight: 500,
             }}
           >
-            {classes?.length ?? 0} classes total
+            {t("{count} classes total", { count: classes?.length ?? 0 })}
           </Typography>
         </Box>
 
         {/* SEARCH */}
-        <Stack direction="row" spacing={1}>
-          <Button variant="outlined" startIcon={<QrCode2Icon />} onClick={exportClassQrs} disabled={!filteredClasses.length || qrExporting} sx={{ borderRadius: "10px", textTransform: "none" }}>
-            {qrExporting ? "Preparing..." : "QR PDF"}
+        <Stack
+          direction="row"
+          sx={{
+            gap: 1,
+            alignItems: "center",
+          }}
+        >
+          {" "}
+          <Button
+            variant="outlined"
+            startIcon={<QrCode2Icon />}
+            onClick={exportClassQrs}
+            disabled={!filteredClasses.length || qrExporting}
+            sx={{
+              borderRadius: "10px",
+              textTransform: "none",
+              direction: "ltr",
+              flexDirection: "row",
+              "& .MuiButton-startIcon": {
+                marginLeft: 0,
+                marginRight: "8px",
+              },
+            }}
+          >
+            {qrExporting ? `${t("Preparing")}...` : "QR PDF"}
           </Button>
           <TextField
-          size="small"
-          placeholder="Search..."
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setPage(1);
-          }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon sx={{ fontSize: 18, color: "#94a3b8" }} />
-              </InputAdornment>
-            ),
-            sx: {
-              fontSize: 13,
-              borderRadius: "10px",
-            },
-          }}
-          sx={{
-            width: 220,
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "10px",
-              background: "background.paper",
-              border: "1px solid",
-              borderColor: "divider",
-              "&:hover": { borderColor: "#c7d2fe" },
-              "&.Mui-focused": {
-                borderColor: "#6366f1",
-                boxShadow: "0 0 0 3px rgba(99,102,241,0.1)",
+            size="small"
+            placeholder={t("Search...")}
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setPage(1);
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon sx={{ fontSize: 18, color: "#94a3b8" }} />
+                </InputAdornment>
+              ),
+              sx: {
+                fontSize: 13,
+                borderRadius: "10px",
               },
-            },
-          }}
+            }}
+            sx={{
+              width: 220,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+                background: "background.paper",
+                border: "1px solid",
+                borderColor: "divider",
+                "&:hover": { borderColor: "#c7d2fe" },
+                "&.Mui-focused": {
+                  borderColor: "#6366f1",
+                  boxShadow: "0 0 0 3px rgba(99,102,241,0.1)",
+                },
+              },
+            }}
           />
         </Stack>
       </Box>
@@ -207,7 +231,10 @@ export default function TeacherClasses() {
               letterSpacing: "0.8px",
             }}
           >
-            Showing {paginatedClasses.length} of {filteredClasses.length}
+            {t("Showing {shown} of {total}", {
+              shown: paginatedClasses.length,
+              total: filteredClasses.length,
+            })}
           </Typography>
         </Box>
 
@@ -266,9 +293,7 @@ export default function TeacherClasses() {
                     gap: 0.5,
                   }}
                 >
-                  <AutoStoriesIcon
-                    sx={{ fontSize: 13, color: "#a5b4fc" }}
-                  />
+                  <AutoStoriesIcon sx={{ fontSize: 13, color: "#a5b4fc" }} />
                   <Typography
                     noWrap
                     sx={{
@@ -299,7 +324,12 @@ export default function TeacherClasses() {
                   background: "rgba(99,102,241,0.12)",
                   border: "1px solid rgba(99,102,241,0.2)",
                   borderRadius: "8px",
-                  "& .MuiChip-icon": { ml: 0.5 },
+
+                  flexDirection: language === "ar" ? "row-reverse" : "row",
+
+                  "& .MuiChip-icon": {
+                    margin: language === "ar" ? "0 0 0 4px" : "0 0px 0 4px",
+                  },
                 }}
               />
 
@@ -310,8 +340,11 @@ export default function TeacherClasses() {
                   event.stopPropagation();
                   setQrClass(cls);
                 }}
-                sx={{ color: "#6366f1", "&:hover": { background: "rgba(99,102,241,0.12)" } }}
-                title="View class QR code"
+                sx={{
+                  color: "#6366f1",
+                  "&:hover": { background: "rgba(99,102,241,0.12)" },
+                }}
+                title={t("View class QR code")}
               >
                 <QrCode2Icon sx={{ fontSize: 18 }} />
               </IconButton>
@@ -326,13 +359,17 @@ export default function TeacherClasses() {
                   },
                 }}
               >
-                <ArrowForwardIcon sx={{ fontSize: 18 }} />
+                <ArrowForwardIcon
+                  sx={{
+                    fontSize: 18,
+                    transform: language === "ar" ? "rotate(180deg)" : "none",
+                    transition: "transform 0.2s ease",
+                  }}
+                />
               </IconButton>
             </Box>
 
-            {idx < paginatedClasses.length - 1 && (
-              <Divider sx={{ mx: 2.5 }} />
-            )}
+            {idx < paginatedClasses.length - 1 && <Divider sx={{ mx: 2.5 }} />}
           </Box>
         ))}
 
@@ -343,10 +380,10 @@ export default function TeacherClasses() {
             <Typography
               sx={{ fontSize: 14, fontWeight: 600, color: "#94a3b8" }}
             >
-              No classes found
+              {t("No classes found")}
             </Typography>
             <Typography sx={{ fontSize: 12, color: "#cbd5e1", mt: 0.3 }}>
-              Try adjusting your search
+              {t("Try adjusting your search")}
             </Typography>
           </Box>
         )}
@@ -393,10 +430,12 @@ export default function TeacherClasses() {
       <QrCodeDialog
         open={Boolean(qrClass)}
         onClose={() => setQrClass(null)}
-        title={qrClass?.class_name || "Class QR"}
+        title={qrClass?.class_name || t("Class QR")}
         subtitle={qrClass?.book_title || ""}
         code={qrClass?.class_name || ""}
-        value={qrClass ? buildClassQrUrl(qrClass.book_id, qrClass.class_name) : ""}
+        value={
+          qrClass ? buildClassQrUrl(qrClass.book_id, qrClass.class_name) : ""
+        }
         fileName={`class-${qrClass?.class_name || "qr"}`}
       />
     </Box>

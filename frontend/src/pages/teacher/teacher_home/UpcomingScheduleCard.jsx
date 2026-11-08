@@ -5,10 +5,13 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { PickersDay } from "@mui/x-date-pickers/PickersDay";
 import { useState } from "react";
 import dayjs from "dayjs";
+import "dayjs/locale/ar";
 import { useGetTeacherEvents } from "../../../api/events";
 import { useNavigate } from "react-router-dom";
+import { useDashboardLanguage } from "../../../contexts/dashboardLanguage";
 
 export default function UpcomingScheduleCard() {
+  const { language, t } = useDashboardLanguage();
   const { events } = useGetTeacherEvents();
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const navigate = useNavigate();
@@ -21,10 +24,10 @@ export default function UpcomingScheduleCard() {
   const hiddenCount = selectedEvents.length - 1;
   return (
     <Box sx={cardStyle}>
-      <Typography sx={titleStyle}>Upcoming Schedule</Typography>
+      <Typography sx={titleStyle}>{t("Upcoming Schedule")}</Typography>
 
       {/* Calendar */}
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={language}>
         <DateCalendar
           value={selectedDate}
           onChange={(newValue) => setSelectedDate(newValue)}
@@ -130,7 +133,7 @@ export default function UpcomingScheduleCard() {
           >
             {/* LEFT */}
             <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
-              No events for this day
+              {t("No events for this day")}
             </Typography>
 
             {/* RIGHT */}
@@ -150,7 +153,7 @@ export default function UpcomingScheduleCard() {
                 },
               }}
             >
-              Add Event +
+              {t("Add Event +")}
             </Typography>
           </Box>
         ) : (
@@ -179,11 +182,13 @@ export default function UpcomingScheduleCard() {
                 <Box
                   sx={{
                     ...badge,
-                    backgroundColor: isPast ? "action.selected" : "rgba(25,118,210,0.12)",
+                    backgroundColor: isPast
+                      ? "action.selected"
+                      : "rgba(25,118,210,0.12)",
                     color: isPast ? "text.secondary" : "#1976d2",
                   }}
                 >
-                  {isPast ? "Finished" : "Upcoming"}
+                  {t(isPast ? "Finished" : "Upcoming")}
                 </Box>
               </Box>
             );
@@ -215,7 +220,7 @@ export default function UpcomingScheduleCard() {
                 color: "primary.main",
               }}
             >
-              Show {hiddenCount} more
+              {t("Show {count} more", { count: hiddenCount })}
             </Typography>
           </Box>
         )}

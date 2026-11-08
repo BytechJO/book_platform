@@ -25,6 +25,7 @@ import PushPinIcon from "@mui/icons-material/PushPin";
 import { useGetStudentClassDetails } from "../../api/Classes";
 import CurveLoader from "../../components/CurveLoader";
 import ClassResourcesSection from "../../components/ClassResourcesSection";
+import { useDashboardLanguage } from "../../contexts/dashboardLanguage";
 
 const formatDate = (value, withTime = false) =>
   value
@@ -36,6 +37,7 @@ const isEventEnded = (event) =>
   ).isBefore(dayjs());
 
 export default function ClassDetails() {
+  const { t } = useDashboardLanguage();
   const { id } = useParams();
   const navigate = useNavigate();
   const { details, loading, error } = useGetStudentClassDetails(id);
@@ -49,7 +51,9 @@ export default function ClassDetails() {
   if (error || !details) {
     return (
       <Box sx={{ width: "92%", maxWidth: 1180, mx: "auto", py: 4 }}>
-        <Alert severity="error">Class details could not be loaded.</Alert>
+        <Alert severity="error">
+          {t("Class details could not be loaded.")}
+        </Alert>
       </Box>
     );
   }
@@ -63,7 +67,7 @@ export default function ClassDetails() {
         onClick={() => navigate("/student/classes")}
         sx={{ mb: 2, color: "text.secondary" }}
       >
-        Back to classes
+        {t("Back to classes")}
       </Button>
 
       <Paper
@@ -77,7 +81,9 @@ export default function ClassDetails() {
       >
         <Stack
           direction={{ xs: "column", sm: "row" }}
-          spacing={2.5}
+          sx={{
+            gap: 2,
+          }}
           alignItems={{ sm: "center" }}
         >
           <Box
@@ -108,11 +114,17 @@ export default function ClassDetails() {
               bgcolor: "rgba(255,255,255,.14)",
             }}
           >
-            <Stack direction="row" spacing={1} alignItems="center">
+            <Stack
+              direction="row"
+              sx={{
+                gap: 3,
+              }}
+              alignItems="center"
+            >
               <SchoolOutlinedIcon />
               <Box>
                 <Typography variant="caption" sx={{ opacity: 0.8 }}>
-                  Teacher
+                  {t("Teacher")}
                 </Typography>
                 <Typography fontWeight={700}>
                   {classInfo.teacher_name}
@@ -125,7 +137,7 @@ export default function ClassDetails() {
           variant="caption"
           sx={{ display: "block", mt: 2, opacity: 0.75 }}
         >
-          Joined {formatDate(classInfo.joined_at)}
+          {t("Joined {date}", { date: formatDate(classInfo.joined_at) })}
         </Typography>
       </Paper>
 
@@ -150,8 +162,12 @@ export default function ClassDetails() {
           <Stack
             direction="row"
             alignItems="center"
-            spacing={1}
-            sx={{ p: 2.5, borderBottom: "1px solid", borderColor: "divider" }}
+            sx={{
+              p: 2.5,
+              borderBottom: "1px solid",
+              borderColor: "divider",
+              gap: 1,
+            }}
           >
             <Box
               sx={{
@@ -167,9 +183,11 @@ export default function ClassDetails() {
               <CampaignOutlinedIcon fontSize="small" />
             </Box>
             <Box sx={{ flex: 1 }}>
-              <Typography fontWeight={800}>Notes & announcements</Typography>
+              <Typography fontWeight={800}>
+                {t("Notes & announcements")}
+              </Typography>
               <Typography variant="caption" color="text.secondary">
-                General updates published by your teacher
+                {t("General updates published by your teacher")}
               </Typography>
             </Box>
             <Chip
@@ -183,9 +201,11 @@ export default function ClassDetails() {
             <Table sx={{ minWidth: 520 }}>
               <TableHead sx={{ bgcolor: "action.hover" }}>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: 700 }}>Title</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Note</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Published</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>{t("Title")}</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>{t("Note")}</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>
+                    {t("Published")}
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -205,7 +225,13 @@ export default function ClassDetails() {
                     }}
                   >
                     <TableCell>
-                      <Stack direction="row" spacing={0.7} alignItems="center">
+                      <Stack
+                        direction="row"
+                        sx={{
+                          gap: 0.5,
+                        }}
+                        alignItems="center"
+                      >
                         <Typography variant="body2" fontWeight={700}>
                           {note.title}
                         </Typography>
@@ -213,7 +239,7 @@ export default function ClassDetails() {
                           <Chip
                             size="small"
                             icon={<PushPinIcon />}
-                            label="Pinned"
+                            label={t("Pinned")}
                             color="warning"
                             variant="outlined"
                           />
@@ -233,7 +259,7 @@ export default function ClassDetails() {
                       align="center"
                       sx={{ py: 5, color: "text.secondary" }}
                     >
-                      No notes have been published yet.
+                      {t("No notes have been published yet.")}
                     </TableCell>
                   </TableRow>
                 )}
@@ -244,7 +270,7 @@ export default function ClassDetails() {
                         size="small"
                         onClick={() => setVisibleNotes(details.notes.length)}
                       >
-                        Show more
+                        {t("Show more")}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -266,8 +292,12 @@ export default function ClassDetails() {
           <Stack
             direction="row"
             alignItems="center"
-            spacing={1}
-            sx={{ p: 2.5, borderBottom: "1px solid", borderColor: "divider" }}
+            sx={{
+              p: 2.5,
+              borderBottom: "1px solid",
+              borderColor: "divider",
+              gap: 1,
+            }}
           >
             <Box
               sx={{
@@ -283,9 +313,9 @@ export default function ClassDetails() {
               <EventOutlinedIcon fontSize="small" />
             </Box>
             <Box sx={{ flex: 1 }}>
-              <Typography fontWeight={800}>Class events</Typography>
+              <Typography fontWeight={800}>{t("Class events")}</Typography>
               <Typography variant="caption" color="text.secondary">
-                Scheduled events for this class
+                {t("Scheduled events for this class")}
               </Typography>
             </Box>
             <Chip
@@ -299,10 +329,10 @@ export default function ClassDetails() {
             <Table sx={{ minWidth: 480 }}>
               <TableHead sx={{ bgcolor: "action.hover" }}>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: 700 }}>Subject</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Date</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Time</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>{t("Subject")}</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>{t("Date")}</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>{t("Time")}</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>{t("Status")}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -343,9 +373,15 @@ export default function ClassDetails() {
                     }}
                   >
                     <TableCell>
-                      <Stack direction="row" spacing={0.7} alignItems="center">
+                      <Stack
+                        direction="row"
+                        sx={{
+                          gap: 0.5,
+                        }}
+                        alignItems="center"
+                      >
                         <Typography variant="body2" fontWeight={700}>
-                          {event.subject || "No subject"}
+                          {event.subject || t("No subject")}
                         </Typography>
                         {event.is_pinned && (
                           <PushPinIcon
@@ -361,7 +397,7 @@ export default function ClassDetails() {
                     <TableCell>
                       <Chip
                         size="small"
-                        label={isEventEnded(event) ? "Ended" : "Upcoming"}
+                        label={t(isEventEnded(event) ? "Ended" : "Upcoming")}
                         color={isEventEnded(event) ? "default" : "success"}
                         variant="outlined"
                       />
@@ -375,7 +411,7 @@ export default function ClassDetails() {
                       align="center"
                       sx={{ py: 5, color: "text.secondary" }}
                     >
-                      No events are scheduled for this class.
+                      {t("No events are scheduled for this class.")}
                     </TableCell>
                   </TableRow>
                 )}
@@ -386,7 +422,7 @@ export default function ClassDetails() {
                         size="small"
                         onClick={() => setVisibleEvents(details.events.length)}
                       >
-                        Show more
+                        {t("Show more")}
                       </Button>
                     </TableCell>
                   </TableRow>

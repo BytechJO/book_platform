@@ -11,6 +11,7 @@ import { markAllActivitiesAsRead } from "../../api/activities";
 export default function NotificationMenu({
   items = [],
   title = "Notifications",
+  emptyText = "No notifications",
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [localItems, setLocalItems] = useState(items);
@@ -59,7 +60,7 @@ export default function NotificationMenu({
           </Typography>
 
           {localItems?.length === 0 ? (
-            <NotificationEmpty />
+            <NotificationEmpty text={emptyText} />
           ) : (
             localItems.map((item) => (
               <NotificationItem key={item.id} item={item} />

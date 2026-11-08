@@ -14,7 +14,9 @@ import UpcomingScheduleCard from "./UpcomingScheduleCard";
 import ClassProgressCard from "./ClassProgressCard";
 import QuickActionsCard from "./QuickActionsCard";
 import { useNavigate } from "react-router-dom";
+import { useDashboardLanguage } from "../../../contexts/dashboardLanguage";
 export default function Dashboard() {
+  const { t } = useDashboardLanguage();
   const { stats, loading } = useTeacherDashboard();
   const navigate = useNavigate();
 
@@ -43,26 +45,26 @@ export default function Dashboard() {
         }}
       >
         <StatCard
-          title="My Classes"
+          title={t("My Classes")}
           value={stats.total_classes}
-          subtitle="Active classes"
+          subtitle={t("Active classes")}
           growth={stats.growth.classes}
           icon={GroupsIcon}
           onClick={() => navigate("/teacher/classes")}
         />
 
         <StatCard
-          title="My Students"
+          title={t("My Students")}
           value={stats.total_students}
-          subtitle="Total students"
+          subtitle={t("Total students")}
           growth={stats.growth.students}
           icon={PersonIcon}
         />
 
         <StatCard
-          title="Books Assigned"
+          title={t("Books Assigned")}
           value={stats.total_books}
-          subtitle="Books"
+          subtitle={t("Books")}
           growth={stats.growth.books}
           onClick={() => navigate("/teacher/books")}
           icon={MenuBookIcon}
@@ -106,6 +108,7 @@ export default function Dashboard() {
 
 // eslint-disable-next-line no-unused-vars
 function StatCard({ title, value, subtitle, growth, icon: Icon, onClick }) {
+  const { t } = useDashboardLanguage();
   const isPositive = growth >= 0;
 
   return (
@@ -115,7 +118,7 @@ function StatCard({ title, value, subtitle, growth, icon: Icon, onClick }) {
       onClick={onClick}
       sx={{
         width: "100%",
-        textAlign: "left",
+        textAlign: "start",
         font: "inherit",
         border: "none",
         bgcolor: "background.paper",
@@ -200,7 +203,7 @@ function StatCard({ title, value, subtitle, growth, icon: Icon, onClick }) {
 
         {/* RIGHT */}
         <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
-          vs last 30 days
+          {t("vs last 30 days")}
         </Typography>
       </Box>
     </Box>

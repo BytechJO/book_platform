@@ -4,6 +4,7 @@ const ENDPOINTS = {
     REGISTER: "/api/auth/register",
     ME: "/api/auth/me",
     UPDATE_PROFILE: "/api/auth/profile",
+    UPDATE_PREFERENCES: "/api/auth/preferences",
   },
 
   BOOKS: {

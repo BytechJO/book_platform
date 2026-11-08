@@ -46,6 +46,7 @@ import {
 import { getStudentProgress } from "../../data/defaultClassProgress";
 import CurveLoader from "../../components/CurveLoader";
 import ClassResourcesSection from "../../components/ClassResourcesSection";
+import { useDashboardLanguage } from "../../contexts/dashboardLanguage";
 import QrCodeDialog from "../../components/QrCodeDialog";
 import { buildClassQrUrl } from "../../utils/qrCodes";
 
@@ -57,6 +58,7 @@ const isEventEnded = (event) =>
   ).isBefore(dayjs());
 
 export default function ClassDetails() {
+  const { t } = useDashboardLanguage();
   const { id } = useParams();
   const navigate = useNavigate();
   const { details, loading, error } = useGetTeacherClassDetails(id);
@@ -147,7 +149,9 @@ export default function ClassDetails() {
   if (error || !details) {
     return (
       <Box sx={{ width: "92%", maxWidth: 1180, mx: "auto", py: 4 }}>
-        <Alert severity="error">Class details could not be loaded.</Alert>
+        <Alert severity="error">
+          {t("Class details could not be loaded.")}
+        </Alert>
       </Box>
     );
   }
@@ -177,7 +181,10 @@ export default function ClassDetails() {
       >
         <Stack
           direction={{ xs: "column", sm: "row" }}
-          spacing={2.5}
+          sx={{
+            gap: 3,
+            alignItems: "center",
+          }}
           alignItems={{ sm: "center" }}
         >
           <Box
@@ -200,7 +207,13 @@ export default function ClassDetails() {
               {classInfo.book_title}
             </Typography>
           </Box>
-          <Stack direction="row" spacing={1.5}>
+          <Stack
+            direction="row"
+            sx={{
+              gap: 1,
+              alignItems: "center",
+            }}
+          >
             <Button
               variant="outlined"
               startIcon={<QrCode2Icon />}
@@ -210,6 +223,8 @@ export default function ClassDetails() {
                 color: "white",
                 borderColor: "rgba(255,255,255,.55)",
                 textTransform: "none",
+                direction: "ltr",
+
                 "&:hover": {
                   borderColor: "white",
                   bgcolor: "rgba(255,255,255,.1)",
@@ -230,7 +245,7 @@ export default function ClassDetails() {
               <Typography variant="h5" fontWeight={800}>
                 {classInfo.total_students}
               </Typography>
-              <Typography variant="caption">Students</Typography>
+              <Typography variant="caption">{t("Students")}</Typography>
             </Box>
             <Box
               sx={{
@@ -244,13 +259,17 @@ export default function ClassDetails() {
               <Typography variant="h5" fontWeight={800}>
                 {averageProgress}%
               </Typography>
-              <Typography variant="caption">Avg. progress</Typography>
+              <Typography variant="caption">{t("Avg. progress")}</Typography>
             </Box>
           </Stack>
         </Stack>
       </Paper>
 
-      <Stack spacing={3}>
+      <Stack
+        sx={{
+          gap: 3,
+        }}
+      >
         <Paper
           elevation={0}
           sx={{
@@ -271,7 +290,7 @@ export default function ClassDetails() {
             }}
           >
             <PeopleAltOutlinedIcon color="primary" />
-            <Typography fontWeight={800}>Class students</Typography>
+            <Typography fontWeight={800}>{t("Class students")}</Typography>
             <Chip
               size="small"
               label={details.students.length}
@@ -282,12 +301,12 @@ export default function ClassDetails() {
             <Table sx={{ minWidth: 900 }}>
               <TableHead sx={{ bgcolor: "action.hover" }}>
                 <TableRow>
-                  <TableCell>Student</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Progress</TableCell>
-                  <TableCell>Joined</TableCell>
-                  <TableCell>Book expires</TableCell>
-                  <TableCell>Activity</TableCell>
+                  <TableCell>{t("Student")}</TableCell>
+                  <TableCell>{t("Status")}</TableCell>
+                  <TableCell>{t("Progress")}</TableCell>
+                  <TableCell>{t("Joined")}</TableCell>
+                  <TableCell>{t("Book expires")}</TableCell>
+                  <TableCell>{t("Activity")}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -301,8 +320,10 @@ export default function ClassDetails() {
                       <TableCell>
                         <Stack
                           direction="row"
-                          spacing={1.2}
-                          alignItems="center"
+                          sx={{
+                            gap: 1.5,
+                          }}
+                          alignItems="start"
                         >
                           <Avatar src={student.avatar_url}>
                             {student.full_name?.[0]}
@@ -331,7 +352,13 @@ export default function ClassDetails() {
                         />
                       </TableCell>
                       <TableCell sx={{ minWidth: 150 }}>
-                        <Stack direction="row" spacing={1} alignItems="center">
+                        <Stack
+                          direction="row"
+                          sx={{
+                            gap: 1,
+                          }}
+                          alignItems="center"
+                        >
                           <LinearProgress
                             variant="determinate"
                             value={progress}
@@ -355,7 +382,9 @@ export default function ClassDetails() {
                       >
                         <Stack
                           direction="row"
-                          spacing={0.8}
+                          sx={{
+                            gap: 0.5,
+                          }}
                           alignItems="center"
                         >
                           <Typography
@@ -368,7 +397,7 @@ export default function ClassDetails() {
                           {bookExpired && (
                             <Chip
                               size="small"
-                              label="Expired"
+                              label={t("Expired")}
                               color="error"
                               variant="outlined"
                             />
@@ -386,7 +415,7 @@ export default function ClassDetails() {
                       align="center"
                       sx={{ py: 6, color: "text.secondary" }}
                     >
-                      No students have joined this class yet.
+                      {t("No students have joined this class yet.")}
                     </TableCell>
                   </TableRow>
                 )}
@@ -411,16 +440,25 @@ export default function ClassDetails() {
               borderRadius: 3,
             }}
           >
-            <Stack direction="row" alignItems="center" spacing={1} mb={2}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              sx={{
+                gap: 1,
+              }}
+              mb={2}
+            >
               <NotesOutlinedIcon color="primary" />
-              <Typography fontWeight={800}>Notes & announcements</Typography>
+              <Typography fontWeight={800}>
+                {t("Notes & announcements")}
+              </Typography>
               <Button
                 size="small"
                 startIcon={<AddIcon />}
                 onClick={() => openNoteDialog()}
                 sx={{ ml: "auto !important" }}
               >
-                Add note
+                {t("Add note")}
               </Button>
             </Stack>
             {formError && !dialogOpen && (
@@ -428,7 +466,11 @@ export default function ClassDetails() {
                 {formError}
               </Alert>
             )}
-            <Stack spacing={1.5}>
+            <Stack
+              sx={{
+                gap: 1.5,
+              }}
+            >
               {details.notes.slice(0, visibleNotes).map((note) => (
                 <Box
                   key={note.id}
@@ -444,12 +486,18 @@ export default function ClassDetails() {
                 >
                   <Stack direction="row" alignItems="flex-start">
                     <Box sx={{ flex: 1 }}>
-                      <Stack direction="row" spacing={0.7} alignItems="center">
+                      <Stack
+                        direction="row"
+                        sx={{
+                          gap: 0.5,
+                        }}
+                        alignItems="center"
+                      >
                         <Typography fontWeight={750}>{note.title}</Typography>
                         {note.is_pinned && (
                           <Chip
                             size="small"
-                            label="Pinned"
+                            label={t("Pinned")}
                             color="warning"
                             variant="outlined"
                           />
@@ -470,7 +518,7 @@ export default function ClassDetails() {
                       size="small"
                       color={note.is_pinned ? "warning" : "default"}
                       onClick={() => togglePinned(note)}
-                      title={note.is_pinned ? "Unpin note" : "Pin note"}
+                      title={t(note.is_pinned ? "Unpin note" : "Pin note")}
                     >
                       {note.is_pinned ? (
                         <PushPinIcon fontSize="small" />
@@ -496,7 +544,7 @@ export default function ClassDetails() {
               ))}
               {!details.notes.length && (
                 <Typography variant="body2" color="text.secondary">
-                  No notes published yet.
+                  {t("No notes published yet.")}
                 </Typography>
               )}
               {visibleNotes < details.notes.length && (
@@ -504,7 +552,7 @@ export default function ClassDetails() {
                   size="small"
                   onClick={() => setVisibleNotes(details.notes.length)}
                 >
-                  Show more
+                  {t("Show more")}
                 </Button>
               )}
             </Stack>
@@ -519,16 +567,27 @@ export default function ClassDetails() {
               borderRadius: 3,
             }}
           >
-            <Stack direction="row" alignItems="center" spacing={1} mb={2}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              sx={{
+                gap: 1,
+              }}
+              mb={2}
+            >
               <EventOutlinedIcon color="primary" />
-              <Typography fontWeight={800}>Class events</Typography>
+              <Typography fontWeight={800}>{t("Class events")}</Typography>
               <Chip
                 size="small"
                 label={details.events.length}
                 sx={{ ml: "auto !important" }}
               />
             </Stack>
-            <Stack spacing={1.4}>
+            <Stack
+              sx={{
+                gap: 1,
+              }}
+            >
               {details.events.slice(0, visibleEvents).map((event) => (
                 <Box
                   key={event.id}
@@ -567,23 +626,35 @@ export default function ClassDetails() {
                     },
                   }}
                 >
-                  <Stack direction="row" alignItems="flex-start" spacing={1}>
+                  <Stack
+                    direction="row"
+                    alignItems="flex-start"
+                    sx={{
+                      gap: 1,
+                    }}
+                  >
                     <Box sx={{ flex: 1 }}>
-                      <Stack direction="row" alignItems="center" spacing={0.7}>
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        sx={{
+                          gap: 1.5,
+                        }}
+                      >
                         <Typography variant="body2" fontWeight={750}>
                           {event.title}
                         </Typography>
                         {event.is_pinned && (
                           <Chip
                             size="small"
-                            label="Pinned"
+                            label={t("Pinned")}
                             color="warning"
                             variant="outlined"
                           />
                         )}
                         <Chip
                           size="small"
-                          label={isEventEnded(event) ? "Ended" : "Upcoming"}
+                          label={t(isEventEnded(event) ? "Ended" : "Upcoming")}
                           color={isEventEnded(event) ? "default" : "success"}
                           variant="outlined"
                         />
@@ -593,7 +664,7 @@ export default function ClassDetails() {
                         color="text.secondary"
                         sx={{ mt: 0.4 }}
                       >
-                        {event.subject || "No details"}
+                        {event.subject || t("No details")}
                       </Typography>
                       <Typography variant="caption" color="text.disabled">
                         {formatDate(event.date)} ·{" "}
@@ -607,7 +678,7 @@ export default function ClassDetails() {
                         clickEvent.stopPropagation();
                         togglePinned(event);
                       }}
-                      title={event.is_pinned ? "Unpin event" : "Pin event"}
+                      title={t(event.is_pinned ? "Unpin event" : "Pin event")}
                     >
                       {event.is_pinned ? (
                         <PushPinIcon fontSize="small" />
@@ -628,7 +699,7 @@ export default function ClassDetails() {
                   size="small"
                   onClick={() => setVisibleEvents(details.events.length)}
                 >
-                  Show more
+                  {t("Show more")}
                 </Button>
               )}
             </Stack>
@@ -654,12 +725,15 @@ export default function ClassDetails() {
         }}
       >
         <DialogTitle fontWeight={800}>
-          {editingNote ? "Edit class note" : "Publish a class note"}
+          {t(editingNote ? "Edit class note" : "Publish a class note")}
         </DialogTitle>
         <DialogContent sx={{ overflowX: "hidden" }}>
-          <Stack spacing={2} sx={{ mt: 1, width: "100%", minWidth: 0 }}>
+          <Stack
+            spacing={2}
+            sx={{ mt: 1, width: "100%", minWidth: 0 }}
+          >
             <TextField
-              label="Title"
+              label={t("Title")}
               value={form.title}
               onChange={(event) =>
                 setForm({ ...form, title: event.target.value })
@@ -668,7 +742,7 @@ export default function ClassDetails() {
               autoFocus
             />
             <TextField
-              label="Note or announcement"
+              label={t("Note or announcement")}
               value={form.content}
               onChange={(event) =>
                 setForm({ ...form, content: event.target.value })
@@ -681,10 +755,12 @@ export default function ClassDetails() {
         </DialogContent>
         <DialogActions sx={{ p: 2.5 }}>
           <Button onClick={closeNoteDialog} disabled={saving}>
-            Cancel
+            {t("Cancel")}
           </Button>
           <Button variant="contained" onClick={saveNote} disabled={saving}>
-            {saving ? "Saving..." : editingNote ? "Save changes" : "Publish"}
+            {saving
+              ? `${t("Saving")}...`
+              : t(editingNote ? "Save changes" : "Publish")}
           </Button>
         </DialogActions>
       </Dialog>

@@ -33,8 +33,10 @@ import NotificationMenu from "../notifications/NotificationMenu";
 import { useGetStudentNotifications } from "../../api/studentActivities";
 import useRateLimitCountdown from "../../hooks/useRateLimitCountdown";
 import QrScanButton from "../QrScanButton";
+import { useDashboardLanguage } from "../../contexts/dashboardLanguage";
 
 export default function TeachBar() {
+  const { t } = useDashboardLanguage();
   const [anchorEl, setAnchorEl] = useState(null);
   const location = useLocation();
   const [activationError, setActivationError] = useState("");
@@ -67,7 +69,7 @@ export default function TeachBar() {
   };
   const [activationCode, setActivationCode] = useState("");
   const [activateLoading, setActivateLoading] = useState(false);
-  const bookActivationLimit = useRateLimitCountdown("book-activation");
+  const bookActivationLimit = useRateLimitCountdown("book-activation", t);
   const closeActivationDialog = () => {
     setOpenDialog(false);
     setActivationCode("");
@@ -78,7 +80,7 @@ export default function TeachBar() {
     e.preventDefault();
 
     if (!activationCode.trim()) {
-      setActivationError("Please enter a valid activation code");
+      setActivationError(t("Please enter a valid activation code"));
       return;
     }
 
@@ -101,7 +103,7 @@ export default function TeachBar() {
         return;
       }
 
-      const message = err.response?.data?.message || "Invalid activation code";
+      const message = err.response?.data?.message || t("Invalid activation code");
 
       setActivationError(message);
     } finally {
@@ -184,7 +186,7 @@ export default function TeachBar() {
                 transition: "0.2s",
               }}
             >
-              Home
+              {t("Home")}
             </Box>
 
             {/* Books */}
@@ -211,7 +213,7 @@ export default function TeachBar() {
                 fontSize: 14,
               }}
             >
-              Books
+              {t("Books")}
             </Box>
 
             {/* Help */}
@@ -238,7 +240,7 @@ export default function TeachBar() {
                 },
               }}
             >
-              Help
+              {t("Help")}
             </Box>
             <Box
               onClick={() => navigate(`/${role}/events`)}
@@ -263,7 +265,7 @@ export default function TeachBar() {
                 },
               }}
             >
-              Events
+              {t("Events")}
             </Box>
             <Box
               onClick={() => setOpenDialog(true)}
@@ -282,7 +284,7 @@ export default function TeachBar() {
                 fontSize: 14,
               }}
             >
-              Activate Code
+              {t("Activate Code")}
             </Box>
           </Box>
         </Box>
@@ -297,7 +299,11 @@ export default function TeachBar() {
             <SettingsIcon size={26} />
           </IconButton>
           {/* Notifications */}
-          <NotificationMenu items={notifications} />
+          <NotificationMenu
+            items={notifications}
+            title={t("Notifications")}
+            emptyText={t("No notifications")}
+          />
           {/* User */}
           <IconButton
             sx={{
@@ -347,7 +353,7 @@ export default function TeachBar() {
                 navigate("/");
               }}
             >
-              Logout
+              {t("Logout")}
             </MenuItem>
           </Menu>
         </Box>
@@ -395,7 +401,7 @@ export default function TeachBar() {
               mb: 1,
             }}
           >
-            Activate Code
+            {t("Activate Code")}
           </Typography>
 
           {/* DESCRIPTION */}
@@ -406,7 +412,7 @@ export default function TeachBar() {
               mb: 3,
             }}
           >
-            Enter your activation code to access your class or content.
+            {t("Enter your activation code to access your class or content.")}
           </Typography>
 
           {/* INPUT LABEL */}
@@ -415,10 +421,10 @@ export default function TeachBar() {
               fontSize: 13,
               fontWeight: 600,
               mb: 1,
-              textAlign: "left",
+              textAlign: "start",
             }}
           >
-            Activation Code *
+            {t("Activation Code *")}
           </Typography>
 
           {/* INPUT */}
@@ -429,7 +435,7 @@ export default function TeachBar() {
               setActivationCode(e.target.value);
               if (activationError) setActivationError("");
             }}
-            placeholder="Enter activation code"
+            placeholder={t("Enter activation code")}
             error={
               Boolean(activationError) ||
               (showActivationRateLimit && bookActivationLimit.isRateLimited)
@@ -483,7 +489,7 @@ export default function TeachBar() {
                 },
               }}
             >
-              Activate
+              {t("Activate")}
             </LoadingButton>
 
             <Button
@@ -502,7 +508,7 @@ export default function TeachBar() {
                 },
               }}
             >
-              Cancel
+              {t("Cancel")}
             </Button>
           </Box>
         </Dialog>
@@ -526,7 +532,7 @@ export default function TeachBar() {
                 setMobileOpen(false); // 👈 سكر الدراور
               }}
             >
-              Home
+              {t("Home")}
             </Button>
             <Button
               onClick={() => {
@@ -534,7 +540,7 @@ export default function TeachBar() {
                 setMobileOpen(false);
               }}
             >
-              Books
+              {t("Books")}
             </Button>
 
             <Button
@@ -543,7 +549,7 @@ export default function TeachBar() {
                 setMobileOpen(false);
               }}
             >
-              Help
+              {t("Help")}
             </Button>
 
             <Button
@@ -552,7 +558,7 @@ export default function TeachBar() {
                 setMobileOpen(false);
               }}
             >
-              Activate Code
+              {t("Activate Code")}
             </Button>
           </Box>
         </Drawer>

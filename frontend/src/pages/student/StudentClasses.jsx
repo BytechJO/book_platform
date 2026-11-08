@@ -20,8 +20,10 @@ import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 
 import { useGetStudentClasses } from "../../api/Classes";
 import CurveLoader from "../../components/CurveLoader";
+import { useDashboardLanguage } from "../../contexts/dashboardLanguage";
 
 export default function StudentClasses() {
+  const { t, language } = useDashboardLanguage();
   const navigate = useNavigate();
   const { classes, loading } = useGetStudentClasses();
   const [searchTerm, setSearchTerm] = useState("");
@@ -91,7 +93,7 @@ export default function StudentClasses() {
                 letterSpacing: "-0.5px",
               }}
             >
-              My Classes
+              {t("My Classes")}
             </Typography>
           </Box>
           <Typography
@@ -103,14 +105,14 @@ export default function StudentClasses() {
               fontWeight: 500,
             }}
           >
-            {classes?.length ?? 0} classes total
+            {t("{count} classes total", { count: classes?.length ?? 0 })}
           </Typography>
         </Box>
 
         {/* SEARCH */}
         <TextField
           size="small"
-          placeholder="Search..."
+          placeholder={t("Search...")}
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value);
@@ -177,7 +179,10 @@ export default function StudentClasses() {
               letterSpacing: "0.8px",
             }}
           >
-            Showing {paginatedClasses.length} of {filteredClasses.length}
+            {t("Showing {shown} of {total}", {
+              shown: paginatedClasses.length,
+              total: filteredClasses.length,
+            })}
           </Typography>
         </Box>
 
@@ -267,7 +272,17 @@ export default function StudentClasses() {
                   background: "rgba(99,102,241,0.12)",
                   border: "1px solid rgba(99,102,241,0.2)",
                   borderRadius: "8px",
-                  "& .MuiChip-icon": { ml: 0.5 },
+
+                  flexDirection: language === "ar" ? "row-reverse" : "row",
+                  gap: "5px",
+
+                  "& .MuiChip-icon": {
+                    margin: 0,
+                  },
+
+                  "& .MuiChip-label": {
+                    px: 0.5,
+                  },
                 }}
               />
 
@@ -283,13 +298,16 @@ export default function StudentClasses() {
                   },
                 }}
               >
-                <ArrowForwardIcon sx={{ fontSize: 18 }} />
+                <ArrowForwardIcon
+                  sx={{
+                    fontSize: 18,
+                    transform: language === "ar" ? "rotate(180deg)" : "none",
+                  }}
+                />
               </IconButton>
             </Box>
 
-            {idx < paginatedClasses.length - 1 && (
-              <Divider sx={{ mx: 2.5 }} />
-            )}
+            {idx < paginatedClasses.length - 1 && <Divider sx={{ mx: 2.5 }} />}
           </Box>
         ))}
 
@@ -300,10 +318,10 @@ export default function StudentClasses() {
             <Typography
               sx={{ fontSize: 14, fontWeight: 600, color: "#94a3b8" }}
             >
-              No classes found
+              {t("No classes found")}
             </Typography>
             <Typography sx={{ fontSize: 12, color: "#cbd5e1", mt: 0.3 }}>
-              Try adjusting your search
+              {t("Try adjusting your search")}
             </Typography>
           </Box>
         )}

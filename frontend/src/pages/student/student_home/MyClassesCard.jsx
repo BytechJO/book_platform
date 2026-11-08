@@ -10,7 +10,9 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CurveLoader from "../../../components/CurveLoader";
 import PersonIcon from "@mui/icons-material/Person";
 import { useNavigate } from "react-router-dom";
+import { useDashboardLanguage } from "../../../contexts/dashboardLanguage";
 export default function MyClassesCard({ classes, loading }) {
+  const { t } = useDashboardLanguage();
   const navigate = useNavigate();
 
   const progressValues = [72, 65, 80, 60, 90];
@@ -20,7 +22,7 @@ export default function MyClassesCard({ classes, loading }) {
   }
   return (
     <Box sx={cardStyle}>
-      <Typography sx={titleStyle}>My Classes</Typography>
+      <Typography sx={titleStyle}>{t("My Classes")}</Typography>
 
       {classes?.length === 0 ? (
         <Box
@@ -43,7 +45,7 @@ export default function MyClassesCard({ classes, loading }) {
               fontWeight: 600,
             }}
           >
-            No Classes Yet
+            {t("No Classes Yet")}
           </Typography>
 
           <Typography
@@ -52,7 +54,7 @@ export default function MyClassesCard({ classes, loading }) {
               mt: 0.5,
             }}
           >
-            Your classes will appear here
+            {t("Your classes will appear here")}
           </Typography>
         </Box>
       ) : (
@@ -132,7 +134,7 @@ export default function MyClassesCard({ classes, loading }) {
               },
             }}
           >
-            View all classes
+            {t("View all classes")}
           </Typography>
 
           <ArrowForwardIosIcon
@@ -140,6 +142,11 @@ export default function MyClassesCard({ classes, loading }) {
               fontSize: 12,
               color: "primary.main",
               ml: 0.5,
+              transform: "rotate(0deg)",
+
+              '[dir="rtl"] &': {
+                transform: "rotate(180deg)",
+              },
             }}
           />
         </Box>

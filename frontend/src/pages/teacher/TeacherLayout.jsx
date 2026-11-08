@@ -3,12 +3,17 @@ import { Box } from "@mui/material";
 import TeachBar from "../../components/layout/TeachBar";
 import useSessionCheck from "../../hooks/useSessionCheck";
 import { TeacherThemeProvider } from "../../contexts/TeacherThemeContext";
+import { DashboardLanguageProvider } from "../../contexts/DashboardLanguageContext";
+import { useDashboardLanguage } from "../../contexts/dashboardLanguage";
 
-export default function TeacherLayout() {
-  useSessionCheck();
+function TeacherDashboardContent() {
+  const { direction, language } = useDashboardLanguage();
+
   return (
     <TeacherThemeProvider>
       <Box
+        dir={direction}
+        lang={language}
         sx={{
           width: "100%",
           minHeight: "100vh",
@@ -20,17 +25,19 @@ export default function TeacherLayout() {
         }}
       >
         <TeachBar />
-
-        <Box
-          sx={{
-            width: "100%",
-            flex: 1,
-            pt: "90px",
-          }}
-        >
+        <Box sx={{ width: "100%", flex: 1, pt: "90px" }}>
           <Outlet />
         </Box>
       </Box>
     </TeacherThemeProvider>
+  );
+}
+
+export default function TeacherLayout() {
+  useSessionCheck();
+  return (
+    <DashboardLanguageProvider role="teacher">
+      <TeacherDashboardContent />
+    </DashboardLanguageProvider>
   );
 }

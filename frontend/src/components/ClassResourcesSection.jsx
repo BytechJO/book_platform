@@ -26,6 +26,7 @@ import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
 import OndemandVideoOutlinedIcon from "@mui/icons-material/OndemandVideoOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { useDashboardLanguage } from "../contexts/dashboardLanguage";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import PictureAsPdfOutlinedIcon from "@mui/icons-material/PictureAsPdfOutlined";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
@@ -174,6 +175,7 @@ export default function ClassResourcesSection({
   resources = [],
   editable = false,
 }) {
+  const { t } = useDashboardLanguage();
   const [visibleCount, setVisibleCount] = useState(5);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingResource, setEditingResource] = useState(null);
@@ -295,12 +297,19 @@ export default function ClassResourcesSection({
           borderRadius: 3,
         }}
       >
-        <Stack direction="row" alignItems="center" spacing={1} mb={2}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          sx={{
+            gap: 1,
+          }}
+          mb={2}
+        >
           <AttachFileIcon color="primary" />
           <Box sx={{ flex: 1 }}>
-            <Typography fontWeight={800}>Class resources</Typography>
+            <Typography fontWeight={800}>{t("Class resources")}</Typography>
             <Typography variant="caption" color="text.secondary">
-              Files, worksheets, videos and useful links
+              {t("Files, worksheets, videos and useful links")}
             </Typography>
           </Box>
           <Chip size="small" label={resources.length} />
@@ -310,7 +319,7 @@ export default function ClassResourcesSection({
               startIcon={<AddIcon />}
               onClick={() => openDialog()}
             >
-              Add resource
+              {t("Add resource")}
             </Button>
           )}
         </Stack>
@@ -346,7 +355,13 @@ export default function ClassResourcesSection({
                   minWidth: 0,
                 }}
               >
-                <Stack direction="row" spacing={1.2} alignItems="flex-start">
+                <Stack
+                  direction="row"
+                  sx={{
+                    gap: 1,
+                  }}
+                  alignItems="flex-start"
+                >
                   <Box
                     sx={{
                       width: 38,
@@ -363,13 +378,19 @@ export default function ClassResourcesSection({
                     {details.icon}
                   </Box>
                   <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Stack direction="row" spacing={0.7} alignItems="center">
+                    <Stack
+                      direction="row"
+                      sx={{
+                        gap: 0.5,
+                      }}
+                      alignItems="center"
+                    >
                       <Typography variant="body2" fontWeight={800} noWrap>
                         {resource.title}
                       </Typography>
                       <Chip
                         size="small"
-                        label={details.label}
+                        label={t(details.label)}
                         variant="outlined"
                       />
                     </Stack>
@@ -410,8 +431,8 @@ export default function ClassResourcesSection({
                       disabled={downloadingId === resource.id}
                     >
                       {downloadingId === resource.id
-                        ? "Downloading..."
-                        : "Download"}
+                        ? `${t("Downloading")}...`
+                        : t("Download")}
                     </Button>
                   ) : (
                     <Button
@@ -424,8 +445,8 @@ export default function ClassResourcesSection({
                       endIcon={<OpenInNewIcon />}
                     >
                       {resource.resource_type === "video"
-                        ? "Watch"
-                        : "Open link"}
+                        ? t("Watch")
+                        : t("Open link")}
                     </Button>
                   )}
                   {editable && (
@@ -458,7 +479,7 @@ export default function ClassResourcesSection({
           <Box sx={{ py: 5, textAlign: "center", color: "text.secondary" }}>
             <AttachFileIcon sx={{ fontSize: 34, color: "#cbd5e1" }} />
             <Typography variant="body2" sx={{ mt: 1 }}>
-              No resources have been shared yet.
+              {t("No resources have been shared yet.")}
             </Typography>
           </Box>
         )}
@@ -468,7 +489,7 @@ export default function ClassResourcesSection({
               size="small"
               onClick={() => setVisibleCount(resources.length)}
             >
-              Show more
+              {t("Show more")}
             </Button>
           </Box>
         )}
@@ -477,14 +498,14 @@ export default function ClassResourcesSection({
       {editable && (
         <Dialog open={dialogOpen} onClose={closeDialog} fullWidth maxWidth="sm">
           <DialogTitle fontWeight={800}>
-            {editingResource ? "Edit class resource" : "Add class resource"}
+            {t(editingResource ? "Edit class resource" : "Add class resource")}
           </DialogTitle>
           <DialogContent>
             <Stack spacing={2} sx={{ mt: 1 }}>
               <FormControl fullWidth>
-                <InputLabel>Resource type</InputLabel>
+                <InputLabel>{t("Resource type")}</InputLabel>
                 <Select
-                  label="Resource type"
+                  label={t("Resource type")}
                   value={form.resource_type}
                   onChange={(event) =>
                     setForm({
@@ -495,14 +516,14 @@ export default function ClassResourcesSection({
                     })
                   }
                 >
-                  <MenuItem value="file">File</MenuItem>
-                  <MenuItem value="worksheet">Worksheet</MenuItem>
-                  <MenuItem value="video">Video link</MenuItem>
-                  <MenuItem value="link">External link</MenuItem>
+                  <MenuItem value="file">{t("File")}</MenuItem>
+                  <MenuItem value="worksheet">{t("Worksheet")}</MenuItem>
+                  <MenuItem value="video">{t("Video link")}</MenuItem>
+                  <MenuItem value="link">{t("External link")}</MenuItem>
                 </Select>
               </FormControl>
               <TextField
-                label="Title"
+                label={t("Title")}
                 value={form.title}
                 onChange={(event) =>
                   setForm({ ...form, title: event.target.value })
@@ -510,7 +531,7 @@ export default function ClassResourcesSection({
                 inputProps={{ maxLength: 255 }}
               />
               <TextField
-                label="Description (optional)"
+                label={t("Description (optional)")}
                 value={form.description}
                 onChange={(event) =>
                   setForm({ ...form, description: event.target.value })
@@ -525,7 +546,7 @@ export default function ClassResourcesSection({
                     variant="outlined"
                     startIcon={<AttachFileIcon />}
                   >
-                    Choose file
+                    {t("Choose file")}
                     <input
                       hidden
                       type="file"
@@ -545,15 +566,15 @@ export default function ClassResourcesSection({
                   >
                     {form.file?.name ||
                       editingResource?.original_file_name ||
-                      "Maximum size: 20MB"}
+                      t("Maximum size: 20MB")}
                   </Typography>
                 </Box>
               ) : (
                 <TextField
                   label={
                     form.resource_type === "video"
-                      ? "Video URL"
-                      : "Resource URL"
+                      ? t("Video URL")
+                      : t("Resource URL")
                   }
                   value={form.resource_url}
                   onChange={(event) =>
@@ -567,7 +588,7 @@ export default function ClassResourcesSection({
           </DialogContent>
           <DialogActions sx={{ p: 2.5 }}>
             <Button onClick={closeDialog} disabled={saving}>
-              Cancel
+              {t("Cancel")}
             </Button>
             <Button
               variant="contained"
@@ -575,10 +596,10 @@ export default function ClassResourcesSection({
               disabled={saving}
             >
               {saving
-                ? "Saving..."
+                ? `${t("Saving")}...`
                 : editingResource
-                  ? "Save changes"
-                  : "Publish"}
+                  ? t("Save changes")
+                  : t("Publish")}
             </Button>
           </DialogActions>
         </Dialog>
@@ -599,7 +620,9 @@ export default function ClassResourcesSection({
           },
         }}
       >
-        <DialogTitle sx={{ fontWeight: 800 }}>Delete resource?</DialogTitle>
+        <DialogTitle sx={{ fontWeight: 800 }}>
+          {t("Delete resource?")}
+        </DialogTitle>
 
         <DialogContent>
           <Typography color="text.secondary" variant="body2">
@@ -624,7 +647,7 @@ export default function ClassResourcesSection({
               setResourceToDelete(null);
             }}
           >
-            Cancel
+            {t("Cancel")}
           </Button>
 
           <Button
@@ -634,7 +657,7 @@ export default function ClassResourcesSection({
             onClick={removeResource}
             startIcon={<DeleteOutlineIcon />}
           >
-            {deleting ? "Deleting..." : "Delete resource"}
+            {deleting ? `${t("Deleting")}...` : t("Delete resource")}
           </Button>
         </DialogActions>
       </Dialog>

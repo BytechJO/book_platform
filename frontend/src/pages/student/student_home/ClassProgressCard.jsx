@@ -8,9 +8,11 @@ import {
   CartesianGrid,
 } from "recharts";
 import { useTheme } from "@mui/material/styles";
+import { useDashboardLanguage } from "../../../contexts/dashboardLanguage";
 
 export default function ClassProgressCard() {
   const theme = useTheme();
+  const { t } = useDashboardLanguage();
   const data = [
     { name: "5A", value: 72 },
     { name: "5B", value: 65 },
@@ -24,30 +26,50 @@ export default function ClassProgressCard() {
   return (
     <Box sx={cardStyle}>
       <Box sx={header}>
-        <Typography sx={title}>Class Progress Overview</Typography>
+        <Typography sx={title}>{t("Class Progress Overview")}</Typography>
       </Box>
 
-      <Box sx={{ width: "100%", height: 140 }}>
-        <ResponsiveContainer>
-          <BarChart data={data}>
-            <CartesianGrid
-              strokeDasharray="3 3" // 👈 يخليها dashed زي الصورة
-              vertical={false} // 👈 يلغي الخطوط العمودية
-            />
+      <Box
+        dir="ltr"
+        sx={{
+          width: "100%",
+          height: 140,
+          direction: "ltr",
+        }}
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={data}
+            margin={{
+              top: 5,
+              right: 10,
+              left: 10,
+              bottom: 0,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+
             <XAxis
               dataKey="name"
-              tick={{ fontSize: 12, fill: theme.palette.text.secondary }}
-              axisLine={true}
-              tickLine={true}
+              tick={{
+                fontSize: 12,
+                fill: theme.palette.text.secondary,
+              }}
+              axisLine
+              tickLine
             />
 
             <YAxis
               domain={[0, 100]}
               ticks={[0, 50, 100]}
               tickFormatter={(value) => `${value}%`}
-              tick={{ fontSize: 12, fill: theme.palette.text.secondary }}
-              axisLine={true}
-              tickLine={true}
+              tick={{
+                fontSize: 12,
+                fill: theme.palette.text.secondary,
+              }}
+              width={45}
+              axisLine
+              tickLine
             />
 
             <Bar

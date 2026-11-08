@@ -31,3 +31,18 @@ export function useAuthMe() {
 
   return { ...memoizedValue, refetch };
 }
+
+export async function updateUserPreferences(preferences) {
+  const { data } = await axiosInstance.patch(
+    ENDPOINTS.AUTH.UPDATE_PREFERENCES,
+    preferences,
+  );
+
+  await mutate(
+    ENDPOINTS.AUTH.ME,
+    (currentUser) => currentUser ? { ...currentUser, ...data } : currentUser,
+    false,
+  );
+
+  return data;
+}

@@ -21,8 +21,10 @@ import { useGetMyBooks } from "../../../api/user_books";
 import { useNavigate } from "react-router-dom";
 import CurveLoader from "../../../components/CurveLoader";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import { useDashboardLanguage } from "../../../contexts/dashboardLanguage";
 
 export default function StudentBooks() {
+  const { t } = useDashboardLanguage();
   const { books, loading } = useGetMyBooks();
   const navigate = useNavigate();
   const isArabic = (text) => /[\u0600-\u06FF]/.test(text || "");
@@ -139,12 +141,12 @@ export default function StudentBooks() {
             }}
           >
             <Typography variant="caption" color="text.secondary">
-              Search:
+              {t("Search")}:
             </Typography>
             <TextField
               fullWidth
               size="small"
-              placeholder="Search"
+              placeholder={t("Search")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               InputProps={{
@@ -160,17 +162,17 @@ export default function StudentBooks() {
           {/* Sort */}
           <Box>
             <Typography variant="caption" color="text.secondary">
-              Sort by:
+              {t("Sort by")}:
             </Typography>
             <FormControl fullWidth size="small">
               <Select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
               >
-                <MenuItem value="latest">Latest</MenuItem>
-                <MenuItem value="oldest">Oldest</MenuItem>
-                <MenuItem value="az">Title (A-Z)</MenuItem>
-                <MenuItem value="za">Title (Z-A)</MenuItem>
+                <MenuItem value="latest">{t("Latest")}</MenuItem>
+                <MenuItem value="oldest">{t("Oldest")}</MenuItem>
+                <MenuItem value="az">{t("Title (A-Z)")}</MenuItem>
+                <MenuItem value="za">{t("Title (Z-A)")}</MenuItem>
               </Select>
             </FormControl>
           </Box>
@@ -178,16 +180,16 @@ export default function StudentBooks() {
           {/* Status */}
           <Box>
             <Typography variant="caption" color="text.secondary">
-              Status:
+              {t("Status")}:
             </Typography>
             <FormControl fullWidth size="small">
               <Select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
               >
-                <MenuItem value="all">All</MenuItem>
-                <MenuItem value="active">Active</MenuItem>
-                <MenuItem value="inactive">Expired</MenuItem>
+                <MenuItem value="all">{t("All")}</MenuItem>
+                <MenuItem value="active">{t("Active")}</MenuItem>
+                <MenuItem value="inactive">{t("Expired")}</MenuItem>
               </Select>
             </FormControl>
           </Box>
@@ -264,7 +266,7 @@ export default function StudentBooks() {
                         fontWeight: 700,
                       }}
                     >
-                      Expired
+                      {t("Expired")}
                     </Box>
                   )}
                   <Box
@@ -319,7 +321,7 @@ export default function StudentBooks() {
                               direction: isRTL ? "rtl" : "ltr",
                             }}
                           >
-                            {book.description || "No description available."}
+                            {book.description || t("No description available.")}
                           </Typography>
                         </Box>
                       </Box>
@@ -408,7 +410,7 @@ export default function StudentBooks() {
                                 variant="caption"
                                 sx={{ color: "text.secondary", fontSize: 10 }}
                               >
-                                Avg. Progress
+                                {t("Avg. Progress")}
                               </Typography>
                             </Box>
                           </Box>
@@ -433,11 +435,11 @@ export default function StudentBooks() {
                 variant="h6"
                 sx={{ color: "primary.main", fontWeight: 600, mb: 1 }}
               >
-                No books found
+                {t("No books found")}
               </Typography>
 
               <Typography variant="body2" color="text.secondary">
-                Try changing your search or filters.
+                {t("Try changing your search or filters.")}
               </Typography>
             </Box>
           )}
@@ -453,9 +455,11 @@ export default function StudentBooks() {
           >
             {/* 🔹 اليسار */}
             <Typography variant="body2" color="text.secondary">
-              Showing {(page - 1) * booksPerPage + 1} to{" "}
-              {Math.min(page * booksPerPage, sortedBooks.length)} of{" "}
-              {sortedBooks.length} books
+              {t("Showing {from} to {to} of {total} books", {
+                from: (page - 1) * booksPerPage + 1,
+                to: Math.min(page * booksPerPage, sortedBooks.length),
+                total: sortedBooks.length,
+              })}
             </Typography>
 
             {/* 🔹 النص (Pagination بالنص) */}

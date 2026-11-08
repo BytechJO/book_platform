@@ -88,7 +88,8 @@ const register = async (req, res) => {
     const insertedUser = await client.query(
       `INSERT INTO users (email, password, full_name, role)
        VALUES ($1, $2, $3, $4)
-       RETURNING id, email, full_name, role`,
+       RETURNING id, email, full_name, role,
+                 preferred_language, preferred_theme`,
       [email, passwordHash, full_name, role],
     );
 
@@ -203,6 +204,8 @@ const login = async (req, res) => {
         full_name: user.full_name,
         role: user.role,
         status: user.status,
+        preferred_language: user.preferred_language,
+        preferred_theme: user.preferred_theme,
       },
     });
   } catch (error) {
@@ -216,6 +219,7 @@ const me = async (req, res) => {
 
     const result = await pool.query(
       `SELECT id, email, full_name, role, status, avatar_url,
+              preferred_language, preferred_theme,
               created_at, updated_at
        FROM users
        WHERE id = $1`,
@@ -305,7 +309,8 @@ const updateProfile = async (req, res) => {
         avatar_public_id = COALESCE($4, avatar_public_id),
         updated_at = NOW()
       WHERE id = $5
-      RETURNING id,email,full_name,role,status,avatar_url
+       RETURNING id,email,full_name,role,status,avatar_url,
+                 preferred_language,preferred_theme
       `,
       [full_name, email, avatarUrl, avatarPublicId, userId],
     );
@@ -322,4 +327,50 @@ const updateProfile = async (req, res) => {
   }
 };
 
-module.exports = { register, login, me, updateProfile };
+const updatePreferences = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { preferred_language, preferred_theme } = req.body;
+
+    if (preferred_language === undefined && preferred_theme === undefined) {
+      return res.status(400).json({
+        message: "At least one preference is required",
+      });
+    }
+
+    if (
+      preferred_language !== undefined &&
+      !["en", "ar"].includes(preferred_language)
+    ) {
+      return res.status(400).json({ message: "Invalid preferred language" });
+    }
+
+    if (
+      preferred_theme !== undefined &&
+      !["light", "dark"].includes(preferred_theme)
+    ) {
+      return res.status(400).json({ message: "Invalid preferred theme" });
+    }
+
+    const result = await pool.query(
+      `UPDATE users
+       SET preferred_language = COALESCE($1, preferred_language),
+           preferred_theme = COALESCE($2, preferred_theme),
+           updated_at = NOW()
+       WHERE id = $3 AND is_deleted = FALSE
+       RETURNING preferred_language, preferred_theme`,
+      [preferred_language ?? null, preferred_theme ?? null, userId],
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Update preferences error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = { register, login, me, updateProfile, updatePreferences };

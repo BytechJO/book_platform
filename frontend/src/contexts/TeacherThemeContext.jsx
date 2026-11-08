@@ -1,24 +1,46 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { CssBaseline } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { TeacherThemeContext } from "./teacherTheme";
+import { useDashboardLanguage } from "./dashboardLanguage";
+import { updateUserPreferences, useAuthMe } from "../api";
 
 const STORAGE_KEY = "teacher-theme-mode";
 
 export function TeacherThemeProvider({ children }) {
-  const [mode, setMode] = useState(() =>
-    localStorage.getItem(STORAGE_KEY) === "dark" ? "dark" : "light",
-  );
+  const { direction } = useDashboardLanguage();
+  const { user } = useAuthMe();
+  const cachedMode = localStorage.getItem(STORAGE_KEY) === "dark" ? "dark" : "light";
+  const accountMode = ["light", "dark"].includes(user?.preferred_theme)
+    ? user.preferred_theme
+    : cachedMode;
+  const [pendingMode, setPendingMode] = useState(null);
+  const preferenceRequest = useRef(0);
+  const mode = pendingMode ?? accountMode;
 
-  const changeMode = (nextMode) => {
+  const changeMode = useCallback(async (nextMode) => {
     const safeMode = nextMode === "dark" ? "dark" : "light";
-    setMode(safeMode);
+    const previousMode = mode;
+    const requestId = ++preferenceRequest.current;
+    setPendingMode(safeMode);
     localStorage.setItem(STORAGE_KEY, safeMode);
-  };
+
+    try {
+      await updateUserPreferences({ preferred_theme: safeMode });
+      if (requestId === preferenceRequest.current) setPendingMode(null);
+    } catch (error) {
+      if (requestId === preferenceRequest.current) {
+        setPendingMode(null);
+        localStorage.setItem(STORAGE_KEY, previousMode);
+      }
+      console.error("Failed to update theme preference:", error);
+    }
+  }, [mode]);
 
   const theme = useMemo(
     () =>
       createTheme({
+        direction,
         palette: {
           mode,
           primary: { main: mode === "dark" ? "#8ab4f8" : "#1A4D96" },
@@ -38,14 +60,20 @@ export function TeacherThemeProvider({ children }) {
             styleOverrides: { root: { backgroundImage: "none" } },
           },
           MuiDialog: {
-            styleOverrides: { paper: { backgroundImage: "none" } },
+            styleOverrides: { paper: { backgroundImage: "none", direction } },
+          },
+          MuiPopover: {
+            styleOverrides: { paper: { direction } },
+          },
+          MuiDrawer: {
+            styleOverrides: { paper: { direction } },
           },
         },
       }),
-    [mode],
+    [direction, mode],
   );
 
-  const value = useMemo(() => ({ mode, changeMode }), [mode]);
+  const value = useMemo(() => ({ mode, changeMode }), [changeMode, mode]);
 
   return (
     <TeacherThemeContext.Provider value={value}>

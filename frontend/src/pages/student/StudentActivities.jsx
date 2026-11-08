@@ -21,10 +21,12 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useGetStudentActivities } from "../../api/studentActivities";
 import CurveLoader from "../../components/CurveLoader";
+import { useDashboardLanguage } from "../../contexts/dashboardLanguage";
 
 dayjs.extend(relativeTime);
 
 export default function StudentActivities() {
+  const { t } = useDashboardLanguage();
   const { activities, loading } = useGetStudentActivities();
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -56,7 +58,7 @@ export default function StudentActivities() {
           color: "#2563eb",
           bg: "rgba(37,99,235,0.12)",
           border: "rgba(37,99,235,0.25)",
-          label: "Event",
+          label: t("Event"),
           dot: "#2563eb",
         };
       case "class":
@@ -65,7 +67,7 @@ export default function StudentActivities() {
           color: "#7c3aed",
           bg: "rgba(124,58,237,0.12)",
           border: "rgba(124,58,237,0.25)",
-          label: "Class",
+          label: t("Class"),
           dot: "#7c3aed",
         };
       case "book":
@@ -74,7 +76,7 @@ export default function StudentActivities() {
           color: "#059669",
           bg: "rgba(5,150,105,0.12)",
           border: "rgba(5,150,105,0.25)",
-          label: "Book",
+          label: t("Book"),
           dot: "#059669",
         };
       default:
@@ -83,7 +85,7 @@ export default function StudentActivities() {
           color: "#64748b",
           bg: "rgba(100,116,139,0.12)",
           border: "rgba(100,116,139,0.25)",
-          label: "Activity",
+          label: t("Activity"),
           dot: "#64748b",
         };
     }
@@ -153,19 +155,19 @@ export default function StudentActivities() {
                 letterSpacing: "-0.3px",
               }}
             >
-              Activities
+              {t("Activities")}
             </Typography>
             <Typography
               sx={{ fontSize: 11.5, color: "#94a3b8", fontWeight: 500 }}
             >
-              {activities?.length ?? 0} records
+              {t("{count} records", { count: activities?.length ?? 0 })}
             </Typography>
           </Box>
         </Box>
 
         <TextField
           size="small"
-          placeholder="Search..."
+          placeholder={t("Search...")}
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value);
@@ -405,10 +407,10 @@ export default function StudentActivities() {
             <Typography
               sx={{ fontSize: 14, fontWeight: 600, color: "#94a3b8" }}
             >
-              No activities found
+              {t("No activities found")}
             </Typography>
             <Typography sx={{ fontSize: 12, color: "#cbd5e1", mt: 0.3 }}>
-              Try adjusting your search
+              {t("Try adjusting your search")}
             </Typography>
           </Box>
         )}
