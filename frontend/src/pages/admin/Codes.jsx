@@ -276,7 +276,8 @@ export default function Codes() {
             gap: 2,
             mb: 2.5,
             pb: 2,
-            borderBottom: "2px solid #e3ecf8",
+            borderBottom: "2px solid",
+            borderColor: "divider",
           }}
         >
           <Box>
@@ -284,13 +285,13 @@ export default function Codes() {
               sx={{
                 fontSize: { xs: 26, md: 34 },
                 fontWeight: 700,
-                color: "#2B5A9E",
+                color: "primary.main",
               }}
             >
               Codes
             </Typography>
 
-            <Typography sx={{ fontSize: 14, color: "#7a869a" }}>
+            <Typography sx={{ fontSize: 14, color: "text.secondary" }}>
               Manage and explore your codes
             </Typography>
           </Box>
@@ -306,7 +307,7 @@ export default function Codes() {
               startIcon={<QrCode2Icon />}
               disabled={!filtered.length || qrExporting}
               onClick={handleExportQrPdf}
-              sx={{ height: 36, px: 2, borderRadius: "6px", textTransform: "none", fontWeight: 500, borderColor: "#2B5A9E", color: "#2B5A9E" }}
+              sx={{ height: 36, px: 2, borderRadius: "6px", textTransform: "none", fontWeight: 500 }}
             >
               {qrExporting ? "Preparing..." : "QR PDF"}
             </Button>
@@ -320,13 +321,12 @@ export default function Codes() {
                 textTransform: "none",
                 fontWeight: 500,
                 fontSize: { xs: 13, md: 15 },
-                borderColor: "#2B5A9E",
                 transition: "all 0.4s ease",
-                color: "#2B5A9E",
+                color: "primary.main",
                 "&:hover": {
-                  backgroundColor: "#2B5A9E", // 👈 يرجع أزرق
-                  color: "#fff", // 👈 النص أبيض
-                  borderColor: "#2B5A9E",
+                  backgroundColor: "primary.main",
+                  color: "primary.contrastText",
+                  borderColor: "primary.main",
                 },
               }}
               onClick={() => fileInputRef.current.click()}
@@ -351,14 +351,13 @@ export default function Codes() {
                 textTransform: "none",
                 fontWeight: 500,
                 fontSize: { xs: 13, md: 15 },
-                borderColor: "#2B5A9E",
-                color: "#2B5A9E",
+                color: "primary.main",
                 transition: "all 0.4s ease",
 
                 "&:hover": {
-                  backgroundColor: "#2B5A9E", // 👈 يرجع أزرق
-                  color: "#fff", // 👈 النص أبيض
-                  borderColor: "#2B5A9E",
+                  backgroundColor: "primary.main",
+                  color: "primary.contrastText",
+                  borderColor: "primary.main",
                 },
               }}
               onClick={() => {
@@ -378,13 +377,12 @@ export default function Codes() {
                 textTransform: "none",
                 fontWeight: 500,
                 fontSize: { xs: 13, md: 15 },
-                borderColor: "#2B5A9E",
-                color: "#2B5A9E",
+                color: "primary.main",
                 transition: "all 0.4s ease",
                 "&:hover": {
-                  backgroundColor: "#2B5A9E", // 👈 يرجع أزرق
-                  color: "#fff", // 👈 النص أبيض
-                  borderColor: "#2B5A9E",
+                  backgroundColor: "primary.main",
+                  color: "primary.contrastText",
+                  borderColor: "primary.main",
                 },
               }}
               onClick={handleExportExcel}
@@ -415,7 +413,7 @@ export default function Codes() {
           <Paper
             elevation={0}
             sx={{
-              backgroundColor: "#fff",
+              backgroundColor: "background.paper",
               borderRadius: "12px",
               p: 2,
               boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
@@ -441,40 +439,40 @@ export default function Codes() {
                 }}
               >
                 <TableHead>
-                  <TableRow sx={{ borderBottom: "2px solid #e0e0e0" }}>
-                    <TableCell sx={{ color: "#7a869a", fontSize: 16 }}>
+                  <TableRow sx={{ borderBottom: "2px solid", borderColor: "divider" }}>
+                    <TableCell sx={{ color: "text.secondary", fontSize: 16 }}>
                       Book
                     </TableCell>
-                    <TableCell sx={{ color: "#7a869a", fontSize: 16 }}>
+                    <TableCell sx={{ color: "text.secondary", fontSize: 16 }}>
                       Code
                     </TableCell>
                     <TableCell
                       align="center"
-                      sx={{ color: "#7a869a", fontSize: 16 }}
+                      sx={{ color: "text.secondary", fontSize: 16 }}
                     >
                       Validity (Months)
                     </TableCell>
                     <TableCell
                       align="center"
-                      sx={{ color: "#7a869a", fontSize: 16 }}
+                      sx={{ color: "text.secondary", fontSize: 16 }}
                     >
                       Role
                     </TableCell>
                     <TableCell
                       align="center"
-                      sx={{ color: "#7a869a", fontSize: 16 }}
+                      sx={{ color: "text.secondary", fontSize: 16 }}
                     >
                       Status
                     </TableCell>
                     <TableCell
                       align="center"
-                      sx={{ color: "#7a869a", fontSize: 16 }}
+                      sx={{ color: "text.secondary", fontSize: 16 }}
                     >
                       Created
                     </TableCell>
                     <TableCell
                       align="center"
-                      sx={{ color: "#7a869a", fontSize: 16 }}
+                      sx={{ color: "text.secondary", fontSize: 16 }}
                     >
                       Used
                     </TableCell>
@@ -505,12 +503,12 @@ export default function Codes() {
                   {paginatedCodes.map((c) => (
                     <TableRow
                       key={c.id}
-                      sx={{ "&:hover": { backgroundColor: "#f9fafc" } }}
+                      sx={{ "&:hover": { backgroundColor: "action.hover" } }}
                     >
-                      <TableCell sx={{ fontSize: 16, color: "#333333" }}>
+                      <TableCell sx={{ fontSize: 16, color: "text.primary" }}>
                         {c.book_title || "—"}
                       </TableCell>
-                      <TableCell sx={{ fontSize: 16, color: "#333333" }}>
+                      <TableCell sx={{ fontSize: 16, color: "text.primary" }}>
                         {c.code}
                       </TableCell>
                       <TableCell
@@ -526,16 +524,16 @@ export default function Codes() {
                         <Typography
                           sx={{
                             fontWeight: 500,
-                            color: c.is_used ? "#2e7d32" : "#d32f2f",
+                            color: c.is_used ? "success.main" : "error.main",
                           }}
                         >
                           {c.is_used ? "Used" : "Unused"}
                         </Typography>
                       </TableCell>
-                      <TableCell align="center" sx={{ color: "#7a869a" }}>
+                      <TableCell align="center" sx={{ color: "text.secondary" }}>
                         {formatDate(c.created_at)}
                       </TableCell>
-                      <TableCell align="center" sx={{ color: "#7a869a" }}>
+                      <TableCell align="center" sx={{ color: "text.secondary" }}>
                         {c.used_at ? formatDate(c.used_at) : "—"}
                       </TableCell>
                       <TableCell align="center">
@@ -577,11 +575,12 @@ export default function Codes() {
                 alignItems: "center",
                 mt: 2,
                 pt: 2,
-                borderTop: "1px solid #eee",
+                borderTop: "1px solid",
+                borderColor: "divider",
               }}
             >
               {/* LEFT */}
-              <Typography sx={{ fontSize: 12, color: "#777" }}>
+              <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
                 Showing {(page - 1) * perPage + 1} to{" "}
                 {Math.min(page * perPage, filtered.length)} of {filtered.length}{" "}
                 codes
@@ -608,9 +607,9 @@ export default function Codes() {
                       onClick={() => setPage(p)}
                       sx={{
                         minWidth: 32,
-                        backgroundColor: p === page ? "#2B5A9E" : "transparent",
-                        color: p === page ? "#fff" : "#2B5A9E",
-                        borderColor: "#dfe3e8",
+                        backgroundColor: p === page ? "primary.main" : "transparent",
+                        color: p === page ? "primary.contrastText" : "primary.main",
+                        borderColor: "divider",
                       }}
                     >
                       {p}
@@ -685,7 +684,7 @@ export default function Codes() {
                       variant="subtitle1"
                       sx={{
                         fontWeight: 600,
-                        color: "#2d5aa7",
+                        color: "primary.main",
                         flex: 1,
                         overflow: "hidden",
                         textOverflow: "ellipsis",
@@ -699,7 +698,7 @@ export default function Codes() {
                       size="small"
                       sx={{
                         color: "#fff",
-                        backgroundColor: c.is_used ? "#2e7d32" : "#d32f2f",
+                        backgroundColor: c.is_used ? "success.main" : "error.main",
                         ml: 1,
                       }}
                     />
@@ -715,7 +714,7 @@ export default function Codes() {
                       display: "grid",
                       gridTemplateColumns: "1fr 1fr",
                       gap: 1,
-                      bgcolor: "#f9fafc",
+                      bgcolor: "action.hover",
                       p: 1.5,
                       borderRadius: 1,
                     }}
@@ -726,7 +725,7 @@ export default function Codes() {
                       </Typography>
                       <Typography
                         variant="body2"
-                        sx={{ color: "#0073D8", fontWeight: 500 }}
+                        sx={{ color: "primary.main", fontWeight: 500 }}
                       >
                         {c.validity_months} Mo
                       </Typography>

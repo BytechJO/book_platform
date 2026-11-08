@@ -107,16 +107,16 @@ export default function ViewBook() {
           <IconButton
             onClick={() => navigate(-1)}
             sx={{
-              backgroundColor: "#f4f6f8",
+              backgroundColor: "action.hover",
               borderRadius: "8px",
             }}
           >
-            <ArrowBackIcon sx={{ color: "#2B5A9E" }} />{" "}
+            <ArrowBackIcon sx={{ color: "primary.main" }} />{" "}
           </IconButton>
 
-          <Typography sx={{ color: "#7a869a", fontSize: 14 }}>Books</Typography>
+          <Typography sx={{ color: "text.secondary", fontSize: 14 }}>Books</Typography>
 
-          <Typography sx={{ color: "#7a869a" }}>{">"}</Typography>
+          <Typography sx={{ color: "text.secondary" }}>{">"}</Typography>
 
           <Typography sx={{ fontWeight: 500, fontSize: 14 }}>
             Book Details
@@ -161,12 +161,12 @@ export default function ViewBook() {
               ...btnStyle,
               ...(book.status === "Published"
                 ? {
-                    borderColor: "#f59e0b",
-                    color: "#f59e0b",
+                    borderColor: "warning.main",
+                    color: "warning.main",
                   }
                 : {
-                    backgroundColor: "#2e7d32",
-                    "&:hover": { backgroundColor: "#27682b" },
+                    backgroundColor: "success.main",
+                    "&:hover": { backgroundColor: "success.dark" },
                   }),
             }}
             onClick={() => handleTogglePublish(book)}
@@ -179,8 +179,8 @@ export default function ViewBook() {
             startIcon={<DeleteIcon />}
             sx={{
               ...btnStyle,
-              borderColor: "#d32f2f",
-              color: "#d32f2f",
+              borderColor: "error.main",
+              color: "error.main",
             }}
             onClick={() => setOpenDelete(true)}
           >
@@ -197,14 +197,17 @@ export default function ViewBook() {
           mt: 2,
           p: 3,
           borderRadius: "14px",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+          boxShadow: (theme) =>
+            theme.palette.mode === "dark"
+              ? "0 8px 24px rgba(0,0,0,0.38), 0 0 0 1px rgba(255,255,255,0.04)"
+              : "0 2px 8px rgba(0,0,0,0.05)",
         }}
       >
         <Typography
           sx={{
             fontWeight: 600,
             mb: 1,
-            color: "#2B5A9E",
+            color: "primary.main",
           }}
         >
           Book Description
@@ -212,7 +215,7 @@ export default function ViewBook() {
 
         <Typography
           sx={{
-            color: "#6b7280",
+            color: "text.secondary",
             fontSize: 14,
             lineHeight: 1.8,
             whiteSpace: "pre-line", // 🔥 يحافظ على الفقرات
@@ -229,7 +232,7 @@ export default function ViewBook() {
             onClick={() => setExpanded(!expanded)}
             sx={{
               mt: 1,
-              color: "#2B5A9E",
+              color: "primary.main",
               fontSize: 13,
               fontWeight: 500,
               cursor: "pointer",
@@ -250,7 +253,7 @@ export default function ViewBook() {
         <Typography
           sx={{
             fontSize: 13,
-            color: "#9ca3af",
+            color: "text.secondary",
             letterSpacing: 0.5,
           }}
         >
@@ -274,7 +277,7 @@ export default function ViewBook() {
             Delete Book
           </Typography>
 
-          <Typography sx={{ fontSize: 14, color: "#666" }}>
+          <Typography sx={{ fontSize: 14, color: "text.secondary" }}>
             Are you sure you want to delete this book?
           </Typography>
 

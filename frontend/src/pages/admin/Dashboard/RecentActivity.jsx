@@ -46,7 +46,7 @@ export default function RecentActivity() {
   return (
     <Box
       sx={{
-        background: "#fff",
+        background: "background.paper",
         borderRadius: "12px",
         p: 2,
         boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
@@ -56,7 +56,7 @@ export default function RecentActivity() {
       }}
     >
       {/* Header */}
-      <Typography sx={{ fontWeight: 600, color: "#1F4E8C", mb: 2 }}>
+      <Typography sx={{ fontWeight: 600, color: "primary.main", mb: 2 }}>
         Recent Activity
       </Typography>
 
@@ -127,14 +127,14 @@ export default function RecentActivity() {
                     {act.title}
                   </Typography>
 
-                  <Typography sx={{ fontSize: 11, color: "#777" }}>
+                  <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
                     {act.description}
                   </Typography>
                 </Box>
               </Box>
 
               {/* TIME */}
-              <Typography sx={{ fontSize: 11, color: "#999" }}>
+              <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
                 {dayjs.utc(act.created_at).tz("Asia/Amman").fromNow()}
               </Typography>
             </Box>

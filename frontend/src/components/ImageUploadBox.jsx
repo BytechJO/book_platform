@@ -27,12 +27,13 @@ export default function ImageUploadBox({ label, preview, onFileSelect }) {
         onDragLeave={() => setDragging(false)}
         onDrop={handleDrop}
         sx={{
-          border: "2px dashed #2B5A9E",
+          border: "2px dashed",
+          borderColor: "primary.main",
           borderRadius: "12px",
           p: 3,
           textAlign: "center",
           cursor: "pointer",
-          backgroundColor: dragging ? "#f3f7fd" : "#fafafa",
+          backgroundColor: dragging ? "action.selected" : "action.hover",
           transition: "0.2s ease",
         }}
       >

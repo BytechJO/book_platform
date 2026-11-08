@@ -105,12 +105,14 @@ export default function ActivivtyReport() {
       {/* MAIN REPORT */}
       <Box
         sx={{
-          background: "#fff",
+          background: "background.paper",
           borderRadius: 3,
           p: 3,
           mb: 3,
-          boxShadow:
-            "0 2px 8px rgba(0,0,0,0.08)",
+          boxShadow: (theme) =>
+            theme.palette.mode === "dark"
+              ? "0 8px 24px rgba(0,0,0,0.38), 0 0 0 1px rgba(255,255,255,0.04)"
+              : "0 2px 8px rgba(0,0,0,0.08)",
         }}
       >
         {/* HEADER */}
@@ -155,8 +157,8 @@ export default function ActivivtyReport() {
               <Box
                 key={activity.id}
                 sx={{
-                  border:
-                    "1px solid #eee",
+                  border: "1px solid",
+                  borderColor: "divider",
                   borderRadius: 2,
                   p: 1.5,
                   minHeight: 100,
@@ -175,7 +177,7 @@ export default function ActivivtyReport() {
                 <Typography
                   sx={{
                     fontSize: 13,
-                    color: "#666",
+                    color: "text.secondary",
                     mb: 1,
                   }}
                 >
@@ -185,7 +187,7 @@ export default function ActivivtyReport() {
                 <Typography
                   sx={{
                     fontSize: 11,
-                    color: "#999",
+                    color: "text.secondary",
                   }}
                 >
                   {new Date(
@@ -328,6 +330,11 @@ export default function ActivivtyReport() {
             sx={{
               p: 2,
               background: "#fff",
+              color: "#111",
+              "& .MuiTableCell-root": {
+                color: "#111",
+                borderColor: "#ddd",
+              },
             }}
           >
             <Typography

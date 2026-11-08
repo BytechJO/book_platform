@@ -13,7 +13,7 @@ export default function TopCodes({ codes }) {
   return (
     <Box
       sx={{
-        background: "#fff",
+        background: "background.paper",
         borderRadius: "12px",
         p: 2,
         boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
@@ -24,7 +24,7 @@ export default function TopCodes({ codes }) {
       }}
     >
       {/* Header */}
-      <Typography sx={{ fontWeight: 600, color: "#1F4E8C", mb: 2 }}>
+      <Typography sx={{ fontWeight: 600, color: "primary.main", mb: 2 }}>
         Last Codes
       </Typography>
 
@@ -42,9 +42,9 @@ export default function TopCodes({ codes }) {
             gridTemplateColumns: "40px 150px 150px",
             fontSize: 12,
             fontWeight: 600,
-            color: "#3B6DB5",
+            color: "primary.main",
             mb: 1.5,
-            background: "#F5F7FA",
+            bgcolor: "action.hover",
             px: 2,
             py: 1,
             borderRadius: "8px",
@@ -98,7 +98,8 @@ export default function TopCodes({ codes }) {
           justifyContent: "flex-end",
           gap: 0.5,
           pt: 2,
-          borderTop: "1px solid #eee",
+          borderTop: "1px solid",
+          borderColor: "divider",
           mt: "auto",
         }}
       >
@@ -106,7 +107,7 @@ export default function TopCodes({ codes }) {
           onClick={() => navigate("/admin/codes")}
           sx={{
             fontSize: 12,
-            color: "#3f51b5",
+            color: "primary.main",
             fontWeight: 500,
             cursor: "pointer",
 
@@ -121,7 +122,7 @@ export default function TopCodes({ codes }) {
         <ArrowForwardIosIcon
           sx={{
             fontSize: 12,
-            color: "#3f51b5",
+            color: "primary.main",
             ml: 0.5,
           }}
         />

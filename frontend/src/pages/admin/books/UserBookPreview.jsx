@@ -25,7 +25,7 @@ export default function UserBookPreview({ book, onClose }) {
   const isRTL = isArabic(book.title);
 
   return (
-    <Box sx={{ backgroundColor: "#fff", p: 3 }}>
+    <Box sx={{ backgroundColor: "background.default", p: 3 }}>
       {/* ❌ CLOSE */}
       <Button
         onClick={onClose}
@@ -68,7 +68,10 @@ export default function UserBookPreview({ book, onClose }) {
                   transform: "scale(1.06)", // 🔥 مهم
                   transformOrigin: "center",
                   height: "auto",
-                  boxShadow: "5px 5px 15px 5px #888888", // 🔥 مهم
+                  boxShadow: (theme) =>
+                    theme.palette.mode === "dark"
+                      ? "5px 5px 18px 5px rgba(0,0,0,0.55)"
+                      : "5px 5px 15px 5px #888888",
                 }}
               />
             </Box>
@@ -83,15 +86,19 @@ export default function UserBookPreview({ book, onClose }) {
                 px: 4,
                 pb: 2,
                 borderRadius: "28px",
-                backgroundColor: "#ffffff",
-                boxShadow: "0 20px 45px rgba(0,0,0,0.08)",
-                border: "1px solid #E1E1E1",
+                backgroundColor: "background.paper",
+                boxShadow: (theme) =>
+                  theme.palette.mode === "dark"
+                    ? "0 20px 45px rgba(0,0,0,0.4)"
+                    : "0 20px 45px rgba(0,0,0,0.08)",
+                border: "1px solid",
+                borderColor: "divider",
               }}
             >
               <Typography
                 sx={{
                   fontWeight: 600,
-                  color: "#2d5aa7",
+                  color: "primary.main",
                   fontSize: 18,
                   mt: 2,
                   mb: 1,
@@ -130,7 +137,7 @@ export default function UserBookPreview({ book, onClose }) {
               <Divider sx={{ my: 1 }} />
 
               {/* AVAILABLE */}
-              <Typography sx={{ fontWeight: 600, mb: 2, color: "#1A4D96" }}>
+              <Typography sx={{ fontWeight: 600, mb: 2, color: "primary.main" }}>
                 Available on
               </Typography>
 
@@ -185,13 +192,13 @@ export default function UserBookPreview({ book, onClose }) {
           {/* 🔵 RIGHT */}
           <Box sx={{ flex: 1 }}>
             {/* TITLE */}
-            <Typography fontSize={30} fontWeight={700} color="#2d5aa7">
+            <Typography fontSize={30} fontWeight={700} color="primary.main">
               {book.title}
             </Typography>
 
             {/* DESCRIPTION */}
             <Box mt={3}>
-              <Typography fontWeight={700} color="#1A4D96">
+              <Typography fontWeight={700} color="primary.main">
                 Description
               </Typography>
 
@@ -213,7 +220,7 @@ export default function UserBookPreview({ book, onClose }) {
         </Stack>
 
         {/* FOOTER */}
-        <Typography textAlign="center" mt={4} color="#2d5aa7">
+        <Typography textAlign="center" mt={4} color="primary.main">
           alrowadpub.com
         </Typography>
       </Box>

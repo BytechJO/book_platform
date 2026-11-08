@@ -89,7 +89,7 @@ export default function CodesFilter({
       <Typography
         variant="caption"
         sx={{
-          color: "#7a869a",
+          color: "text.secondary",
           fontWeight: 500,
           mb: 0.5,
           display: "block",
@@ -127,7 +127,7 @@ export default function CodesFilter({
             sx: {
               height: 40,
               borderRadius: "10px",
-              backgroundColor: "#F5F7FA",
+              backgroundColor: "action.hover",
               "& .MuiOutlinedInput-notchedOutline": {
                 border: "none",
               },
@@ -158,12 +158,12 @@ export default function CodesFilter({
               textTransform: "none",
               fontWeight: 500,
               fontSize: 14,
-              borderColor: "#E0E4EA",
-              color: "#555B6E",
-              backgroundColor: "#F5F7FA",
+              borderColor: "divider",
+              color: "text.primary",
+              backgroundColor: "action.hover",
               "&:hover": {
-                borderColor: "#2B5A9E",
-                backgroundColor: "#EDF1F8",
+                borderColor: "primary.main",
+                backgroundColor: "action.selected",
               },
             }}
           >
@@ -189,10 +189,10 @@ export default function CodesFilter({
               size="small"
               onDelete={() => setBookId("all")}
               sx={{
-                backgroundColor: "#E8F0FE",
-                color: "#2B5A9E",
+                backgroundColor: "action.selected",
+                color: "primary.main",
                 fontWeight: 500,
-                "& .MuiChip-deleteIcon": { color: "#2B5A9E" },
+                "& .MuiChip-deleteIcon": { color: "primary.main" },
               }}
             />
           )}
@@ -202,10 +202,10 @@ export default function CodesFilter({
               size="small"
               onDelete={() => setStatus("all")}
               sx={{
-                backgroundColor: "#E8F0FE",
-                color: "#2B5A9E",
+                backgroundColor: "action.selected",
+                color: "primary.main",
                 fontWeight: 500,
-                "& .MuiChip-deleteIcon": { color: "#2B5A9E" },
+                "& .MuiChip-deleteIcon": { color: "primary.main" },
               }}
             />
           )}
@@ -215,10 +215,10 @@ export default function CodesFilter({
               size="small"
               onDelete={() => setRole("all")}
               sx={{
-                backgroundColor: "#E8F0FE",
-                color: "#2B5A9E",
+                backgroundColor: "action.selected",
+                color: "primary.main",
                 fontWeight: 500,
-                "& .MuiChip-deleteIcon": { color: "#2B5A9E" },
+                "& .MuiChip-deleteIcon": { color: "primary.main" },
               }}
             />
           )}
@@ -228,10 +228,10 @@ export default function CodesFilter({
               size="small"
               onDelete={() => setYear(currentYear)}
               sx={{
-                backgroundColor: "#E8F0FE",
-                color: "#2B5A9E",
+                backgroundColor: "action.selected",
+                color: "primary.main",
                 fontWeight: 500,
-                "& .MuiChip-deleteIcon": { color: "#2B5A9E" },
+                "& .MuiChip-deleteIcon": { color: "primary.main" },
               }}
             />
           )}
@@ -241,10 +241,11 @@ export default function CodesFilter({
             onClick={resetAllFilters}
             sx={{
               backgroundColor: "transparent",
-              color: "#d32f2f",
+              color: "error.main",
               fontWeight: 500,
-              border: "1px solid #d32f2f",
-              "&:hover": { backgroundColor: "#FFEBEE" },
+              border: "1px solid",
+              borderColor: "error.main",
+              "&:hover": { backgroundColor: "action.hover" },
             }}
           />
         </Box>
@@ -261,7 +262,7 @@ export default function CodesFilter({
         }}
       >
         <Box>
-          <Typography variant="caption" sx={{ color: "#7a869a" }}>
+          <Typography variant="caption" sx={{ color: "text.secondary" }}>
             Search:
           </Typography>
           <TextField
@@ -280,7 +281,7 @@ export default function CodesFilter({
           />
         </Box>
         <Box>
-          <Typography variant="caption" sx={{ color: "#7a869a" }}>
+          <Typography variant="caption" sx={{ color: "text.secondary" }}>
             Book
           </Typography>
           <FormControl fullWidth size="small">
@@ -295,7 +296,7 @@ export default function CodesFilter({
           </FormControl>
         </Box>
         <Box>
-          <Typography variant="caption" sx={{ color: "#7a869a" }}>
+          <Typography variant="caption" sx={{ color: "text.secondary" }}>
             Status
           </Typography>
           <FormControl fullWidth size="small">
@@ -307,7 +308,7 @@ export default function CodesFilter({
           </FormControl>
         </Box>
         <Box>
-          <Typography variant="caption" sx={{ color: "#7a869a" }}>
+          <Typography variant="caption" sx={{ color: "text.secondary" }}>
             Role
           </Typography>
           <FormControl fullWidth size="small">
@@ -319,7 +320,7 @@ export default function CodesFilter({
           </FormControl>
         </Box>
         <Box>
-          <Typography variant="caption" sx={{ color: "#7a869a" }}>
+          <Typography variant="caption" sx={{ color: "text.secondary" }}>
             Year
           </Typography>
           <FormControl fullWidth size="small">
@@ -357,7 +358,7 @@ export default function CodesFilter({
             width: 40,
             height: 4,
             borderRadius: 2,
-            backgroundColor: "#D1D5DB",
+            backgroundColor: "text.secondary",
             mx: "auto",
             mt: 2,
             mb: 1,
@@ -374,7 +375,7 @@ export default function CodesFilter({
             py: 1.5,
           }}
         >
-          <Typography sx={{ fontSize: 18, fontWeight: 600, color: "#1E293B" }}>
+          <Typography sx={{ fontSize: 18, fontWeight: 600, color: "text.primary" }}>
             Filters
           </Typography>
           <Box sx={{ display: "flex", gap: 0.5 }}>
@@ -383,8 +384,8 @@ export default function CodesFilter({
                 size="small"
                 onClick={resetTempFilters}
                 sx={{
-                  color: "#7a869a",
-                  "&:hover": { backgroundColor: "#F5F7FA" },
+                  color: "text.secondary",
+                  "&:hover": { backgroundColor: "action.hover" },
                 }}
                 title="Reset filters"
               >
@@ -395,8 +396,8 @@ export default function CodesFilter({
               size="small"
               onClick={() => setFilterDrawerOpen(false)}
               sx={{
-                color: "#7a869a",
-                "&:hover": { backgroundColor: "#F5F7FA" },
+                color: "text.secondary",
+                "&:hover": { backgroundColor: "action.hover" },
               }}
             >
               <CloseIcon fontSize="small" />
@@ -404,7 +405,7 @@ export default function CodesFilter({
           </Box>
         </Box>
 
-        <Divider sx={{ borderColor: "#F0F0F0" }} />
+        <Divider />
 
         {/* Filter Fields */}
         <Box
@@ -428,7 +429,7 @@ export default function CodesFilter({
                 sx={{
                   height: 48,
                   borderRadius: "12px",
-                  backgroundColor: "#F5F7FA",
+                  backgroundColor: "action.hover",
                   "& .MuiOutlinedInput-notchedOutline": {
                     border: "none",
                   },
@@ -454,7 +455,7 @@ export default function CodesFilter({
                 sx={{
                   height: 48,
                   borderRadius: "12px",
-                  backgroundColor: "#F5F7FA",
+                  backgroundColor: "action.hover",
                   "& .MuiOutlinedInput-notchedOutline": {
                     border: "none",
                   },
@@ -477,7 +478,7 @@ export default function CodesFilter({
                 sx={{
                   height: 48,
                   borderRadius: "12px",
-                  backgroundColor: "#F5F7FA",
+                  backgroundColor: "action.hover",
                   "& .MuiOutlinedInput-notchedOutline": {
                     border: "none",
                   },
@@ -500,7 +501,7 @@ export default function CodesFilter({
                 sx={{
                   height: 48,
                   borderRadius: "12px",
-                  backgroundColor: "#F5F7FA",
+                  backgroundColor: "action.hover",
                   "& .MuiOutlinedInput-notchedOutline": {
                     border: "none",
                   },
@@ -520,8 +521,9 @@ export default function CodesFilter({
           sx={{
             px: 3,
             py: 2.5,
-            borderTop: "1px solid #F0F0F0",
-            backgroundColor: "#fff",
+            borderTop: "1px solid",
+            borderColor: "divider",
+            backgroundColor: "background.paper",
           }}
         >
           <Button
@@ -534,10 +536,10 @@ export default function CodesFilter({
               textTransform: "none",
               fontWeight: 600,
               fontSize: 16,
-              backgroundColor: "#2B5A9E",
+              backgroundColor: "primary.main",
               boxShadow: "0 4px 12px rgba(43, 90, 158, 0.3)",
               "&:hover": {
-                backgroundColor: "#234B85",
+                backgroundColor: "primary.dark",
                 boxShadow: "0 4px 12px rgba(43, 90, 158, 0.4)",
               },
             }}

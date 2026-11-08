@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import CodeIcon from "../../../assets/icon/Group (2).svg";
 import BookIcon from "../../../assets/icon/Asset 1 5.svg";
@@ -31,17 +31,18 @@ const actions = [
 
 export default function QuickActions({ onGenerateClick }) {
   const navigate = useNavigate();
+  const theme = useTheme();
   return (
     <Box
       sx={{
-        background: "#fff",
+        background: "background.paper",
         borderRadius: "12px",
         p: 2,
         boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
       }}
     >
       {/* Header */}
-      <Typography sx={{ fontWeight: 600, color: "#1F4E8C", mb: 2 }}>
+      <Typography sx={{ fontWeight: 600, color: "primary.main", mb: 2 }}>
         Quick Actions
       </Typography>
 
@@ -64,7 +65,10 @@ export default function QuickActions({ onGenerateClick }) {
               }
             }}
             sx={{
-              background: item.color,
+              background:
+                theme.palette.mode === "dark"
+                  ? `${item.textColor}22`
+                  : item.color,
               borderRadius: "10px",
               height: 90,
               display: "flex",

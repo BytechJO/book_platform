@@ -37,7 +37,7 @@ export default function BookTopSection({ book }) {
           width: { xs: "100%", md: "50%" },
           p: 3,
           borderRadius: "14px",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+          boxShadow: cardShadow,
         }}
       >
         <Stack direction="row" spacing={3}>
@@ -66,8 +66,8 @@ export default function BookTopSection({ book }) {
                 fontWeight: 600,
                 fontSize: 13,
 
-                backgroundColor: "#eef4ff", // 🔵 نفس الصورة
-                color: "#2B5A9E",
+                backgroundColor: "action.selected",
+                color: "primary.main",
 
                 // 🔥 النقطة الخضرا
                 "&::before": {
@@ -91,7 +91,7 @@ export default function BookTopSection({ book }) {
             {/* Description */}
             <Typography
               sx={{
-                color: "#6b7280",
+                color: "text.secondary",
                 fontSize: 14,
                 mb: 2,
                 lineHeight: 1.6,
@@ -138,14 +138,14 @@ export default function BookTopSection({ book }) {
           width: { xs: "100%", md: "55%" },
           p: 3,
           borderRadius: "14px",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+          boxShadow: cardShadow,
         }}
       >
         <Typography
           sx={{
             fontWeight: 600,
             mb: 2,
-            color: "#2B5A9E",
+            color: "primary.main",
           }}
         >
           Book Information
@@ -215,7 +215,7 @@ function InfoRow({ label, value, icon }) {
           icon
         )}
 
-        <Typography sx={{ color: "#7a869a", fontSize: 14 }}>{label}</Typography>
+        <Typography sx={{ color: "text.secondary", fontSize: 14 }}>{label}</Typography>
       </Stack>
 
       {/* RIGHT (value) */}
@@ -223,7 +223,7 @@ function InfoRow({ label, value, icon }) {
         sx={{
           fontSize: 14,
           fontWeight: 500,
-          color: "#2c2c2c",
+          color: "text.primary",
         }}
       >
         {value || "-"}
@@ -241,7 +241,7 @@ function InfoLine({ label, value, type = "text", icon }) {
         spacing={1}
         sx={{ width: 120 }} // 🔥 أهم سطر
       >
-        <Typography sx={{ color: "#7a869a", fontSize: 14 }}>{label}</Typography>
+        <Typography sx={{ color: "text.secondary", fontSize: 14 }}>{label}</Typography>
       </Stack>
 
       <Box
@@ -260,8 +260,8 @@ function InfoLine({ label, value, type = "text", icon }) {
           label={value || "N/A"}
           size="small"
           sx={{
-            backgroundColor: "#eef4ff",
-            color: "#2B5A9E",
+            backgroundColor: "action.selected",
+            color: "primary.main",
             fontWeight: 500,
             borderRadius: "8px",
           }}
@@ -270,7 +270,7 @@ function InfoLine({ label, value, type = "text", icon }) {
         <Typography
           sx={{
             fontSize: 14,
-            color: "#2B5A9E",
+            color: "primary.main",
             fontWeight: 500,
           }}
         >
@@ -280,3 +280,8 @@ function InfoLine({ label, value, type = "text", icon }) {
     </Stack>
   );
 }
+
+const cardShadow = (theme) =>
+  theme.palette.mode === "dark"
+    ? "0 8px 24px rgba(0,0,0,0.38), 0 0 0 1px rgba(255,255,255,0.04)"
+    : "0 2px 8px rgba(0,0,0,0.05)";

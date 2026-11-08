@@ -57,7 +57,18 @@ export default function MyClassesCard() {
       ) : (
         classes?.slice(0, 5).map((cls, i) => (
           <Box key={cls.id}>
-            <Box sx={rowStyle}>
+            <Box
+              sx={rowStyle}
+              role="link"
+              tabIndex={0}
+              onClick={() => navigate(`/teacher/classes/${cls.id}`)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  navigate(`/teacher/classes/${cls.id}`);
+                }
+              }}
+            >
               <Avatar sx={avatarStyle}>{cls.class_name}</Avatar>
 
               <Box sx={{ flex: 1 }}>
@@ -101,7 +112,9 @@ export default function MyClassesCard() {
               </Box>
             </Box>
 
-            {i !== classes.length - 1 && <Divider sx={dividerStyle} />}
+            {i !== classes.slice(0, 5).length - 1 && (
+              <Divider sx={dividerStyle} />
+            )}
           </Box>
         ))
       )}
@@ -174,8 +187,17 @@ const rowStyle = {
   alignItems: "center",
   gap: 1.5,
   py: 0.8,
+  px: 0.7,
+  cursor: "pointer",
+  transition: "background-color 0.2s ease, transform 0.2s ease",
   "&:hover": {
     background: "#f8fafc",
+    borderRadius: "8px",
+    transform: "translateX(2px)",
+  },
+  "&:focus-visible": {
+    outline: "2px solid #2B5A9E",
+    outlineOffset: "2px",
     borderRadius: "8px",
   },
 };

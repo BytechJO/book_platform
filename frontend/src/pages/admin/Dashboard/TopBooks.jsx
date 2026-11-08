@@ -14,14 +14,14 @@ export default function TopBooks() {
   return (
     <Box
       sx={{
-        background: "#fff",
+        background: "background.paper",
         borderRadius: "12px",
         p: 2,
         boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
       }}
     >
       {/* Header */}
-      <Typography sx={{ fontWeight: 600, color: "#1F4E8C", mb: 2 }}>
+      <Typography sx={{ fontWeight: 600, color: "primary.main", mb: 2 }}>
         Top Books
       </Typography>
 
@@ -31,9 +31,9 @@ export default function TopBooks() {
           gridTemplateColumns: "40px 1fr 140px 80px",
           fontSize: 12,
           fontWeight: 600,
-          color: "#3B6DB5",
+          color: "primary.main",
           mb: 1.5,
-          background: "#F5F7FA",
+          bgcolor: "action.hover",
           px: 2,
           py: 1,
           borderRadius: "8px",
@@ -86,7 +86,8 @@ export default function TopBooks() {
           justifyContent: "flex-end",
           gap: 0.5,
           pt: 2,
-          borderTop: "1px solid #eee",
+          borderTop: "1px solid",
+          borderColor: "divider",
           mt: "auto",
         }}
       >
@@ -94,7 +95,7 @@ export default function TopBooks() {
           onClick={() => navigate("/admin/books")}
           sx={{
             fontSize: 12,
-            color: "#3f51b5",
+            color: "primary.main",
             fontWeight: 500,
             cursor: "pointer",
 
@@ -109,7 +110,7 @@ export default function TopBooks() {
         <ArrowForwardIosIcon
           sx={{
             fontSize: 12,
-            color: "#3f51b5",
+            color: "primary.main",
             ml: 0.5,
           }}
         />

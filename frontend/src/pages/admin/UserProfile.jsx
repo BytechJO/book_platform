@@ -7,8 +7,10 @@ import {
   Stack,
   Snackbar,
   Alert,
-  IconButton,
   Divider,
+  Button,
+  Chip,
+  ButtonBase,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useState, useEffect } from "react";
@@ -22,8 +24,16 @@ import EmailIcon from "@mui/icons-material/Email";
 import SaveIcon from "@mui/icons-material/Save";
 import { Helmet } from "react-helmet-async";
 import CurveLoader from "../../components/CurveLoader";
+import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
+import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
+import PaletteOutlinedIcon from "@mui/icons-material/PaletteOutlined";
+import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlined";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import { useAdminTheme } from "../../contexts/adminTheme";
 
 export default function UserProfile() {
+  const { mode, changeMode } = useAdminTheme();
+  const [activeSection, setActiveSection] = useState("account");
   const { user, loading, refetch } = useAuthMe();
   const [initialData, setInitialData] = useState({
     full_name: "",
@@ -50,7 +60,6 @@ export default function UserProfile() {
     severity: "success",
   });
 
-  const primaryColor = "#1A4D96";
   useEffect(() => {
     if (user) {
       setFullName(user.full_name || "");
@@ -129,199 +138,161 @@ export default function UserProfile() {
       <Helmet>
         <title>User Profile - Admin Dashboard</title>
       </Helmet>
-      <Box
-        sx={{
-          p: { xs: 2, md: 4 },
-          display: "flex",
-          justifyContent: "center",
-          minHeight: "80vh",
-          bgcolor: "#f0f2f5",
-        }}
-      >
-        <Paper
-          sx={{
-            width: "100%",
-            maxWidth: 600,
-            borderRadius: 4,
-            overflow: "hidden",
-            boxShadow: "0 10px 30px rgba(26, 77, 150, 0.15)",
-          }}
-        >
-          <Box
+      <Box sx={{ p: { xs: 2, md: 4 }, minHeight: "80vh", bgcolor: "background.default" }}>
+        <Box sx={{ width: "100%", maxWidth: 1120, mx: "auto" }}>
+          <Typography sx={{ fontSize: { xs: 28, md: 34 }, fontWeight: 800, color: "primary.main" }}>
+            Settings
+          </Typography>
+          <Typography color="text.secondary" sx={{ mt: 0.5, mb: 3 }}>
+            Manage your account information and dashboard preferences.
+          </Typography>
+
+          <Paper
+            elevation={0}
             sx={{
-              height: 140,
-              background: `linear-gradient(135deg, ${primaryColor} 0%, #3a6fb0 100%)`,
-              position: "relative",
-              display: "flex",
-              alignItems: "center",
-              px: 4,
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "260px minmax(0, 1fr)" },
+              borderRadius: 4,
+              overflow: "hidden",
+              border: "1px solid",
+              borderColor: "divider",
+              boxShadow: (theme) =>
+                theme.palette.mode === "dark"
+                  ? "0 14px 34px rgba(0,0,0,0.38)"
+                  : "0 12px 32px rgba(26,77,150,0.09)",
             }}
           >
-            <Typography
-              variant="h4"
-              sx={{
-                color: "white",
-                fontWeight: "bold",
-                zIndex: 1,
-              }}
-            >
-              My Profile
-            </Typography>
-
             <Box
               sx={{
-                position: "absolute",
-                right: -50,
-                top: -50,
-                width: 200,
-                height: 200,
-                borderRadius: "50%",
-                background: "rgba(255,255,255,0.1)",
-              }}
-            />
-          </Box>
-
-          <Box sx={{ px: 4, pb: 4 }}>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                mt: -8,
+                p: 2.5,
+                bgcolor: "action.hover",
+                borderRight: { md: "1px solid" },
+                borderBottom: { xs: "1px solid", md: "none" },
+                borderColor: "divider",
               }}
             >
-              <Box sx={{ position: "relative" }}>
-                <Avatar
-                  src={preview}
-                  sx={{
-                    width: 140,
-                    height: 140,
-                    border: "5px solid white",
-                    boxShadow: 3,
-                    bgcolor: "#e0e0e0",
-                  }}
-                />
-                <IconButton
-                  component="label"
-                  sx={{
-                    position: "absolute",
-                    bottom: 5,
-                    right: 5,
-                    bgcolor: primaryColor,
-                    color: "white",
-                    boxShadow: 2,
-                    "&:hover": { bgcolor: "#143d7a" },
-                  }}
-                >
-                  <input
-                    hidden
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
+              <Stack direction={{ xs: "row", md: "column" }} spacing={2} alignItems={{ xs: "center", md: "stretch" }}>
+                <Stack direction="row" spacing={1.5} alignItems="center" sx={{ flex: { xs: 1, md: "initial" }, minWidth: 0 }}>
+                  <Avatar src={preview} sx={{ width: 54, height: 54, bgcolor: "primary.main" }}>
+                    {!preview && fullName?.charAt(0)}
+                  </Avatar>
+                  <Box sx={{ minWidth: 0 }}>
+                    <Typography fontWeight={700} noWrap>{fullName || "Admin"}</Typography>
+                    <Typography variant="caption" color="text.secondary" noWrap display="block">{email}</Typography>
+                    <Chip label={user?.role || "admin"} size="small" color="primary" variant="outlined" sx={{ mt: 0.7, height: 22, textTransform: "capitalize" }} />
+                  </Box>
+                </Stack>
+
+                <Divider sx={{ display: { xs: "none", md: "block" } }} />
+
+                <Stack direction={{ xs: "row", md: "column" }} spacing={0.7}>
+                  <SettingsNavButton
+                    active={activeSection === "account"}
+                    icon={<ManageAccountsOutlinedIcon />}
+                    label="Account"
+                    onClick={() => setActiveSection("account")}
                   />
-                  <PhotoCameraIcon fontSize="small" />
-                </IconButton>
-              </Box>
-
-              <Typography
-                variant="h6"
-                sx={{ mt: 2, fontWeight: 600, color: "#333" }}
-              >
-                {fullName || "User Name"}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {email || "email@example.com"}
-              </Typography>
-
-              {errors.avatar && (
-                <Typography color="error" fontSize={13} mt={1}>
-                  {errors.avatar}
-                </Typography>
-              )}
+                  <SettingsNavButton
+                    active={activeSection === "appearance"}
+                    icon={<PaletteOutlinedIcon />}
+                    label="Appearance"
+                    onClick={() => setActiveSection("appearance")}
+                  />
+                </Stack>
+              </Stack>
             </Box>
 
-            <Divider sx={{ my: 3 }} />
+            <Box sx={{ p: { xs: 2.5, sm: 4 } }}>
+              {activeSection === "account" ? (
+                <Box>
+                  <Typography variant="h5" fontWeight={800}>Account settings</Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                    Update your profile photo and personal information.
+                  </Typography>
 
-            <Stack spacing={3}>
-              <TextField
-                label="Full Name"
-                value={fullName}
-                onChange={(e) => {
-                  setFullName(e.target.value);
-                  setErrors((prev) => ({ ...prev, full_name: "" }));
-                }}
-                fullWidth
-                variant="outlined"
-                error={!!errors.full_name}
-                helperText={errors.full_name}
-                InputProps={{
-                  startAdornment: (
-                    <Box sx={{ mr: 1, color: primaryColor }}>
-                      <PersonIcon />
+                  <Stack direction={{ xs: "column", sm: "row" }} spacing={2.5} alignItems={{ xs: "flex-start", sm: "center" }} sx={{ my: 4 }}>
+                    <Avatar src={preview} sx={{ width: 88, height: 88, bgcolor: "primary.main", fontSize: 28 }}>
+                      {!preview && fullName?.charAt(0)}
+                    </Avatar>
+                    <Box>
+                      <Button component="label" variant="outlined" startIcon={<PhotoCameraIcon />} sx={{ textTransform: "none" }}>
+                        Change photo
+                        <input hidden type="file" accept="image/*" onChange={handleImageChange} />
+                      </Button>
+                      <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 1 }}>
+                        JPG or PNG. A square image works best.
+                      </Typography>
+                      {errors.avatar && <Typography color="error" fontSize={13} mt={0.5}>{errors.avatar}</Typography>}
                     </Box>
-                  ),
-                }}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    "&.Mui-focused fieldset": { borderColor: primaryColor },
-                  },
-                  "& .MuiInputLabel-root.Mui-focused": { color: primaryColor },
-                }}
-              />
+                  </Stack>
 
-              <TextField
-                label="Email Address"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setErrors((prev) => ({ ...prev, email: "" }));
-                }}
-                fullWidth
-                variant="outlined"
-                error={!!errors.email}
-                helperText={errors.email}
-                InputProps={{
-                  startAdornment: (
-                    <Box sx={{ mr: 1, color: primaryColor }}>
-                      <EmailIcon />
+                  <Divider sx={{ mb: 3 }} />
+
+                  <Stack spacing={2.5}>
+                    <TextField
+                      label="Full Name"
+                      value={fullName}
+                      onChange={(e) => {
+                        setFullName(e.target.value);
+                        setErrors((prev) => ({ ...prev, full_name: "" }));
+                      }}
+                      fullWidth
+                      error={!!errors.full_name}
+                      helperText={errors.full_name}
+                      InputProps={{ startAdornment: <PersonIcon sx={{ mr: 1, color: "primary.main" }} /> }}
+                    />
+                    <TextField
+                      label="Email Address"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setErrors((prev) => ({ ...prev, email: "" }));
+                      }}
+                      fullWidth
+                      error={!!errors.email}
+                      helperText={errors.email}
+                      InputProps={{ startAdornment: <EmailIcon sx={{ mr: 1, color: "primary.main" }} /> }}
+                    />
+                    <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                      <LoadingButton
+                        variant="contained"
+                        loading={saving}
+                        onClick={handleSave}
+                        startIcon={<SaveIcon />}
+                        disabled={!isChanged}
+                        sx={{ px: 3, py: 1.2, textTransform: "none", borderRadius: 2, fontWeight: 700 }}
+                      >
+                        Save changes
+                      </LoadingButton>
                     </Box>
-                  ),
-                }}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    "&.Mui-focused fieldset": { borderColor: primaryColor },
-                  },
-                  "& .MuiInputLabel-root.Mui-focused": { color: primaryColor },
-                }}
-              />
+                  </Stack>
+                </Box>
+              ) : (
+                <Box>
+                  <Typography variant="h5" fontWeight={800}>Appearance</Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: 4 }}>
+                    Select the theme used across the admin dashboard. Your choice is saved automatically.
+                  </Typography>
 
-              <LoadingButton
-                variant="contained"
-                size="large"
-                loading={saving}
-                onClick={handleSave}
-                startIcon={<SaveIcon />}
-                disabled={!isChanged}
-                sx={{
-                  mt: 2,
-                  py: 1.5,
-                  fontSize: "16px",
-                  fontWeight: "bold",
-                  textTransform: "none",
-                  borderRadius: 2,
-                  bgcolor: primaryColor,
-                  boxShadow: `0 4px 12px rgba(26, 77, 150, 0.3)`,
-                  "&:hover": {
-                    bgcolor: "#143d7a",
-                    boxShadow: `0 6px 16px rgba(26, 77, 150, 0.4)`,
-                  },
-                }}
-              >
-                Save Changes
-              </LoadingButton>
-            </Stack>
-          </Box>
-        </Paper>
+                  <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2.5 }}>
+                    <ThemeOption
+                      mode="light"
+                      selected={mode === "light"}
+                      icon={<LightModeOutlinedIcon />}
+                      onClick={() => changeMode("light")}
+                    />
+                    <ThemeOption
+                      mode="dark"
+                      selected={mode === "dark"}
+                      icon={<DarkModeOutlinedIcon />}
+                      onClick={() => changeMode("dark")}
+                    />
+                  </Box>
+                </Box>
+              )}
+            </Box>
+          </Paper>
+        </Box>
       </Box>
 
       {/* Snackbar */}
@@ -341,5 +312,83 @@ export default function UserProfile() {
         </Alert>
       </Snackbar>
     </>
+  );
+}
+
+function SettingsNavButton({ active, icon, label, onClick }) {
+  return (
+    <Button
+      fullWidth
+      onClick={onClick}
+      startIcon={icon}
+      sx={{
+        justifyContent: "flex-start",
+        minWidth: { xs: "auto", md: "100%" },
+        px: 1.5,
+        py: 1.1,
+        borderRadius: 2,
+        textTransform: "none",
+        fontWeight: active ? 700 : 500,
+        color: active ? "primary.main" : "text.secondary",
+        bgcolor: active ? "action.selected" : "transparent",
+        "&:hover": { bgcolor: "action.hover" },
+      }}
+    >
+      {label}
+    </Button>
+  );
+}
+
+function ThemeOption({ mode, selected, icon, onClick }) {
+  const isDark = mode === "dark";
+  return (
+    <ButtonBase
+      onClick={onClick}
+      sx={{
+        display: "block",
+        width: "100%",
+        p: 1.5,
+        textAlign: "left",
+        border: "2px solid",
+        borderColor: selected ? "primary.main" : "divider",
+        borderRadius: 3,
+        bgcolor: selected ? "action.selected" : "transparent",
+        transition: "0.2s ease",
+        "&:hover": { borderColor: "primary.main", transform: "translateY(-2px)" },
+      }}
+    >
+      <Box
+        sx={{
+          height: 150,
+          borderRadius: 2,
+          overflow: "hidden",
+          bgcolor: isDark ? "#0f172a" : "#f4f7fb",
+          border: "1px solid",
+          borderColor: isDark ? "#334155" : "#dce3ec",
+        }}
+      >
+        <Box sx={{ height: 28, bgcolor: isDark ? "#23466f" : "#1A4D96" }} />
+        <Box sx={{ display: "grid", gridTemplateColumns: "42px 1fr", height: "calc(100% - 28px)" }}>
+          <Box sx={{ bgcolor: isDark ? "#182235" : "#e9eef6", borderRight: "1px solid", borderColor: isDark ? "#334155" : "#dce3ec" }} />
+          <Box sx={{ p: 1.5 }}>
+            <Box sx={{ height: 12, width: "55%", borderRadius: 1, bgcolor: isDark ? "#8ab4f8" : "#2B5A9E", mb: 1.5 }} />
+            <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1 }}>
+              {[1, 2, 3, 4].map((item) => (
+                <Box key={item} sx={{ height: 38, borderRadius: 1.5, bgcolor: isDark ? "#243147" : "#ffffff", boxShadow: "0 2px 7px rgba(0,0,0,0.08)" }} />
+              ))}
+            </Box>
+          </Box>
+        </Box>
+      </Box>
+
+      <Stack direction="row" alignItems="center" spacing={1.2} sx={{ pt: 1.5, px: 0.5 }}>
+        <Box sx={{ color: selected ? "primary.main" : "text.secondary", display: "flex" }}>{icon}</Box>
+        <Box sx={{ flex: 1 }}>
+          <Typography fontWeight={700}>{isDark ? "Dark mode" : "Light mode"}</Typography>
+          <Typography variant="caption" color="text.secondary">{isDark ? "Comfortable in low light" : "Bright and clean interface"}</Typography>
+        </Box>
+        {selected && <CheckCircleRoundedIcon color="primary" />}
+      </Stack>
+    </ButtonBase>
   );
 }

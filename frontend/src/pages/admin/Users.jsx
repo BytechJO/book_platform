@@ -58,12 +58,20 @@ function UserCard({ user, onToggle }) {
     <Card
       elevation={0}
       sx={{
-        border: "1px solid #e8eaf0",
+        border: "1px solid",
+        borderColor: "divider",
         borderRadius: 2,
         mb: 2,
+        boxShadow: (theme) =>
+          theme.palette.mode === "dark"
+            ? "0 6px 18px rgba(0,0,0,0.32)"
+            : "none",
         transition: "box-shadow 0.2s",
         "&:hover": {
-          boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+          boxShadow: (theme) =>
+            theme.palette.mode === "dark"
+              ? "0 8px 22px rgba(0,0,0,0.38)"
+              : "0 2px 12px rgba(0,0,0,0.06)",
         },
       }}
     >
@@ -90,7 +98,7 @@ function UserCard({ user, onToggle }) {
                 variant="subtitle1"
                 sx={{
                   fontWeight: 600,
-                  color: "#333",
+                  color: "text.primary",
                   fontSize: 16,
                   overflow: "hidden",
                   textOverflow: "ellipsis",
@@ -102,7 +110,7 @@ function UserCard({ user, onToggle }) {
 
               <Typography
                 sx={{
-                  color: "#555",
+                  color: "text.secondary",
                   fontSize: 13,
                   overflow: "hidden",
                   textOverflow: "ellipsis",
@@ -118,7 +126,7 @@ function UserCard({ user, onToggle }) {
             size="small"
             onClick={() => onToggle(user)}
             sx={{
-              color: isActive ? "#C72100" : "#2e7d32",
+              color: isActive ? "error.main" : "success.main",
               backgroundColor: isActive
                 ? "rgba(199,33,0,0.06)"
                 : "rgba(46,125,50,0.06)",
@@ -147,8 +155,8 @@ function UserCard({ user, onToggle }) {
             sx={{
               fontWeight: 500,
               fontSize: 12,
-              backgroundColor: "#EEF2F9",
-              color: "#2d5aa7",
+              backgroundColor: "action.selected",
+              color: "primary.main",
               height: 26,
             }}
           />
@@ -161,7 +169,7 @@ function UserCard({ user, onToggle }) {
               backgroundColor: isActive
                 ? "rgba(46,125,50,0.08)"
                 : "rgba(0,0,0,0.06)",
-              color: isActive ? "#2e7d32" : "#888",
+              color: isActive ? "success.main" : "text.secondary",
               height: 26,
             }}
           />
@@ -170,7 +178,7 @@ function UserCard({ user, onToggle }) {
               ml: "auto",
               fontSize: 11,
               fontWeight: 600,
-              color: isActive ? "#C72100" : "#2e7d32",
+              color: isActive ? "error.main" : "success.main",
             }}
           >
             {isActive ? "Block" : "Activate"}
@@ -279,7 +287,7 @@ export default function Users() {
 
   const EmptyState = ({ message }) => (
     <TableRow>
-      <TableCell colSpan={5} align="center" sx={{ py: 6, color: "#7a869a" }}>
+      <TableCell colSpan={5} align="center" sx={{ py: 6, color: "text.secondary" }}>
         {message}
       </TableCell>
     </TableRow>
@@ -316,13 +324,13 @@ export default function Users() {
             sx={{
               fontSize: { xs: 26, md: 34 },
               fontWeight: 700,
-              color: "#2B5A9E",
+              color: "primary.main",
             }}
           >
              Users
           </Typography>
 
-          <Typography sx={{ fontSize: 14, color: "#7a869a" }}>
+          <Typography sx={{ fontSize: 14, color: "text.secondary" }}>
             Manage and explore your users
           </Typography>
         </Box>
@@ -342,7 +350,7 @@ export default function Users() {
         >
           {/* Search */}
           <Box>
-            <Typography variant="caption" sx={{ color: "#7a869a" }}>
+            <Typography variant="caption" sx={{ color: "text.secondary" }}>
               Search
             </Typography>
             <TextField
@@ -363,7 +371,7 @@ export default function Users() {
 
           {/* Role */}
           <Box>
-            <Typography variant="caption" sx={{ color: "#7a869a" }}>
+            <Typography variant="caption" sx={{ color: "text.secondary" }}>
               Role
             </Typography>
             <FormControl fullWidth size="small">
@@ -381,7 +389,7 @@ export default function Users() {
 
           {/* Status */}
           <Box>
-            <Typography variant="caption" sx={{ color: "#7a869a" }}>
+            <Typography variant="caption" sx={{ color: "text.secondary" }}>
               Status
             </Typography>
             <FormControl fullWidth size="small">
@@ -408,11 +416,11 @@ export default function Users() {
                 height: 40,
                 textTransform: "none",
                 borderRadius: "6px",
-                color: "#577DAE",
-                borderColor: "#dfe3e8",
+                color: "primary.main",
+                borderColor: "divider",
                 "&:hover": {
-                  backgroundColor: "#eef3fb",
-                  borderColor: "#2B5A9E",
+                  backgroundColor: "action.hover",
+                  borderColor: "primary.main",
                 },
               }}
             >
@@ -424,7 +432,7 @@ export default function Users() {
         {!loading && !error && filtered.length > 0 && (
           <Typography
             variant="body2"
-            sx={{ color: "#7a869a", mb: { xs: 1.5, md: 2 } }}
+            sx={{ color: "text.secondary", mb: { xs: 1.5, md: 2 } }}
           >
             {filtered.length} user{filtered.length !== 1 ? "s" : ""} found
           </Typography>
@@ -435,10 +443,13 @@ export default function Users() {
           <Paper
             elevation={0}
             sx={{
-              backgroundColor: "#fff",
+              backgroundColor: "background.paper",
               borderRadius: "12px",
               p: 2,
-              boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+              boxShadow: (theme) =>
+                theme.palette.mode === "dark"
+                  ? "0 8px 24px rgba(0,0,0,0.38), 0 0 0 1px rgba(255,255,255,0.04)"
+                  : "0 2px 8px rgba(0,0,0,0.08)",
             }}
           >
             <Table
@@ -465,23 +476,23 @@ export default function Users() {
               </colgroup>
 
               <TableHead>
-                <TableRow sx={{ borderBottom: "2px solid #e0e0e0" }}>
-                  <TableCell sx={{ color: "#7a869a", fontSize: 15 }}>
+                <TableRow sx={{ borderBottom: "2px solid", borderColor: "divider" }}>
+                  <TableCell sx={{ color: "text.secondary", fontSize: 15 }}>
                     Name
                   </TableCell>
-                  <TableCell sx={{ color: "#7a869a", fontSize: 15 }}>
+                  <TableCell sx={{ color: "text.secondary", fontSize: 15 }}>
                     Email
                   </TableCell>
-                  <TableCell sx={{ color: "#7a869a", fontSize: 15 }}>
+                  <TableCell sx={{ color: "text.secondary", fontSize: 15 }}>
                     Role
                   </TableCell>
-                  <TableCell sx={{ color: "#7a869a", fontSize: 15 }}>
+                  <TableCell sx={{ color: "text.secondary", fontSize: 15 }}>
                     Status
                   </TableCell>
-                  <TableCell sx={{ color: "#7a869a", fontSize: 15 }}>
+                  <TableCell sx={{ color: "text.secondary", fontSize: 15 }}>
                     Joined On
                   </TableCell>
-                  <TableCell sx={{ color: "#7a869a", fontSize: 15 }}>
+                  <TableCell sx={{ color: "text.secondary", fontSize: 15 }}>
                     Action
                   </TableCell>
                 </TableRow>
@@ -499,7 +510,7 @@ export default function Users() {
                       <TableRow
                         key={c.id}
                         sx={{
-                          "&:hover": { backgroundColor: "#f9fafc" },
+                          "&:hover": { backgroundColor: "action.hover" },
                         }}
                       >
                         <TableCell>
@@ -520,7 +531,7 @@ export default function Users() {
                             </Typography>
                           </Stack>
                         </TableCell>
-                        <TableCell sx={{ color: "#555", fontSize: 14 }}>
+                        <TableCell sx={{ color: "text.secondary", fontSize: 14 }}>
                           {c.email}
                         </TableCell>
                         <TableCell>
@@ -562,14 +573,16 @@ export default function Users() {
                                 fontSize: 13,
                                 fontWeight: 500,
                                 color:
-                                  c.status === "active" ? "#34C759" : "#999",
+                                  c.status === "active"
+                                    ? "success.main"
+                                    : "text.secondary",
                               }}
                             >
                               {c.status === "active" ? "Active" : "Inactive"}
                             </Typography>
                           </Box>
                         </TableCell>
-                        <TableCell sx={{ fontSize: 14, color: "#555" }}>
+                        <TableCell sx={{ fontSize: 14, color: "text.secondary" }}>
                           {new Date(c.created_at).toLocaleDateString("en-US", {
                             month: "short",
                             day: "numeric",
@@ -596,11 +609,12 @@ export default function Users() {
                 alignItems: "center",
                 mt: 2,
                 pt: 2,
-                borderTop: "1px solid #eee",
+                borderTop: "1px solid",
+                borderColor: "divider",
               }}
             >
               {/* Left */}
-              <Typography sx={{ fontSize: 12, color: "#777" }}>
+              <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
                 Showing {(page - 1) * perPage + 1} to{" "}
                 {Math.min(page * perPage, filtered.length)} of {filtered.length}{" "}
                 users
@@ -629,9 +643,9 @@ export default function Users() {
                       onClick={() => setPage(p)}
                       sx={{
                         minWidth: 32,
-                        backgroundColor: p === page ? "#2B5A9E" : "transparent",
-                        color: p === page ? "#fff" : "#2B5A9E",
-                        borderColor: "#dfe3e8",
+                        backgroundColor: p === page ? "primary.main" : "transparent",
+                        color: p === page ? "primary.contrastText" : "primary.main",
+                        borderColor: "divider",
                       }}
                     >
                       {p}
@@ -678,13 +692,13 @@ export default function Users() {
         {isMobile && (
           <Box>
             {error && (
-              <Typography sx={{ textAlign: "center", color: "red", py: 6 }}>
+              <Typography sx={{ textAlign: "center", color: "error.main", py: 6 }}>
                 Failed to load users
               </Typography>
             )}
 
             {!error && filtered.length === 0 && (
-              <Typography sx={{ textAlign: "center", color: "#7a869a", py: 6 }}>
+              <Typography sx={{ textAlign: "center", color: "text.secondary", py: 6 }}>
                 No users found
               </Typography>
             )}
@@ -716,7 +730,7 @@ export default function Users() {
           </DialogTitle>
 
           <DialogContent>
-            <Typography sx={{ fontSize: { xs: 14, sm: 15 }, color: "#555" }}>
+            <Typography sx={{ fontSize: { xs: 14, sm: 15 }, color: "text.secondary" }}>
               Are you sure you want to{" "}
               <strong>
                 {actionType === "delete"
@@ -726,9 +740,9 @@ export default function Users() {
                     : "activate"}
               </strong>{" "}
               user{" "}
-              <strong style={{ color: "#2d5aa7" }}>
+              <Box component="strong" sx={{ color: "primary.main" }}>
                 {selectedUser?.full_name}
-              </strong>
+              </Box>
               ?
             </Typography>
           </DialogContent>
@@ -740,8 +754,8 @@ export default function Users() {
               sx={{
                 textTransform: "none",
                 fontWeight: 500,
-                color: "#555",
-                "&:hover": { backgroundColor: "rgba(0,0,0,0.04)" },
+                color: "text.secondary",
+                "&:hover": { backgroundColor: "action.hover" },
               }}
             >
               Cancel
@@ -757,12 +771,12 @@ export default function Users() {
                 textTransform: "none",
                 fontWeight: 500,
                 backgroundColor:
-                  actionType === "delete" ? "#D32F2F" : "#2B5A9E",
+                  actionType === "delete" ? "error.main" : "primary.main",
                 borderRadius: 1.5,
                 px: 3,
                 "&:hover": {
                   backgroundColor:
-                    actionType === "delete" ? "#b71c1c" : "#244a86",
+                    actionType === "delete" ? "error.dark" : "primary.dark",
                 },
               }}
             >
@@ -818,7 +832,10 @@ export default function Users() {
               openConfirm(user); // 🔥 استخدمه بعد الإغلاق
             }}
             sx={{
-              color: selectedUser?.status === "active" ? "#EF6C00" : "#2e7d32",
+              color:
+                selectedUser?.status === "active"
+                  ? "warning.main"
+                  : "success.main",
             }}
           >
             {selectedUser?.status === "active" ? (
@@ -839,7 +856,7 @@ export default function Users() {
               handleClose();
               openConfirm(user, "delete"); // نستخدم نفس الديالوج
             }}
-            sx={{ color: "#D32F2F" }}
+            sx={{ color: "error.main" }}
           >
             <DeleteIcon sx={{ mr: 1, fontSize: 18 }} />
             Delete User
@@ -855,7 +872,7 @@ export default function Users() {
           <Typography
             sx={{
               fontSize: 13,
-              color: "#9ca3af",
+              color: "text.secondary",
               letterSpacing: 0.5,
             }}
           >
@@ -874,7 +891,7 @@ export default function Users() {
             },
           }}
         >
-          <DialogTitle sx={{ fontWeight: 700, color: "#2B5A9E" }}>
+          <DialogTitle sx={{ fontWeight: 700, color: "primary.main" }}>
             Edit User
           </DialogTitle>
 
@@ -893,14 +910,14 @@ export default function Users() {
                   <Typography fontWeight={600}>
                     {selectedUser?.full_name}
                   </Typography>
-                  <Typography fontSize={13} color="#7a869a">
+                  <Typography fontSize={13} color="text.secondary">
                     {selectedUser?.email}
                   </Typography>
                 </Box>
               </Box>
 
               <FormControl fullWidth>
-                <Typography sx={{ fontSize: 13, mb: 0.5, color: "#7a869a" }}>
+                <Typography sx={{ fontSize: 13, mb: 0.5, color: "text.secondary" }}>
                   Role
                 </Typography>
 
@@ -917,18 +934,19 @@ export default function Users() {
 
               <Box
                 sx={{
-                  border: "1px solid #e5e7eb",
+                  border: "1px solid",
+                  borderColor: "divider",
                   borderRadius: "12px",
                   p: 2,
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  backgroundColor: "#f9fafb",
+                  backgroundColor: "action.hover",
                 }}
               >
                 <Box>
                   <Typography fontWeight={600}>User Status</Typography>
-                  <Typography fontSize={13} color="#7a869a">
+                  <Typography fontSize={13} color="text.secondary">
                     {editStatus === "active"
                       ? "User can access the platform"
                       : "User is blocked"}
@@ -974,7 +992,7 @@ export default function Users() {
                 }
               }}
               sx={{
-                backgroundColor: "#2B5A9E",
+                backgroundColor: "primary.main",
                 textTransform: "none",
                 borderRadius: "8px",
                 px: 3,
@@ -1018,7 +1036,8 @@ const IOSSwitch = styled(Switch)(({ theme }) => ({
   },
   "& .MuiSwitch-track": {
     borderRadius: 22,
-    backgroundColor: "#E5E5EA", // 🔥 رمادي فاتح مثل iOS
+    backgroundColor:
+      theme.palette.mode === "dark" ? "#526071" : "#E5E5EA",
     opacity: 1,
     transition: theme.transitions.create(["background-color"], {
       duration: 300,

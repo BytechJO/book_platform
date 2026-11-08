@@ -100,8 +100,7 @@ export default function Books() {
     const fileName = buildFilteredExportFileName("books", {
       search: search.trim() || null,
       status: statusFilter !== "all" ? statusFilter : null,
-      category:
-        categoryFilter !== "all" ? selectedCategory?.name : null,
+      category: categoryFilter !== "all" ? selectedCategory?.name : null,
       language: languageFilter !== "all" ? languageFilter : null,
     });
 
@@ -317,13 +316,13 @@ export default function Books() {
               sx={{
                 fontSize: 34,
                 fontWeight: 700,
-                color: "#2B5A9E",
+                color: "primary.main",
               }}
             >
               Books
             </Typography>
 
-            <Typography sx={{ fontSize: 14, color: "#7a869a" }}>
+            <Typography sx={{ fontSize: 14, color: "text.secondary" }}>
               Manage and explore your books
             </Typography>
           </Box>
@@ -352,7 +351,7 @@ export default function Books() {
                 textTransform: "none",
                 fontWeight: 600,
                 fontSize: { xs: 14, sm: 15 },
-                backgroundColor: "#2B5A9E",
+                backgroundColor: "primary.main",
                 whiteSpace: "nowrap",
               }}
             >
@@ -369,8 +368,8 @@ export default function Books() {
                 textTransform: "none",
                 fontWeight: 600,
                 fontSize: { xs: 14, sm: 15 },
-                borderColor: "#dfe3e8",
-                color: "#2B5A9E",
+                borderColor: "divider",
+                color: "primary.main",
                 whiteSpace: "nowrap",
               }}
             >
@@ -438,7 +437,7 @@ export default function Books() {
         >
           {/* Search */}
           <Box>
-            <Typography variant="caption" sx={{ color: "#7a869a" }}>
+            <Typography variant="caption" sx={{ color: "text.secondary" }}>
               Search
             </Typography>
             <TextField
@@ -459,7 +458,7 @@ export default function Books() {
 
           {/* Status */}
           <Box>
-            <Typography variant="caption" sx={{ color: "#7a869a" }}>
+            <Typography variant="caption" sx={{ color: "text.secondary" }}>
               Status
             </Typography>
             <FormControl fullWidth size="small">
@@ -476,7 +475,7 @@ export default function Books() {
 
           {/* Category */}
           <Box>
-            <Typography variant="caption" sx={{ color: "#7a869a" }}>
+            <Typography variant="caption" sx={{ color: "text.secondary" }}>
               Category
             </Typography>
             <FormControl fullWidth size="small">
@@ -497,7 +496,7 @@ export default function Books() {
 
           {/* Language */}
           <Box>
-            <Typography variant="caption" sx={{ color: "#7a869a" }}>
+            <Typography variant="caption" sx={{ color: "text.secondary" }}>
               Language
             </Typography>
             <FormControl fullWidth size="small">
@@ -565,7 +564,7 @@ export default function Books() {
               alignItems: "center",
               justifyContent: "center",
               textAlign: "center",
-              color: "#7a869a",
+              color: "text.secondary",
             }}
           >
             <Box>
@@ -582,7 +581,7 @@ export default function Books() {
           <Paper
             elevation={0}
             sx={{
-              backgroundColor: "#fff",
+              backgroundColor: "background.paper",
               borderRadius: "12px",
               p: 2,
               boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
@@ -614,29 +613,31 @@ export default function Books() {
               </colgroup>
 
               <TableHead>
-                <TableRow sx={{ borderBottom: "2px solid #e0e0e0" }}>
-                  <TableCell sx={{ color: "#7a869a", fontSize: 15 }}>
+                <TableRow
+                  sx={{ borderBottom: "2px solid", borderColor: "divider" }}
+                >
+                  <TableCell sx={{ color: "text.secondary", fontSize: 15 }}>
                     Book
                   </TableCell>
-                  <TableCell sx={{ color: "#7a869a", fontSize: 15 }}>
+                  <TableCell sx={{ color: "text.secondary", fontSize: 15 }}>
                     Author
                   </TableCell>
-                  <TableCell sx={{ color: "#7a869a", fontSize: 15 }}>
+                  <TableCell sx={{ color: "text.secondary", fontSize: 15 }}>
                     Category
                   </TableCell>
-                  <TableCell sx={{ color: "#7a869a", fontSize: 15 }}>
+                  <TableCell sx={{ color: "text.secondary", fontSize: 15 }}>
                     Language
                   </TableCell>
-                  <TableCell sx={{ color: "#7a869a", fontSize: 15 }}>
+                  <TableCell sx={{ color: "text.secondary", fontSize: 15 }}>
                     Status
                   </TableCell>
-                  <TableCell sx={{ color: "#7a869a", fontSize: 15 }}>
+                  <TableCell sx={{ color: "text.secondary", fontSize: 15 }}>
                     Published On
                   </TableCell>
-                  <TableCell sx={{ color: "#7a869a", fontSize: 15 }}>
+                  <TableCell sx={{ color: "text.secondary", fontSize: 15 }}>
                     Views
                   </TableCell>
-                  <TableCell sx={{ color: "#7a869a", fontSize: 15 }}>
+                  <TableCell sx={{ color: "text.secondary", fontSize: 15 }}>
                     Action
                   </TableCell>
                 </TableRow>
@@ -649,7 +650,7 @@ export default function Books() {
                   return (
                     <TableRow
                       key={b.id}
-                      sx={{ "&:hover": { backgroundColor: "#f9fafc" } }}
+                      sx={{ "&:hover": { backgroundColor: "action.hover" } }}
                     >
                       {/* Book */}
                       <TableCell>
@@ -657,14 +658,21 @@ export default function Books() {
                           <Box
                             component="img"
                             src={b.cover_image_url_short}
-                            sx={{ width: 32, height: 42, borderRadius: "4px" ,objectFit:"contain"}}
+                            sx={{
+                              width: 32,
+                              height: 42,
+                              borderRadius: "4px",
+                              objectFit: "contain",
+                            }}
                           />
 
                           <Box>
                             <Typography sx={{ fontSize: 14 }}>
                               {b.title}
                             </Typography>
-                            <Typography sx={{ fontSize: 12, color: "#7a869a" }}>
+                            <Typography
+                              sx={{ fontSize: 12, color: "text.secondary" }}
+                            >
                               ISBN: {b.isbn}
                             </Typography>
                           </Box>
@@ -672,7 +680,7 @@ export default function Books() {
                       </TableCell>
 
                       {/* Author */}
-                      <TableCell sx={{ color: "#555", fontSize: 14 }}>
+                      <TableCell sx={{ color: "text.secondary", fontSize: 14 }}>
                         {b.created_by_name || "-"}
                       </TableCell>
 
@@ -729,7 +737,7 @@ export default function Books() {
                       </TableCell>
 
                       {/* Date */}
-                      <TableCell sx={{ fontSize: 14, color: "#555" }}>
+                      <TableCell sx={{ fontSize: 14, color: "text.secondary" }}>
                         {b.published_at
                           ? new Date(b.published_at).toLocaleDateString(
                               "en-US",
@@ -765,11 +773,12 @@ export default function Books() {
                 alignItems: "center",
                 mt: 2,
                 pt: 2,
-                borderTop: "1px solid #eee",
+                borderTop: "1px solid",
+                borderColor: "divider",
               }}
             >
               {/* Left */}
-              <Typography sx={{ fontSize: 12, color: "#777" }}>
+              <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
                 Showing {(page - 1) * perPage + 1} to{" "}
                 {Math.min(page * perPage, filteredBooks.length)} of{" "}
                 {filteredBooks.length} books
@@ -798,9 +807,11 @@ export default function Books() {
                       onClick={() => setPage(p)}
                       sx={{
                         minWidth: 32,
-                        backgroundColor: p === page ? "#2B5A9E" : "transparent",
-                        color: p === page ? "#fff" : "#2B5A9E",
-                        borderColor: "#dfe3e8",
+                        backgroundColor:
+                          p === page ? "primary.main" : "transparent",
+                        color:
+                          p === page ? "primary.contrastText" : "primary.main",
+                        borderColor: "divider",
                       }}
                     >
                       {p}
@@ -852,7 +863,7 @@ export default function Books() {
           <Typography
             sx={{
               fontSize: 13,
-              color: "#9ca3af",
+              color: "text.secondary",
               letterSpacing: 0.5,
             }}
           >
@@ -952,7 +963,10 @@ export default function Books() {
         <MenuItem
           onClick={() => handleTogglePublish(selectedBook)}
           sx={{
-            color: selectedBook?.status === "Published" ? "#555" : "#2e7d32",
+            color:
+              selectedBook?.status === "Published"
+                ? "text.secondary"
+                : "success.main",
           }}
         >
           {selectedBook?.status === "Published" ? (
@@ -974,7 +988,7 @@ export default function Books() {
             setDeleteDialogOpen(true);
             handleClose();
           }}
-          sx={{ color: "#d32f2f" }}
+          sx={{ color: "error.main" }}
         >
           <DeleteIcon sx={{ mr: 1, fontSize: 18 }} />
           Delete Book
@@ -987,10 +1001,13 @@ function StatCard({ title, value, change, changeColor, icon, color }) {
   return (
     <Box
       sx={{
-        background: "#fff",
+        background: "background.paper",
         borderRadius: "14px",
         p: 2,
-        boxShadow: "0 2px 10px rgba(0,0,0,0.06)",
+        boxShadow: (theme) =>
+          theme.palette.mode === "dark"
+            ? "0 8px 24px rgba(0,0,0,0.42), 0 0 0 1px rgba(255,255,255,0.07)"
+            : "0 2px 10px rgba(0,0,0,0.06)",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
@@ -1019,7 +1036,7 @@ function StatCard({ title, value, change, changeColor, icon, color }) {
 
         {/* Text */}
         <Box>
-          <Typography sx={{ fontSize: 12, color: "#7a869a" }}>
+          <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
             {title}
           </Typography>
 
@@ -1028,7 +1045,7 @@ function StatCard({ title, value, change, changeColor, icon, color }) {
             sx={{
               fontSize: 24,
               fontWeight: 700,
-              color: "#111",
+              color: "text.primary",
               mt: 0.5,
             }}
           >
@@ -1048,13 +1065,13 @@ function StatCard({ title, value, change, changeColor, icon, color }) {
                   changeColor === "green"
                     ? "rgba(46,125,50,0.1)"
                     : "rgba(211,47,47,0.1)",
-                color: changeColor === "green" ? "#2e7d32" : "#d32f2f",
+                color: changeColor === "green" ? "success.main" : "error.main",
               }}
             >
               {change}
             </Box>
 
-            <Typography sx={{ fontSize: 11, color: "#9aa5b1" }}>
+            <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
               from last month
             </Typography>
           </Box>

@@ -7,10 +7,11 @@ import {
   Area,
   AreaChart,
 } from "recharts";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
 import { useUsersGrowth } from "../../../api";
 
 export default function UsersGrowthChart({ startDate }) {
+  const theme = useTheme();
   // 🔹 تحويل التاريخ
   const formattedDate = startDate
     ? startDate.toISOString().split("T")[0]
@@ -68,7 +69,7 @@ export default function UsersGrowthChart({ startDate }) {
   return (
     <Box
       sx={{
-        background: "#fff",
+        background: "background.paper",
         borderRadius: "12px",
         p: 2,
         boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
@@ -84,14 +85,14 @@ export default function UsersGrowthChart({ startDate }) {
           mb: 2,
         }}
       >
-        <Typography sx={{ fontWeight: 600, color: "#1F4E8C" }}>
+        <Typography sx={{ fontWeight: 600, color: "primary.main" }}>
           Users Growth
         </Typography>
 
         <Box
           sx={{
             fontSize: 12,
-            background: "#f5f5f5",
+            bgcolor: "action.hover",
             px: 1.5,
             py: 0.5,
             borderRadius: "6px",
@@ -111,9 +112,9 @@ export default function UsersGrowthChart({ startDate }) {
             </linearGradient>
           </defs>
 
-          <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <XAxis dataKey="name" />
-          <YAxis width={25} />
+          <CartesianGrid stroke={theme.palette.divider} strokeDasharray="3 3" vertical={false} />
+          <XAxis dataKey="name" tick={{ fill: theme.palette.text.secondary }} />
+          <YAxis width={25} tick={{ fill: theme.palette.text.secondary }} />
           <Tooltip />
 
           <Area

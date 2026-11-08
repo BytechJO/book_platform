@@ -193,7 +193,7 @@ export default function CodesDialogs({
           sx={{
             textAlign: "center",
             fontWeight: 600,
-            color: "#2d5aa7",
+            color: "primary.main",
             fontSize: 20,
           }}
         >
@@ -204,7 +204,7 @@ export default function CodesDialogs({
           <Stack spacing={3}>
             <Box>
               <Typography
-                sx={{ fontSize: 16, fontWeight: 500, mb: 1, color: "#7A869A" }}
+                sx={{ fontSize: 16, fontWeight: 500, mb: 1, color: "text.secondary" }}
               >
                 Number of Codes *
               </Typography>
@@ -216,14 +216,14 @@ export default function CodesDialogs({
                   sx: {
                     height: 56,
                     borderRadius: "12px",
-                    backgroundColor: "#F9FBFF",
+                    backgroundColor: "action.hover",
                   },
                 }}
               />
             </Box>
             <Box>
               <Typography
-                sx={{ fontSize: 16, fontWeight: 500, mb: 1, color: "#7A869A" }}
+                sx={{ fontSize: 16, fontWeight: 500, mb: 1, color: "text.secondary" }}
               >
                 Book name *
               </Typography>
@@ -236,7 +236,7 @@ export default function CodesDialogs({
                   sx={{
                     height: 56,
                     borderRadius: "12px",
-                    backgroundColor: "#F9FBFF",
+                    backgroundColor: "action.hover",
                   }}
                 >
                   <MenuItem value="" disabled>
@@ -252,7 +252,7 @@ export default function CodesDialogs({
             </Box>
             <Box>
               <Typography
-                sx={{ fontSize: 16, fontWeight: 500, mb: 1, color: "#7A869A" }}
+                sx={{ fontSize: 16, fontWeight: 500, mb: 1, color: "text.secondary" }}
               >
                 Role *
               </Typography>
@@ -264,7 +264,7 @@ export default function CodesDialogs({
                   sx={{
                     height: 56,
                     borderRadius: "12px",
-                    backgroundColor: "#F9FBFF",
+                    backgroundColor: "action.hover",
                   }}
                 >
                   <MenuItem value="teacher">Teacher</MenuItem>
@@ -274,7 +274,7 @@ export default function CodesDialogs({
             </Box>
             <Box>
               <Typography
-                sx={{ fontSize: 16, fontWeight: 500, mb: 1, color: "#7A869A" }}
+                sx={{ fontSize: 16, fontWeight: 500, mb: 1, color: "text.secondary" }}
               >
                 Validity Duration (Months) *
               </Typography>
@@ -289,7 +289,7 @@ export default function CodesDialogs({
                   sx: {
                     height: 56,
                     borderRadius: "12px",
-                    backgroundColor: "#F9FBFF",
+                    backgroundColor: "action.hover",
                   },
                 }}
               />
@@ -309,10 +309,10 @@ export default function CodesDialogs({
               textTransform: "none",
               fontWeight: 600,
               fontSize: 16,
-              backgroundColor: "#ECECEC",
-              color: "#2B5A9E",
+              backgroundColor: "action.selected",
+              color: "primary.main",
               boxShadow: "none",
-              "&:hover": { backgroundColor: "#DCDCDC", boxShadow: "none" },
+              "&:hover": { backgroundColor: "action.hover", boxShadow: "none" },
             }}
             disabled={generatedCodes.length > 0}
           >
@@ -328,10 +328,10 @@ export default function CodesDialogs({
               textTransform: "none",
               fontWeight: 600,
               fontSize: 16,
-              backgroundColor: "#466FAA",
-              color: "#FFFFFF",
+              backgroundColor: "primary.main",
+              color: "primary.contrastText",
               boxShadow: "none",
-              "&:hover": { backgroundColor: "#3D6399", boxShadow: "none" },
+              "&:hover": { backgroundColor: "primary.dark", boxShadow: "none" },
             }}
           >
             Cancel
@@ -339,7 +339,7 @@ export default function CodesDialogs({
         </DialogActions>
         {generatedCodes.length > 0 && (
           <Box sx={{ mt: 3, textAlign: "center" }}>
-            <Typography sx={{ mb: 1, color: "#7A869A" }}>
+            <Typography sx={{ mb: 1, color: "text.secondary" }}>
               Codes generated successfully. If you want, you can download them.
             </Typography>
             <Button
@@ -377,13 +377,15 @@ export default function CodesDialogs({
                   <TableRow
                     key={index}
                     sx={{
-                      backgroundColor: c.isDuplicate ? "#ffe6e6" : "inherit",
+                      backgroundColor: c.isDuplicate
+                        ? (theme) => `${theme.palette.error.main}20`
+                        : "inherit",
                     }}
                   >
                     <TableCell>
                       <Typography
                         sx={{
-                          color: c.isDuplicate ? "red" : "inherit",
+                          color: c.isDuplicate ? "error.main" : "inherit",
                           fontWeight: c.isDuplicate ? 600 : 400,
                           fontSize: 14,
                         }}
@@ -391,7 +393,7 @@ export default function CodesDialogs({
                         {c.code}
                       </Typography>
                       {c.isDuplicate && (
-                        <Typography variant="caption" sx={{ color: "red" }}>
+                        <Typography variant="caption" sx={{ color: "error.main" }}>
                           Duplicate
                         </Typography>
                       )}

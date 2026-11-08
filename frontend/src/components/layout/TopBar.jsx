@@ -48,7 +48,14 @@ export default function TopBar() {
   return (
     <AppBar
       position="fixed"
-      sx={{ backgroundColor: "#1A4D96", boxShadow: "none" }}
+      sx={{
+        backgroundColor: (theme) =>
+          theme.palette.mode === "dark" ? "#23466f" : "#1A4D96",
+        boxShadow: "none",
+        borderBottom: "1px solid",
+        borderColor: (theme) =>
+          theme.palette.mode === "dark" ? "rgba(255,255,255,0.1)" : "transparent",
+      }}
     >
       <Toolbar>
         {/* LEFT */}
@@ -196,14 +203,14 @@ export default function TopBar() {
                     }}
                     sx={{
                       backgroundColor: isActive ? "#1A4D96" : "transparent",
-                      color: isActive ? "white" : "#333",
+                      color: isActive ? "white" : "text.primary",
                       borderRadius: "12px",
                       mx: 1,
                       my: 0.5,
                       px: 2,
                       py: 1,
                       "&:hover": {
-                        backgroundColor: isActive ? "#1A4D96" : "#f5f5f5",
+                        backgroundColor: isActive ? "#1A4D96" : "action.hover",
                       },
                     }}
                   >

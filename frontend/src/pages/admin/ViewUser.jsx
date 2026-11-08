@@ -22,16 +22,16 @@ export default function ViewUser() {
 
   return (
     // خلفية الصفحة رمادي فاتح عشان الكروت تبان واضحة
-    <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: "#f5f7fa", minHeight: "100vh" }}>
+    <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: "background.default", minHeight: "100vh" }}>
       
       {/* 🔵 HEADER */}
-      <Card sx={{ p: 3, mb: 3, borderRadius: 3, boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+      <Card sx={{ ...detailCardSx, p: 3, mb: 3 }}>
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems={{ xs: "center", sm: "flex-start" }}>
           {/* إطار خفيف حول الأفاتار */}
           <Box sx={{ p: 0.5, borderRadius: "50%", bgcolor: "primary.light", display: "inline-flex" }}>
             <Avatar 
               src={user.avatar_url} 
-              sx={{ width: 64, height: 64, bgcolor: "white", color: "primary.main", fontWeight: 700 }}
+              sx={{ width: 64, height: 64, bgcolor: "background.paper", color: "primary.main", fontWeight: 700 }}
             >
               {user.full_name?.charAt(0)}
             </Avatar>
@@ -65,7 +65,7 @@ export default function ViewUser() {
       </Card>
 
       {/* 🔵 STATS */}
-      <Card sx={{ p: 3, mb: 3, borderRadius: 3, boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+      <Card sx={{ ...detailCardSx, p: 3, mb: 3 }}>
         <Typography variant="subtitle1" fontWeight={600} color="text.secondary" mb={2}>
           User Statistics
         </Typography>
@@ -83,7 +83,7 @@ export default function ViewUser() {
       </Card>
 
       {/* 🔵 BOOKS */}
-      <Card sx={{ p: 3, mb: 3, borderRadius: 3, boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+      <Card sx={{ ...detailCardSx, p: 3, mb: 3 }}>
         <Typography variant="subtitle1" fontWeight={600} color="text.secondary" mb={2}>
           Activated Books
         </Typography>
@@ -99,12 +99,15 @@ export default function ViewUser() {
                 sx={{
                   p: 1.5,
                   border: "1px solid",
-                  borderColor: "#eee",
+                  borderColor: "divider",
                   borderRadius: 2,
                   transition: "all 0.2s ease-in-out",
                   "&:hover": {
                     borderColor: "primary.light",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
+                    boxShadow: (theme) =>
+                      theme.palette.mode === "dark"
+                        ? "0 6px 16px rgba(0,0,0,0.35)"
+                        : "0 4px 12px rgba(0,0,0,0.06)",
                     transform: "translateY(-1px)"
                   }
                 }}
@@ -135,7 +138,7 @@ export default function ViewUser() {
       </Card>
 
       {/* 🔵 CLASSES */}
-      <Card sx={{ p: 3, borderRadius: 3, boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+      <Card sx={{ ...detailCardSx, p: 3 }}>
         <Typography variant="subtitle1" fontWeight={600} color="text.secondary" mb={2}>
           Classes
         </Typography>
@@ -174,3 +177,11 @@ function StatItem({ value, label }) {
     </Box>
   );
 }
+
+const detailCardSx = {
+  borderRadius: 3,
+  boxShadow: (theme) =>
+    theme.palette.mode === "dark"
+      ? "0 8px 24px rgba(0,0,0,0.38), 0 0 0 1px rgba(255,255,255,0.04)"
+      : "0 2px 8px rgba(0,0,0,0.04)",
+};

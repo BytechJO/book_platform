@@ -36,7 +36,14 @@ export default function DashBar() {
   return (
     <AppBar
       position="static"
-      sx={{ backgroundColor: "#1A4D96", boxShadow: "none" }}
+      sx={{
+        backgroundColor: (theme) =>
+          theme.palette.mode === "dark" ? "#23466f" : "#1A4D96",
+        boxShadow: "none",
+        borderBottom: "1px solid",
+        borderColor: (theme) =>
+          theme.palette.mode === "dark" ? "rgba(255,255,255,0.1)" : "transparent",
+      }}
     >
       <Toolbar
         sx={{
@@ -50,7 +57,7 @@ export default function DashBar() {
             src={logoWhite}
             alt="logo"
             style={{
-              height: window.innerWidth < 600 ? 28 : 32, // 👈 responsive
+              height: window.innerWidth < 600 ? 28 : 32,
               cursor: "pointer",
             }}
             onClick={() => navigate("/admin/dashboard")}

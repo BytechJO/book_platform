@@ -20,7 +20,7 @@ export default function BottomSection({ book, usedCodes }) {
       >
         <Typography sx={titleStyle}>Available On</Typography>
 
-        <Typography sx={{ color: "#7a869a", fontSize: 13, mb: 2 }}>
+        <Typography sx={{ color: "text.secondary", fontSize: 13, mb: 2 }}>
           This book is available on the following platforms.
         </Typography>
         <Stack direction="row" spacing={2} sx={{ width: "100%" }}>
@@ -57,7 +57,7 @@ export default function BottomSection({ book, usedCodes }) {
           {/* ITEM 1 */}
           <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
             <StatItem
-              icon={<VisibilityIcon sx={{ color: "#2B5A9E" }} />}
+              icon={<VisibilityIcon sx={{ color: "primary.main" }} />}
               value={book.views}
               label="Total Views"
             />
@@ -103,7 +103,8 @@ function PlatformItem({ icon, label, url }) {
         display: "flex",
         alignItems: "center",
         gap: 1.5,
-        border: "1px solid #e5e7eb",
+        border: "1px solid",
+        borderColor: "divider",
         borderRadius: "12px",
         px: 2,
         py: 1.5,
@@ -112,7 +113,7 @@ function PlatformItem({ icon, label, url }) {
         transition: "0.2s",
 
         "&:hover": {
-          backgroundColor: isAvailable ? "#f8fafc" : "transparent",
+          backgroundColor: isAvailable ? "action.hover" : "transparent",
         },
       }}
     >
@@ -137,7 +138,7 @@ function PlatformItem({ icon, label, url }) {
           sx={{
             fontSize: 11,
             fontWeight: 600,
-            color: isAvailable ? "#22c55e" : "#9ca3af",
+            color: isAvailable ? "success.main" : "text.secondary",
           }}
         >
           {isAvailable ? "Available" : "Not Available"}
@@ -153,17 +154,20 @@ function StatItem({ icon, value, label }) {
 
       <Typography fontWeight={600}>{value}</Typography>
 
-      <Typography sx={{ fontSize: 12, color: "#7a869a" }}>{label}</Typography>
+      <Typography sx={{ fontSize: 12, color: "text.secondary" }}>{label}</Typography>
     </Stack>
   );
 }
 const cardStyle = {
   p: 3,
   borderRadius: "14px",
-  boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+  boxShadow: (theme) =>
+    theme.palette.mode === "dark"
+      ? "0 8px 24px rgba(0,0,0,0.38), 0 0 0 1px rgba(255,255,255,0.04)"
+      : "0 2px 8px rgba(0,0,0,0.05)",
 };
 
 const titleStyle = {
   fontWeight: 600,
-  color: "#2B5A9E",
+  color: "primary.main",
 };

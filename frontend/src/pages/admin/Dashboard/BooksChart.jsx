@@ -7,10 +7,11 @@ import {
   Bar,
   BarChart,
 } from "recharts";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
 import { useBooksGrowth } from "../../../api";
 
 export default function BooksChart({ startDate }) {
+  const theme = useTheme();
   const start = new Date(startDate);
   start.setHours(0, 0, 0, 0);
 
@@ -48,7 +49,7 @@ export default function BooksChart({ startDate }) {
   return (
     <Box
       sx={{
-        background: "#fff",
+        background: "background.paper",
         borderRadius: "12px",
         p: 2,
         boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
@@ -63,14 +64,14 @@ export default function BooksChart({ startDate }) {
           mb: 2,
         }}
       >
-        <Typography sx={{ fontWeight: 600, color: "#1F4E8C" }}>
+        <Typography sx={{ fontWeight: 600, color: "primary.main" }}>
           Books Published{" "}
         </Typography>
 
         <Box
           sx={{
             fontSize: 12,
-            background: "#f5f5f5",
+            bgcolor: "action.hover",
             px: 1.5,
             py: 0.5,
             borderRadius: "6px",
@@ -82,9 +83,9 @@ export default function BooksChart({ startDate }) {
 
       <ResponsiveContainer width="100%" height="85%">
         <BarChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <XAxis dataKey="name" />
-          <YAxis width={25} />
+          <CartesianGrid stroke={theme.palette.divider} strokeDasharray="3 3" vertical={false} />
+          <XAxis dataKey="name" tick={{ fill: theme.palette.text.secondary }} />
+          <YAxis width={25} tick={{ fill: theme.palette.text.secondary }} />
           <Tooltip />
 
           <Bar

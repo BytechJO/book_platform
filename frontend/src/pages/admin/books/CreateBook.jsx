@@ -221,12 +221,12 @@ export default function CreateBook() {
             startIcon={<ArrowBackRoundedIcon />}
             onClick={() => navigate("/admin/books")}
             sx={{
-              color: "#64748b",
+              color: "text.secondary",
               textTransform: "none",
               fontWeight: 600,
               mb: 1.5,
               px: 0,
-              "&:hover": { backgroundColor: "transparent", color: "#2B5A9E" },
+              "&:hover": { backgroundColor: "transparent", color: "primary.main" },
             }}
           >
             Back to books
@@ -248,12 +248,12 @@ export default function CreateBook() {
                   fontSize: { xs: 28, md: 34 },
                   lineHeight: 1.2,
                   fontWeight: 750,
-                  color: "#163f7a",
+                  color: "primary.main",
                 }}
               >
                 {isEdit ? "Edit Book" : "Create New Book"}
               </Typography>
-              <Typography sx={{ mt: 0.75, color: "#64748b", fontSize: 14 }}>
+              <Typography sx={{ mt: 0.75, color: "text.secondary", fontSize: 14 }}>
                 {isEdit
                   ? "Update the book information, links, and cover images."
                   : "Add book information, availability links, and cover images."}
@@ -265,9 +265,14 @@ export default function CreateBook() {
               sx={{
                 px: 1,
                 fontWeight: 700,
-                color: watch("status") === "Published" ? "#166534" : "#92400e",
+                color:
+                  watch("status") === "Published"
+                    ? "success.main"
+                    : "warning.main",
                 backgroundColor:
-                  watch("status") === "Published" ? "#dcfce7" : "#fef3c7",
+                  watch("status") === "Published"
+                    ? "rgba(46,125,50,0.14)"
+                    : "rgba(237,108,2,0.14)",
               }}
             />
           </Box>
@@ -363,7 +368,7 @@ export default function CreateBook() {
                         }}
                       >
                         <MenuItem value="">
-                          <Typography color="#94a3b8">Select category</Typography>
+                          <Typography color="text.secondary">Select category</Typography>
                         </MenuItem>
                         {categories.map((cat) => (
                           <MenuItem key={cat.id} value={cat.id}>
@@ -372,7 +377,7 @@ export default function CreateBook() {
                         ))}
                         <MenuItem
                           value="add_new"
-                          sx={{ color: "#2B5A9E", fontWeight: 700, gap: 1 }}
+                          sx={{ color: "primary.main", fontWeight: 700, gap: 1 }}
                         >
                           <AddRoundedIcon fontSize="small" /> Add Category
                         </MenuItem>
@@ -389,7 +394,7 @@ export default function CreateBook() {
                         onChange={(e) => setValue("language", e.target.value)}
                       >
                         <MenuItem value="">
-                          <Typography color="#94a3b8">Select language</Typography>
+                          <Typography color="text.secondary">Select language</Typography>
                         </MenuItem>
                         <MenuItem value="English">English</MenuItem>
                         <MenuItem value="Arabic">Arabic</MenuItem>
@@ -409,7 +414,7 @@ export default function CreateBook() {
                         <MenuItem value="Published">Published</MenuItem>
                       </Select>
                     </FormControl>
-                    <Typography sx={{ mt: 1, color: "#94a3b8", fontSize: 12 }}>
+                    <Typography sx={{ mt: 1, color: "text.secondary", fontSize: 12 }}>
                       Draft books stay private. Published books appear in the public catalog.
                     </Typography>
                   </Box>
@@ -436,7 +441,7 @@ export default function CreateBook() {
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
-                            <LinkRoundedIcon sx={{ color: "#94a3b8" }} />
+                            <LinkRoundedIcon sx={{ color: "text.secondary" }} />
                           </InputAdornment>
                         ),
                       }}
@@ -462,7 +467,7 @@ export default function CreateBook() {
                         InputProps={{
                           startAdornment: (
                             <InputAdornment position="start">
-                              <LinkRoundedIcon sx={{ color: "#94a3b8" }} />
+                              <LinkRoundedIcon sx={{ color: "text.secondary" }} />
                             </InputAdornment>
                           ),
                         }}
@@ -481,7 +486,7 @@ export default function CreateBook() {
                         InputProps={{
                           startAdornment: (
                             <InputAdornment position="start">
-                              <LinkRoundedIcon sx={{ color: "#94a3b8" }} />
+                              <LinkRoundedIcon sx={{ color: "text.secondary" }} />
                             </InputAdornment>
                           ),
                         }}
@@ -537,16 +542,20 @@ export default function CreateBook() {
 
                 <Box
                   sx={{
-                    border: "1px solid #e2e8f0",
+                    border: "1px solid",
+                    borderColor: "divider",
                     borderRadius: "16px",
                     overflow: "hidden",
-                    backgroundColor: "#fff",
+                    backgroundColor: "background.paper",
                   }}
                 >
                   <Box
                     sx={{
                       height: 190,
-                      background: "linear-gradient(135deg, #e8f0fe 0%, #dbeafe 100%)",
+                      background: (theme) =>
+                        theme.palette.mode === "dark"
+                          ? "linear-gradient(135deg, #243b5a 0%, #1d2f49 100%)"
+                          : "linear-gradient(135deg, #e8f0fe 0%, #dbeafe 100%)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -561,7 +570,7 @@ export default function CreateBook() {
                         sx={{ width: "100%", height: "100%", objectFit: "cover" }}
                       />
                     ) : (
-                      <MenuBookRoundedIcon sx={{ fontSize: 70, color: "#2B5A9E" }} />
+                      <MenuBookRoundedIcon sx={{ fontSize: 70, color: "primary.main" }} />
                     )}
                   </Box>
                   <Box sx={{ p: 2 }}>
@@ -569,7 +578,7 @@ export default function CreateBook() {
                       sx={{
                         fontSize: 16,
                         fontWeight: 750,
-                        color: "#172033",
+                        color: "text.primary",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                         whiteSpace: "nowrap",
@@ -580,7 +589,7 @@ export default function CreateBook() {
                     <Typography
                       sx={{
                         mt: 0.75,
-                        color: "#64748b",
+                        color: "text.secondary",
                         fontSize: 12,
                         display: "-webkit-box",
                         WebkitLineClamp: 2,
@@ -601,9 +610,13 @@ export default function CreateBook() {
                         size="small"
                         sx={{
                           color:
-                            watch("status") === "Published" ? "#166534" : "#92400e",
+                            watch("status") === "Published"
+                              ? "success.main"
+                              : "warning.main",
                           backgroundColor:
-                            watch("status") === "Published" ? "#dcfce7" : "#fef3c7",
+                            watch("status") === "Published"
+                              ? "rgba(46,125,50,0.14)"
+                              : "rgba(237,108,2,0.14)",
                         }}
                       />
                     </Stack>
@@ -623,8 +636,8 @@ export default function CreateBook() {
                       borderRadius: "10px",
                       textTransform: "none",
                       fontWeight: 700,
-                      backgroundColor: "#2B5A9E",
-                      "&:hover": { backgroundColor: "#244a86" },
+                      backgroundColor: "primary.main",
+                      "&:hover": { backgroundColor: "primary.dark" },
                     }}
                   >
                     {loading ? (
@@ -644,8 +657,8 @@ export default function CreateBook() {
                       borderRadius: "10px",
                       textTransform: "none",
                       fontWeight: 650,
-                      borderColor: "#cbd5e1",
-                      color: "#475569",
+                      borderColor: "divider",
+                      color: "text.secondary",
                     }}
                   >
                     Cancel
@@ -662,7 +675,7 @@ export default function CreateBook() {
           maxWidth="xs"
           PaperProps={{ sx: { borderRadius: "18px", p: 1 } }}
         >
-          <DialogTitle sx={{ fontWeight: 750, color: "#163f7a" }}>
+          <DialogTitle sx={{ fontWeight: 750, color: "primary.main" }}>
             Create Category
           </DialogTitle>
 
@@ -686,7 +699,7 @@ export default function CreateBook() {
               sx={{
                 borderRadius: "9px",
                 textTransform: "none",
-                backgroundColor: "#2B5A9E",
+                backgroundColor: "primary.main",
               }}
             >
               {categoryLoading ? <CircularProgress size={20} /> : "Create"}
@@ -706,8 +719,8 @@ function SectionHeader({ icon, title, description }) {
           width: 42,
           height: 42,
           borderRadius: "12px",
-          backgroundColor: "#e8f0fe",
-          color: "#2B5A9E",
+          backgroundColor: "action.selected",
+          color: "primary.main",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -718,10 +731,10 @@ function SectionHeader({ icon, title, description }) {
         {icon}
       </Box>
       <Box>
-        <Typography sx={{ fontSize: 17, fontWeight: 750, color: "#172033" }}>
+        <Typography sx={{ fontSize: 17, fontWeight: 750, color: "text.primary" }}>
           {title}
         </Typography>
-        <Typography sx={{ color: "#7b8798", fontSize: 12.5, mt: 0.35 }}>
+        <Typography sx={{ color: "text.secondary", fontSize: 12.5, mt: 0.35 }}>
           {description}
         </Typography>
       </Box>
@@ -731,27 +744,31 @@ function SectionHeader({ icon, title, description }) {
 
 function FieldLabel({ children, required = false }) {
   return (
-    <Typography sx={{ mb: 0.9, fontSize: 13, fontWeight: 650, color: "#334155" }}>
+    <Typography sx={{ mb: 0.9, fontSize: 13, fontWeight: 650, color: "text.primary" }}>
       {children}
-      {required && <Box component="span" sx={{ color: "#dc2626" }}> *</Box>}
+      {required && <Box component="span" sx={{ color: "error.main" }}> *</Box>}
     </Typography>
   );
 }
 
 const sectionCardSx = {
-  backgroundColor: "#fff",
-  border: "1px solid #e6ebf2",
+  backgroundColor: "background.paper",
+  border: "1px solid",
+  borderColor: "divider",
   borderRadius: "18px",
   p: { xs: 2.25, sm: 3 },
-  boxShadow: "0 8px 24px rgba(30, 64, 175, 0.045)",
+  boxShadow: (theme) =>
+    theme.palette.mode === "dark"
+      ? "0 8px 24px rgba(0,0,0,0.38), 0 0 0 1px rgba(255,255,255,0.04)"
+      : "0 8px 24px rgba(30, 64, 175, 0.045)",
 };
 
 const fieldSx = {
   "& .MuiOutlinedInput-root": {
     borderRadius: "10px",
-    backgroundColor: "#fbfcfe",
-    "& fieldset": { borderColor: "#dce3ec" },
-    "&:hover fieldset": { borderColor: "#94a3b8" },
-    "&.Mui-focused fieldset": { borderColor: "#2B5A9E" },
+    backgroundColor: "action.hover",
+    "& fieldset": { borderColor: "divider" },
+    "&:hover fieldset": { borderColor: "text.secondary" },
+    "&.Mui-focused fieldset": { borderColor: "primary.main" },
   },
 };

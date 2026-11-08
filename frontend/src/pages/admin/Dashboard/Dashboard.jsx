@@ -163,7 +163,7 @@ export default function Dashboard() {
             sx={{
               fontSize: 26,
               fontWeight: 700,
-              color: "#1F4E8C",
+              color: "primary.main",
             }}
           >
             Admin Dashboard
@@ -211,7 +211,7 @@ export default function Dashboard() {
                 borderRadius: "12px",
                 overflow: "hidden",
                 cursor: "pointer",
-                backgroundColor: "#fff",
+                backgroundColor: "background.paper",
                 boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
                 display: "flex",
                 flexDirection: "column",
@@ -245,7 +245,7 @@ export default function Dashboard() {
               <Box
                 sx={{
                   position: "relative",
-                  backgroundColor: "#fff",
+                  backgroundColor: "background.paper",
                   borderBottomLeftRadius: "20px",
                   borderBottomRightRadius: "20px",
                   flex: 1,
@@ -268,19 +268,19 @@ export default function Dashboard() {
                       sx={{
                         fontSize: 24,
                         fontWeight: "bold",
-                        color: "#2F5DA0",
+                        color: "primary.main",
                       }}
                     >
                       {item.value}
                     </Typography>
-                    <Typography sx={{ fontSize: 10, color: "#999", mt: 0.5 }}>
+                    <Typography sx={{ fontSize: 10, color: "text.secondary", mt: 0.5 }}>
                       {item.title === "TOTAL USERS" && "users Published"}
                       {item.title === "TOTAL BOOK" && "Books Published"}
                       {item.title === "TOTAL CODE" && "Codes Generated"}
                     </Typography>
                   </Box>
 
-                  <Box sx={{ height: "1px", backgroundColor: "#eee", mx: 2 }} />
+                  <Box sx={{ height: "1px", bgcolor: "divider", mx: 2 }} />
 
                   {/* فوتر الكرت */}
                   <Box
@@ -317,7 +317,7 @@ export default function Dashboard() {
                         {item.percent}
                       </Box>
 
-                      <Typography sx={{ fontSize: 14, color: "#777" }}>
+                      <Typography sx={{ fontSize: 14, color: "text.secondary" }}>
                         From last month
                       </Typography>
                     </Box>
