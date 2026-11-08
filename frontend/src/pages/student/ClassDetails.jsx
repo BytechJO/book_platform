@@ -61,7 +61,7 @@ export default function ClassDetails() {
       <Button
         startIcon={<ArrowBackIcon />}
         onClick={() => navigate("/student/classes")}
-        sx={{ mb: 2, color: "#64748b" }}
+        sx={{ mb: 2, color: "text.secondary" }}
       >
         Back to classes
       </Button>
@@ -141,7 +141,8 @@ export default function ClassDetails() {
         <Paper
           elevation={0}
           sx={{
-            border: "1px solid #e2e8f0",
+            border: "1px solid",
+            borderColor: "divider",
             borderRadius: 3,
             overflow: "hidden",
           }}
@@ -150,7 +151,7 @@ export default function ClassDetails() {
             direction="row"
             alignItems="center"
             spacing={1}
-            sx={{ p: 2.5, borderBottom: "1px solid #e2e8f0" }}
+            sx={{ p: 2.5, borderBottom: "1px solid", borderColor: "divider" }}
           >
             <Box
               sx={{
@@ -160,7 +161,7 @@ export default function ClassDetails() {
                 placeItems: "center",
                 borderRadius: 2,
                 color: "#4f46e5",
-                bgcolor: "#eef2ff",
+                bgcolor: "rgba(79,70,229,0.12)",
               }}
             >
               <CampaignOutlinedIcon fontSize="small" />
@@ -180,7 +181,7 @@ export default function ClassDetails() {
           </Stack>
           <TableContainer>
             <Table sx={{ minWidth: 520 }}>
-              <TableHead sx={{ bgcolor: "#f8fafc" }}>
+              <TableHead sx={{ bgcolor: "action.hover" }}>
                 <TableRow>
                   <TableCell sx={{ fontWeight: 700 }}>Title</TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>Note</TableCell>
@@ -189,9 +190,35 @@ export default function ClassDetails() {
               </TableHead>
               <TableBody>
                 {details.notes.slice(0, visibleNotes).map((note) => (
-                  <TableRow key={note.id} hover sx={{ bgcolor: note.is_pinned ? "#fffbeb" : "inherit", "&:hover": { bgcolor: note.is_pinned ? "#fef3c7 !important" : undefined } }}>
+                  <TableRow
+                    key={note.id}
+                    hover
+                    sx={{
+                      bgcolor: note.is_pinned
+                        ? "rgba(245,158,11,0.10)"
+                        : "inherit",
+                      "&:hover": {
+                        bgcolor: note.is_pinned
+                          ? "rgba(245,158,11,0.16) !important"
+                          : undefined,
+                      },
+                    }}
+                  >
                     <TableCell>
-                      <Stack direction="row" spacing={0.7} alignItems="center"><Typography variant="body2" fontWeight={700}>{note.title}</Typography>{note.is_pinned && <Chip size="small" icon={<PushPinIcon />} label="Pinned" color="warning" variant="outlined" />}</Stack>
+                      <Stack direction="row" spacing={0.7} alignItems="center">
+                        <Typography variant="body2" fontWeight={700}>
+                          {note.title}
+                        </Typography>
+                        {note.is_pinned && (
+                          <Chip
+                            size="small"
+                            icon={<PushPinIcon />}
+                            label="Pinned"
+                            color="warning"
+                            variant="outlined"
+                          />
+                        )}
+                      </Stack>
                     </TableCell>
                     <TableCell sx={{ minWidth: 240, whiteSpace: "pre-wrap" }}>
                       {note.content}
@@ -213,7 +240,12 @@ export default function ClassDetails() {
                 {visibleNotes < details.notes.length && (
                   <TableRow>
                     <TableCell colSpan={3} align="center">
-                      <Button size="small" onClick={() => setVisibleNotes(details.notes.length)}>Show more</Button>
+                      <Button
+                        size="small"
+                        onClick={() => setVisibleNotes(details.notes.length)}
+                      >
+                        Show more
+                      </Button>
                     </TableCell>
                   </TableRow>
                 )}
@@ -225,7 +257,8 @@ export default function ClassDetails() {
         <Paper
           elevation={0}
           sx={{
-            border: "1px solid #e2e8f0",
+            border: "1px solid",
+            borderColor: "divider",
             borderRadius: 3,
             overflow: "hidden",
           }}
@@ -234,7 +267,7 @@ export default function ClassDetails() {
             direction="row"
             alignItems="center"
             spacing={1}
-            sx={{ p: 2.5, borderBottom: "1px solid #e2e8f0" }}
+            sx={{ p: 2.5, borderBottom: "1px solid", borderColor: "divider" }}
           >
             <Box
               sx={{
@@ -244,7 +277,7 @@ export default function ClassDetails() {
                 placeItems: "center",
                 borderRadius: 2,
                 color: "#0284c7",
-                bgcolor: "#e0f2fe",
+                bgcolor: "rgba(2,132,199,0.12)",
               }}
             >
               <EventOutlinedIcon fontSize="small" />
@@ -264,7 +297,7 @@ export default function ClassDetails() {
           </Stack>
           <TableContainer>
             <Table sx={{ minWidth: 480 }}>
-              <TableHead sx={{ bgcolor: "#f8fafc" }}>
+              <TableHead sx={{ bgcolor: "action.hover" }}>
                 <TableRow>
                   <TableCell sx={{ fontWeight: 700 }}>Subject</TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>Date</TableCell>
@@ -299,10 +332,12 @@ export default function ClassDetails() {
                     }}
                     sx={{
                       cursor: "pointer",
-                      bgcolor: event.is_pinned ? "#fffbeb" : "inherit",
+                      bgcolor: event.is_pinned
+                        ? "rgba(245,158,11,0.10)"
+                        : "inherit",
                       "&:hover": {
                         bgcolor: event.is_pinned
-                          ? "#fef3c7 !important"
+                          ? "rgba(245,158,11,0.16) !important"
                           : undefined,
                       },
                     }}
@@ -313,7 +348,9 @@ export default function ClassDetails() {
                           {event.subject || "No subject"}
                         </Typography>
                         {event.is_pinned && (
-                          <PushPinIcon sx={{ fontSize: 16, color: "#d97706" }} />
+                          <PushPinIcon
+                            sx={{ fontSize: 16, color: "#d97706" }}
+                          />
                         )}
                       </Stack>
                     </TableCell>

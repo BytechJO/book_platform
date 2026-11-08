@@ -119,7 +119,7 @@ export default function ViewStudentBook() {
             sx={{
               mb: 2,
               cursor: "pointer",
-              color: "#2d5aa7",
+              color: "primary.main",
               fontWeight: 600,
               fontSize: 15,
               display: "inline-flex",
@@ -153,9 +153,10 @@ export default function ViewStudentBook() {
                   zIndex: 1,
                   p: 2,
                   borderRadius: "28px",
-                  backgroundColor: "#ffffff",
+                  backgroundColor: "background.paper",
                   boxShadow: "0 20px 45px rgba(0,0,0,0.08)",
-                  border: "1px solid #E1E1E1",
+                  border: "1px solid",
+                  borderColor: "divider",
                 }}
               >
                 {/* 🔵 IMAGE */}
@@ -181,7 +182,7 @@ export default function ViewStudentBook() {
                 <Typography
                   sx={{
                     fontWeight: 600,
-                    color: "#2d5aa7",
+                    color: "primary.main",
                     fontSize: 18,
                     mt: 2,
                     mb: 1,
@@ -229,7 +230,9 @@ export default function ViewStudentBook() {
 
                 <Divider sx={{ my: 1 }} />
 
-                <Typography sx={{ fontWeight: 600, mb: 2, color: "#1A4D96" }}>
+                <Typography
+                  sx={{ fontWeight: 600, mb: 2, color: "primary.main" }}
+                >
                   Available on
                 </Typography>
 
@@ -306,7 +309,7 @@ export default function ViewStudentBook() {
                   sx={{
                     fontSize: 30,
                     fontWeight: 700,
-                    color: "#2d5aa7",
+                    color: "primary.main",
                     mb: 1.5,
                   }}
                 >
@@ -341,7 +344,11 @@ export default function ViewStudentBook() {
                     }}
                   />
                   <Typography
-                    sx={{ fontWeight: 600, color: "#1A4D96", fontSize: 16 }}
+                    sx={{
+                      fontWeight: 600,
+                      color: "primary.main",
+                      fontSize: 16,
+                    }}
                   >
                     Description
                   </Typography>
@@ -352,7 +359,7 @@ export default function ViewStudentBook() {
                     lineHeight: 2,
                     textAlign: "justify",
                     fontSize: 16,
-                    color: "#5d5d5d",
+                    color: "text.secondary",
                   }}
                 >
                   {expanded
@@ -366,7 +373,7 @@ export default function ViewStudentBook() {
                     sx={{
                       mt: 1,
                       p: 0,
-                      color: "#2d5aa7",
+                      color: "primary.main",
                       fontWeight: 600,
                       fontSize: 14,
                       textTransform: "none",
@@ -395,7 +402,11 @@ export default function ViewStudentBook() {
                     }}
                   />
                   <Typography
-                    sx={{ fontWeight: 600, color: "#1A4D96", fontSize: 16 }}
+                    sx={{
+                      fontWeight: 600,
+                      color: "primary.main",
+                      fontSize: 16,
+                    }}
                   >
                     Class
                   </Typography>
@@ -411,9 +422,10 @@ export default function ViewStudentBook() {
                     sx={{
                       p: 2.5,
                       width: "100%",
-                      backgroundColor: "#ffffff",
+                      backgroundColor: "background.paper",
                       borderRadius: "12px",
-                      border: "1px solid #E1E1E1",
+                      border: "1px solid",
+                      borderColor: "divider",
                       display: "flex",
                       flexDirection: { xs: "column", sm: "row" },
                       gap: 3,
@@ -423,7 +435,7 @@ export default function ViewStudentBook() {
                       fontFamily: "inherit",
                       transition: "all 0.2s ease-in-out",
                       "&:hover": {
-                        backgroundColor: "#f8fafc",
+                        backgroundColor: "action.hover",
                         boxShadow: "0 6px 15px rgba(0,0,0,0.08)",
                       },
                       "&:focus-visible": {
@@ -433,22 +445,34 @@ export default function ViewStudentBook() {
                     }}
                   >
                     <Box>
-                      <Typography sx={{ fontSize: 12, color: "#777", mb: 0.5 }}>
+                      <Typography
+                        sx={{ fontSize: 12, color: "text.secondary", mb: 0.5 }}
+                      >
                         Class Name
                       </Typography>
                       <Typography
-                        sx={{ fontSize: 15, fontWeight: 600, color: "#1A4D96" }}
+                        sx={{
+                          fontSize: 15,
+                          fontWeight: 600,
+                          color: "primary.main",
+                        }}
                       >
                         {book.class_name}
                       </Typography>
                     </Box>
 
                     <Box>
-                      <Typography sx={{ fontSize: 12, color: "#777", mb: 0.5 }}>
+                      <Typography
+                        sx={{ fontSize: 12, color: "text.secondary", mb: 0.5 }}
+                      >
                         Teacher
                       </Typography>
                       <Typography
-                        sx={{ fontSize: 15, fontWeight: 600, color: "#1A4D96" }}
+                        sx={{
+                          fontSize: 15,
+                          fontWeight: 600,
+                          color: "primary.main",
+                        }}
                       >
                         {book.teacher_name || "—"}
                       </Typography>
@@ -470,11 +494,17 @@ export default function ViewStudentBook() {
                   >
                     <Box>
                       <Typography
-                        sx={{ fontSize: 15, color: "#1A4D96", fontWeight: 600 }}
+                        sx={{
+                          fontSize: 15,
+                          color: "primary.main",
+                          fontWeight: 600,
+                        }}
                       >
                         No class assigned yet
                       </Typography>
-                      <Typography sx={{ fontSize: 13, color: "#666", mt: 0.5 }}>
+                      <Typography
+                        sx={{ fontSize: 13, color: "text.secondary", mt: 0.5 }}
+                      >
                         Activate a code to join your class.
                       </Typography>
                     </Box>
@@ -483,7 +513,7 @@ export default function ViewStudentBook() {
                       onClick={() => setOpen(true)}
                       sx={{
                         borderColor: "#2d5aa7",
-                        color: "#2d5aa7",
+                        color: "primary.main",
                         fontWeight: 600,
                         textTransform: "none",
                         borderRadius: "8px",
@@ -508,7 +538,7 @@ export default function ViewStudentBook() {
               textAlign: "center",
               fontWeight: 500,
               fontSize: 14,
-              color: "#2d5aa7",
+              color: "primary.main",
             }}
           >
             alrowadpub.com
@@ -546,7 +576,9 @@ export default function ViewStudentBook() {
                     title="Scan class QR code"
                     onScan={({ code, bookId }) => {
                       if (bookId && String(bookId) !== String(book.id)) {
-                        setErrorMsg("This class QR code belongs to another book.");
+                        setErrorMsg(
+                          "This class QR code belongs to another book.",
+                        );
                         return;
                       }
                       setClassCode(code);

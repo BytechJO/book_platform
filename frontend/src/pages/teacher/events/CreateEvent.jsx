@@ -54,7 +54,7 @@ function ServerDay(props) {
           ...(hasEvents && {
             bgcolor: "rgba(99, 102, 241, 0.08)",
             fontWeight: 700,
-            color: "#4338ca",
+            color: "primary.main",
             "&:hover": {
               bgcolor: "rgba(99, 102, 241, 0.15)",
             },
@@ -216,20 +216,21 @@ export default function CreateEvent() {
   const selectStyles = {
     "& .MuiOutlinedInput-root": {
       borderRadius: 3,
-      bgcolor: "#fff",
+      bgcolor: "background.paper",
       transition: "all 0.2s ease",
-      border: "1.5px solid #e2e8f0",
+      border: "1.5px solid",
+      borderColor: "divider",
       "&:hover": {
         border: "1.5px solid #cbd5e1",
-        bgcolor: "#fafbfc",
+        bgcolor: "background.paper",
       },
       "&.Mui-focused": {
         border: "1.5px solid #2B5A9E",
-        bgcolor: "#fff",
+        bgcolor: "background.paper",
         boxShadow: "0 0 0 3px rgba(99, 102, 241, 0.1)",
       },
       "&.Mui-disabled": {
-        bgcolor: "#f1f5f9",
+        bgcolor: "action.hover",
         color: "#94a3b8",
       },
     },
@@ -237,7 +238,7 @@ export default function CreateEvent() {
       color: "#64748b",
       fontSize: 14,
       "&.Mui-focused": {
-        color: "#2B5A9E",
+        color: "primary.main",
       },
     },
   };
@@ -266,7 +267,7 @@ export default function CreateEvent() {
             sx={{
               fontSize: 28,
               fontWeight: 800,
-              color: "#295899",
+              color: "primary.main",
               letterSpacing: "-0.5px",
             }}
           >
@@ -285,7 +286,7 @@ export default function CreateEvent() {
             borderRadius: 4,
             overflow: "hidden",
             boxShadow: "0 0 20px rgba(0,0,0,0.08)",
-            bgcolor: "#fff",
+            bgcolor: "background.paper",
           }}
         >
           {/* Left Panel — Calendar + Events */}
@@ -293,7 +294,8 @@ export default function CreateEvent() {
             sx={{
               width: 380,
               flexShrink: 0,
-              borderRight: "1.5px solid #e2e8f0",
+              borderRight: "1.5px solid",
+              borderColor: "divider",
               display: "flex",
               flexDirection: "column",
             }}
@@ -338,11 +340,11 @@ export default function CreateEvent() {
                       "& .MuiTypography-root": {
                         fontSize: 15,
                         fontWeight: 700,
-                        color: "#0f172a",
+                        color: "text.primary",
                       },
                       "& .MuiIconButton-root": {
                         color: "#64748b",
-                        "&:hover": { bgcolor: "#f1f5f9" },
+                        "&:hover": { bgcolor: "action.hover" },
                       },
                     },
                   }}
@@ -350,7 +352,7 @@ export default function CreateEvent() {
               </LocalizationProvider>
             </Box>
 
-            <Divider sx={{ mx: 3, borderColor: "#f1f5f9" }} />
+            <Divider sx={{ mx: 3 }} />
 
             {/* Events List */}
             <Box sx={{ flex: 1, p: 3, overflow: "auto", maxHeight: 300 }}>
@@ -383,13 +385,13 @@ export default function CreateEvent() {
                     bgcolor:
                       selectedEvents.length > 0
                         ? "rgba(99, 102, 241, 0.08)"
-                        : "#f1f5f9",
+                        : "action.hover",
                     color: selectedEvents.length > 0 ? "#2B5A9E" : "#94a3b8",
                     border: "1px solid",
                     borderColor:
                       selectedEvents.length > 0
                         ? "rgba(99, 102, 241, 0.15)"
-                        : "#e2e8f0",
+                        : "divider",
                   }}
                 />
               </Box>
@@ -408,7 +410,7 @@ export default function CreateEvent() {
                         width: 48,
                         height: 48,
                         borderRadius: 3,
-                        bgcolor: "#f8fafc",
+                        bgcolor: "action.hover",
                         border: "1.5px dashed #cbd5e1",
                         display: "flex",
                         alignItems: "center",
@@ -453,12 +455,13 @@ export default function CreateEvent() {
                           gap: 2,
                           p: 2,
                           borderRadius: 3,
-                          bgcolor: "#f8fafc",
-                          border: "1px solid #f1f5f9",
+                          bgcolor: "action.hover",
+                          border: "1px solid",
+                          borderColor: "divider",
                           transition: "all 0.15s ease",
                           "&:hover": {
-                            bgcolor: "#f1f5f9",
-                            borderColor: "#e2e8f0",
+                            bgcolor: "action.hover",
+                            borderColor: "divider",
                           },
                           animation: `slideIn 0.3s ease ${index * 0.05}s both`,
                           "@keyframes slideIn": {
@@ -480,7 +483,7 @@ export default function CreateEvent() {
                             py: 0.5,
                             px: 1,
                             borderRadius: 2,
-                            bgcolor: "#eef2ff",
+                            bgcolor: "rgba(99,102,241,0.12)",
                             border: "1px solid rgba(99, 102, 241, 0.08)",
                             alignSelf: "flex-start",
                           }}
@@ -489,7 +492,7 @@ export default function CreateEvent() {
                             sx={{
                               fontSize: 12,
                               fontWeight: 700,
-                              color: "#2B5A9E",
+                              color: "primary.main",
                               lineHeight: 1.2,
                             }}
                           >
@@ -513,7 +516,7 @@ export default function CreateEvent() {
                             sx={{
                               fontSize: 13,
                               fontWeight: 600,
-                              color: "#1e293b",
+                              color: "text.primary",
                               overflow: "hidden",
                               textOverflow: "ellipsis",
                               whiteSpace: "nowrap",
@@ -551,14 +554,14 @@ export default function CreateEvent() {
               p: 4,
               display: "flex",
               flexDirection: "column",
-              bgcolor: "#fff",
+              bgcolor: "background.paper",
             }}
           >
             <Typography
               sx={{
                 fontSize: 16,
                 fontWeight: 700,
-                color: "#0f172a",
+                color: "text.primary",
                 mb: 0.5,
               }}
             >
@@ -611,7 +614,8 @@ export default function CreateEvent() {
                         sx: {
                           mt: 0.5,
                           borderRadius: 3,
-                          border: "1.5px solid #e2e8f0",
+                          border: "1.5px solid",
+                          borderColor: "divider",
                           boxShadow: "0 10px 40px rgba(0,0,0,0.08)",
                           "& .MuiMenuItem-root": {
                             fontSize: 13,
@@ -621,10 +625,10 @@ export default function CreateEvent() {
                             "&.Mui-selected": {
                               bgcolor: "rgba(99, 102, 241, 0.08)",
                               fontWeight: 600,
-                              color: "#4338ca",
+                              color: "primary.main",
                             },
                             "&:hover": {
-                              bgcolor: "#f8fafc",
+                              bgcolor: "action.hover",
                             },
                           },
                         },
@@ -682,7 +686,8 @@ export default function CreateEvent() {
                         sx: {
                           mt: 0.5,
                           borderRadius: 3,
-                          border: "1.5px solid #e2e8f0",
+                          border: "1.5px solid",
+                          borderColor: "divider",
                           boxShadow: "0 10px 40px rgba(0,0,0,0.08)",
                           "& .MuiMenuItem-root": {
                             fontSize: 13,
@@ -692,10 +697,10 @@ export default function CreateEvent() {
                             "&.Mui-selected": {
                               bgcolor: "rgba(99, 102, 241, 0.08)",
                               fontWeight: 600,
-                              color: "#2B5A9E",
+                              color: "primary.main",
                             },
                             "&:hover": {
-                              bgcolor: "#f8fafc",
+                              bgcolor: "action.hover",
                             },
                           },
                         },
@@ -790,7 +795,8 @@ export default function CreateEvent() {
                           sx: {
                             mt: 0.5,
                             borderRadius: 3,
-                            border: "1.5px solid #e2e8f0",
+                            border: "1.5px solid",
+                            borderColor: "divider",
                             boxShadow: "0 10px 40px rgba(0,0,0,0.08)",
                             maxHeight: 240,
                             "& .MuiMenuItem-root": {
@@ -802,7 +808,7 @@ export default function CreateEvent() {
                               "&.Mui-selected": {
                                 bgcolor: "rgba(99, 102, 241, 0.08)",
                                 fontWeight: 700,
-                                color: "#2B5A9E",
+                                color: "primary.main",
                               },
                             },
                           },
@@ -830,7 +836,8 @@ export default function CreateEvent() {
                           sx: {
                             mt: 0.5,
                             borderRadius: 3,
-                            border: "1.5px solid #e2e8f0",
+                            border: "1.5px solid",
+                            borderColor: "divider",
                             boxShadow: "0 10px 40px rgba(0,0,0,0.08)",
                             maxHeight: 240,
                             "& .MuiMenuItem-root": {
@@ -842,7 +849,7 @@ export default function CreateEvent() {
                               "&.Mui-selected": {
                                 bgcolor: "rgba(99, 102, 241, 0.08)",
                                 fontWeight: 700,
-                                color: "#2B5A9E",
+                                color: "primary.main",
                               },
                             },
                           },
@@ -870,7 +877,8 @@ export default function CreateEvent() {
                           sx: {
                             mt: 0.5,
                             borderRadius: 3,
-                            border: "1.5px solid #e2e8f0",
+                            border: "1.5px solid",
+                            borderColor: "divider",
                             boxShadow: "0 10px 40px rgba(0,0,0,0.08)",
                             "& .MuiMenuItem-root": {
                               fontSize: 13,
@@ -881,7 +889,7 @@ export default function CreateEvent() {
                               mx: 1,
                               "&.Mui-selected": {
                                 bgcolor: "rgba(99, 102, 241, 0.08)",
-                                color: "#2B5A9E",
+                                color: "primary.main",
                               },
                             },
                           },
@@ -926,8 +934,8 @@ export default function CreateEvent() {
                     boxShadow: "none",
                   },
                   "&.Mui-disabled": {
-                    bgcolor: "#f1f5f9",
-                    borderColor: "#e2e8f0",
+                    bgcolor: "action.hover",
+                    borderColor: "divider",
                     color: "#94a3b8",
                   },
                 }}

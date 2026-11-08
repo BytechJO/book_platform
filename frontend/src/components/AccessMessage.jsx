@@ -34,7 +34,7 @@ const role=localStorage.getItem("role")
         {message.title}
       </Typography>
 
-      <Typography sx={{ color: "#7a869a", mb: 4 }}>
+      <Typography sx={{ color: "text.secondary", mb: 4 }}>
         {message.description}
       </Typography>
 

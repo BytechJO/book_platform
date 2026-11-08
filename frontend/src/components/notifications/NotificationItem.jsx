@@ -12,7 +12,7 @@ export default function NotificationItem({ item }) {
         p: 1,
         borderRadius: 2,
         "&:hover": {
-          background: "#f5f5f5",
+          background: "action.hover",
         },
       }}
     >
@@ -28,7 +28,7 @@ export default function NotificationItem({ item }) {
       <Typography
         sx={{
           fontSize: 12,
-          color: "#666",
+          color: "text.secondary",
         }}
       >
         {item.description}
@@ -37,7 +37,7 @@ export default function NotificationItem({ item }) {
       <Typography
         sx={{
           fontSize: 11,
-          color: "#999",
+          color: "text.secondary",
           mt: 0.5,
         }}
       >

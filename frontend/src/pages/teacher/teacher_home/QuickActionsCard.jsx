@@ -169,7 +169,7 @@ export default function QuickActionsCard() {
             width: 70,
             height: 70,
             borderRadius: "50%",
-            background: "#e8f0fe",
+            background: "rgba(45,90,167,0.12)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -177,14 +177,14 @@ export default function QuickActionsCard() {
             mb: 2,
           }}
         >
-          <KeyIcon sx={{ color: "#2d5aa7", fontSize: 32 }} />
+          <KeyIcon sx={{ color: "primary.main", fontSize: 32 }} />
         </Box>
         {/* TITLE */}
         <Typography
           sx={{
             fontSize: 22,
             fontWeight: 700,
-            color: "#2d5aa7",
+            color: "primary.main",
             mb: 1,
           }}
         >
@@ -195,7 +195,7 @@ export default function QuickActionsCard() {
         <Typography
           sx={{
             fontSize: 14,
-            color: "#6b7280",
+            color: "text.secondary",
             mb: 3,
           }}
         >
@@ -246,7 +246,7 @@ export default function QuickActionsCard() {
             sx: {
               height: 50,
               borderRadius: "10px",
-              backgroundColor: "#f9fbff",
+              backgroundColor: "action.hover",
             },
           }}
         />
@@ -288,10 +288,10 @@ export default function QuickActionsCard() {
               borderRadius: "10px",
               textTransform: "none",
               fontWeight: 600,
-              backgroundColor: "#e5e7eb",
-              color: "#374151",
+              backgroundColor: "action.selected",
+              color: "text.primary",
               "&:hover": {
-                backgroundColor: "#d1d5db",
+                backgroundColor: "action.hover",
               },
             }}
           >
@@ -322,7 +322,7 @@ export default function QuickActionsCard() {
             width: 70,
             height: 70,
             borderRadius: "50%",
-            background: "#e8f0fe",
+            background: "rgba(45,90,167,0.12)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -330,16 +330,16 @@ export default function QuickActionsCard() {
             mb: 2,
           }}
         >
-          <GroupsIcon sx={{ color: "#2d5aa7", fontSize: 34 }} />
+          <GroupsIcon sx={{ color: "primary.main", fontSize: 34 }} />
         </Box>
 
         <Typography
-          sx={{ fontSize: 22, fontWeight: 700, color: "#2d5aa7", mb: 1 }}
+          sx={{ fontSize: 22, fontWeight: 700, color: "primary.main", mb: 1 }}
         >
           Create Class
         </Typography>
 
-        <Typography sx={{ fontSize: 14, color: "#6b7280", mb: 3 }}>
+        <Typography sx={{ fontSize: 14, color: "text.secondary", mb: 3 }}>
           Select a book to generate a new class for your students.
         </Typography>
 
@@ -358,7 +358,7 @@ export default function QuickActionsCard() {
             sx: {
               height: 50,
               borderRadius: "10px",
-              backgroundColor: "#f9fbff",
+              backgroundColor: "action.hover",
             },
           }}
         >
@@ -392,7 +392,7 @@ export default function QuickActionsCard() {
             sx: {
               height: 50,
               borderRadius: "10px",
-              backgroundColor: "#f3f4f6",
+              backgroundColor: "action.disabledBackground",
             },
           }}
         />
@@ -427,9 +427,9 @@ export default function QuickActionsCard() {
               borderRadius: "10px",
               textTransform: "none",
               fontWeight: 600,
-              backgroundColor: "#e5e7eb",
-              color: "#374151",
-              "&:hover": { backgroundColor: "#d1d5db" },
+              backgroundColor: "action.selected",
+              color: "text.primary",
+              "&:hover": { backgroundColor: "action.hover" },
             }}
           >
             Cancel
@@ -441,7 +441,7 @@ export default function QuickActionsCard() {
 }
 
 const cardStyle = {
-  background: "#fff",
+  bgcolor: "background.paper",
   borderRadius: "14px",
   p: 2,
   boxShadow: "0 2px 10px rgba(0,0,0,0.06)",
@@ -470,12 +470,12 @@ const iconBox = {
   width: 50,
   height: 50,
   borderRadius: "12px",
-  background: "#f1f5f9",
+  bgcolor: "action.hover",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
   margin: "0 auto 8px",
-  color: "#6b7280",
+  color: "text.secondary",
 };
 
 const label = {

@@ -254,7 +254,8 @@ export default function ClassDetails() {
         <Paper
           elevation={0}
           sx={{
-            border: "1px solid #e2e8f0",
+            border: "1px solid",
+            borderColor: "divider",
             borderRadius: 3,
             overflow: "hidden",
           }}
@@ -265,7 +266,8 @@ export default function ClassDetails() {
               display: "flex",
               alignItems: "center",
               gap: 1,
-              borderBottom: "1px solid #e2e8f0",
+              borderBottom: "1px solid",
+              borderColor: "divider",
             }}
           >
             <PeopleAltOutlinedIcon color="primary" />
@@ -278,7 +280,7 @@ export default function ClassDetails() {
           </Box>
           <TableContainer>
             <Table sx={{ minWidth: 900 }}>
-              <TableHead sx={{ bgcolor: "#f8fafc" }}>
+              <TableHead sx={{ bgcolor: "action.hover" }}>
                 <TableRow>
                   <TableCell>Student</TableCell>
                   <TableCell>Status</TableCell>
@@ -343,13 +345,19 @@ export default function ClassDetails() {
                       <TableCell>{formatDate(student.joined_at)}</TableCell>
                       <TableCell
                         sx={{
-                          bgcolor: bookExpired ? "#fef2f2" : "transparent",
+                          bgcolor: bookExpired
+                            ? "rgba(239,68,68,0.10)"
+                            : "transparent",
                           borderLeft: bookExpired
                             ? "3px solid #ef4444"
                             : undefined,
                         }}
                       >
-                        <Stack direction="row" spacing={0.8} alignItems="center">
+                        <Stack
+                          direction="row"
+                          spacing={0.8}
+                          alignItems="center"
+                        >
                           <Typography
                             variant="body2"
                             fontWeight={bookExpired ? 700 : 400}
@@ -396,7 +404,12 @@ export default function ClassDetails() {
         >
           <Paper
             elevation={0}
-            sx={{ p: 2.5, border: "1px solid #e2e8f0", borderRadius: 3 }}
+            sx={{
+              p: 2.5,
+              border: "1px solid",
+              borderColor: "divider",
+              borderRadius: 3,
+            }}
           >
             <Stack direction="row" alignItems="center" spacing={1} mb={2}>
               <NotesOutlinedIcon color="primary" />
@@ -422,10 +435,11 @@ export default function ClassDetails() {
                   sx={{
                     p: 2,
                     borderRadius: 2.5,
-                    bgcolor: note.is_pinned ? "#fffbeb" : "#f8fafc",
-                    border: note.is_pinned
-                      ? "1px solid #fbbf24"
-                      : "1px solid #e2e8f0",
+                    bgcolor: note.is_pinned
+                      ? "rgba(245,158,11,0.10)"
+                      : "action.hover",
+                    border: note.is_pinned ? "1px solid #fbbf24" : "1px solid",
+                    borderColor: note.is_pinned ? "#fbbf24" : "divider",
                   }}
                 >
                   <Stack direction="row" alignItems="flex-start">
@@ -498,7 +512,12 @@ export default function ClassDetails() {
 
           <Paper
             elevation={0}
-            sx={{ p: 2.5, border: "1px solid #e2e8f0", borderRadius: 3 }}
+            sx={{
+              p: 2.5,
+              border: "1px solid",
+              borderColor: "divider",
+              borderRadius: 3,
+            }}
           >
             <Stack direction="row" alignItems="center" spacing={1} mb={2}>
               <EventOutlinedIcon color="primary" />
@@ -536,10 +555,11 @@ export default function ClassDetails() {
                     p: 1.6,
                     cursor: "pointer",
                     borderRadius: 2.5,
-                    bgcolor: event.is_pinned ? "#fffbeb" : "#f8fafc",
-                    border: event.is_pinned
-                      ? "1px solid #fbbf24"
-                      : "1px solid #e2e8f0",
+                    bgcolor: event.is_pinned
+                      ? "rgba(245,158,11,0.10)"
+                      : "action.hover",
+                    border: event.is_pinned ? "1px solid #fbbf24" : "1px solid",
+                    borderColor: event.is_pinned ? "#fbbf24" : "divider",
                     transition: "0.15s",
                     "&:hover": {
                       transform: "translateY(-1px)",

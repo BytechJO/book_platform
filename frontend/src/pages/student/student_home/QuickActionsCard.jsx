@@ -1,10 +1,4 @@
-import {
-  Box,
-  Button,
-  Dialog,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Dialog, TextField, Typography } from "@mui/material";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import GroupsIcon from "@mui/icons-material/Groups";
 import { useState } from "react";
@@ -160,7 +154,7 @@ export default function QuickActionsCard({ refetchClasses }) {
             width: 70,
             height: 70,
             borderRadius: "50%",
-            background: "#e8f0fe",
+            background: "rgba(45,90,167,0.12)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -168,14 +162,14 @@ export default function QuickActionsCard({ refetchClasses }) {
             mb: 2,
           }}
         >
-          <KeyIcon sx={{ color: "#2d5aa7", fontSize: 32 }} />
+          <KeyIcon sx={{ color: "primary.main", fontSize: 32 }} />
         </Box>
         {/* TITLE */}
         <Typography
           sx={{
             fontSize: 22,
             fontWeight: 700,
-            color: "#2d5aa7",
+            color: "primary.main",
             mb: 1,
           }}
         >
@@ -186,7 +180,7 @@ export default function QuickActionsCard({ refetchClasses }) {
         <Typography
           sx={{
             fontSize: 14,
-            color: "#6b7280",
+            color: "text.secondary",
             mb: 3,
           }}
         >
@@ -237,7 +231,7 @@ export default function QuickActionsCard({ refetchClasses }) {
             sx: {
               height: 50,
               borderRadius: "10px",
-              backgroundColor: "#f9fbff",
+              backgroundColor: "action.hover",
             },
           }}
         />
@@ -279,10 +273,10 @@ export default function QuickActionsCard({ refetchClasses }) {
               borderRadius: "10px",
               textTransform: "none",
               fontWeight: 600,
-              backgroundColor: "#e5e7eb",
-              color: "#374151",
+              backgroundColor: "action.selected",
+              color: "text.primary",
               "&:hover": {
-                backgroundColor: "#d1d5db",
+                backgroundColor: "action.hover",
               },
             }}
           >
@@ -313,7 +307,7 @@ export default function QuickActionsCard({ refetchClasses }) {
             width: 70,
             height: 70,
             borderRadius: "50%",
-            background: "#e8f0fe",
+            background: "rgba(45,90,167,0.12)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -321,16 +315,16 @@ export default function QuickActionsCard({ refetchClasses }) {
             mb: 2,
           }}
         >
-          <GroupsIcon sx={{ color: "#2d5aa7", fontSize: 34 }} />
+          <GroupsIcon sx={{ color: "primary.main", fontSize: 34 }} />
         </Box>
 
         <Typography
-          sx={{ fontSize: 22, fontWeight: 700, color: "#2d5aa7", mb: 1 }}
+          sx={{ fontSize: 22, fontWeight: 700, color: "primary.main", mb: 1 }}
         >
           Join Class
         </Typography>
 
-        <Typography sx={{ fontSize: 14, color: "#6b7280", mb: 3 }}>
+        <Typography sx={{ fontSize: 14, color: "text.secondary", mb: 3 }}>
           Select your book and enter the class code provided by your teacher.
         </Typography>
 
@@ -349,7 +343,7 @@ export default function QuickActionsCard({ refetchClasses }) {
             sx: {
               height: 50,
               borderRadius: "10px",
-              backgroundColor: "#f9fbff",
+              backgroundColor: "action.hover",
             },
           }}
         >
@@ -385,8 +379,7 @@ export default function QuickActionsCard({ refetchClasses }) {
             if (classError) setClassError("");
           }}
           error={
-            !!classError ||
-            (showClassRateLimit && classCodeLimit.isRateLimited)
+            !!classError || (showClassRateLimit && classCodeLimit.isRateLimited)
           }
           helperText={
             showClassRateLimit && classCodeLimit.isRateLimited
@@ -415,14 +408,12 @@ export default function QuickActionsCard({ refetchClasses }) {
             sx: {
               height: 50,
               borderRadius: "10px",
-              backgroundColor: "#f9fbff",
+              backgroundColor: "action.hover",
             },
           }}
         />
 
-        <Box
-          sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 4 }}
-        >
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 4 }}>
           <LoadingButton
             type="submit"
             loading={loadingClass}
@@ -450,9 +441,9 @@ export default function QuickActionsCard({ refetchClasses }) {
               borderRadius: "10px",
               textTransform: "none",
               fontWeight: 600,
-              backgroundColor: "#e5e7eb",
-              color: "#374151",
-              "&:hover": { backgroundColor: "#d1d5db" },
+              backgroundColor: "action.selected",
+              color: "text.primary",
+              "&:hover": { backgroundColor: "action.hover" },
             }}
           >
             Cancel
@@ -464,7 +455,7 @@ export default function QuickActionsCard({ refetchClasses }) {
 }
 
 const cardStyle = {
-  background: "#fff",
+  bgcolor: "background.paper",
   borderRadius: "14px",
   p: 2,
   boxShadow: "0 2px 10px rgba(0,0,0,0.06)",
@@ -493,7 +484,7 @@ const iconBox = {
   width: 50,
   height: 50,
   borderRadius: "12px",
-  background: "#f1f5f9",
+  bgcolor: "action.hover",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",

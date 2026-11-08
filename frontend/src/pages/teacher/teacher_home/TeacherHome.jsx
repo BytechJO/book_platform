@@ -118,7 +118,7 @@ function StatCard({ title, value, subtitle, growth, icon: Icon, onClick }) {
         textAlign: "left",
         font: "inherit",
         border: "none",
-        background: "#fff",
+        bgcolor: "background.paper",
         borderRadius: "16px",
         p: 2,
         boxShadow: "0 2px 10px rgba(0,0,0,0.06)",
@@ -144,7 +144,7 @@ function StatCard({ title, value, subtitle, growth, icon: Icon, onClick }) {
             width: 60,
             height: 60,
             borderRadius: "50%",
-            backgroundColor: "#f1f5f9",
+            backgroundColor: "action.hover",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -155,7 +155,7 @@ function StatCard({ title, value, subtitle, growth, icon: Icon, onClick }) {
 
         {/* TEXT */}
         <Box>
-          <Typography sx={{ fontSize: 13, color: "#7a869a" }}>
+          <Typography sx={{ fontSize: 13, color: "text.secondary" }}>
             {title}
           </Typography>
 
@@ -163,14 +163,14 @@ function StatCard({ title, value, subtitle, growth, icon: Icon, onClick }) {
             sx={{
               fontSize: 22,
               fontWeight: 700,
-              color: "#111",
+              color: "text.primary",
               mt: 0.3,
             }}
           >
             {value}
           </Typography>
 
-          <Typography sx={{ fontSize: 12, color: "#9aa5b1" }}>
+          <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
             {subtitle}
           </Typography>
         </Box>
@@ -199,7 +199,7 @@ function StatCard({ title, value, subtitle, growth, icon: Icon, onClick }) {
         </Box>
 
         {/* RIGHT */}
-        <Typography sx={{ fontSize: 11, color: "#9aa5b1" }}>
+        <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
           vs last 30 days
         </Typography>
       </Box>

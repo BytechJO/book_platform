@@ -113,7 +113,7 @@ export default function ViewTeacherBook() {
             sx={{
               mb: 3,
               cursor: "pointer",
-              color: "#2d5aa7",
+              color: "primary.main",
               fontWeight: 600,
               fontSize: 15,
               display: "inline-flex",
@@ -147,7 +147,7 @@ export default function ViewTeacherBook() {
                   zIndex: 1,
                   p: 2,
                   borderRadius: "20px",
-                  backgroundColor: "#ffffff",
+                  backgroundColor: "background.paper",
                   boxShadow: "0 0 12px rgba(0,0,0,0.06)",
                 }}
               >
@@ -174,7 +174,7 @@ export default function ViewTeacherBook() {
                 <Typography
                   sx={{
                     fontWeight: 600,
-                    color: "#2d5aa7",
+                    color: "primary.main",
                     fontSize: 18,
                     mt: 2,
                     mb: 1,
@@ -221,7 +221,7 @@ export default function ViewTeacherBook() {
                 ></Box>
                 <Divider sx={{ my: 1 }} />
 
-                <Typography sx={{ fontWeight: 600, mb: 2, color: "#1A4D96" }}>
+                <Typography sx={{ fontWeight: 600, mb: 2, color: "primary.main" }}>
                   Available on
                 </Typography>
 
@@ -296,7 +296,7 @@ export default function ViewTeacherBook() {
                   sx={{
                     fontSize: 30,
                     fontWeight: 700,
-                    color: "#2d5aa7",
+                    color: "primary.main",
                     mb: 1.5,
                   }}
                 >
@@ -333,7 +333,7 @@ export default function ViewTeacherBook() {
                   <Typography
                     sx={{
                       fontWeight: 700,
-                      color: "#1A4D96",
+                      color: "primary.main",
                       fontSize: 14,
                       textTransform: "uppercase",
                       letterSpacing: 1,
@@ -348,7 +348,7 @@ export default function ViewTeacherBook() {
                     lineHeight: 1.9,
                     textAlign: "justify",
                     fontSize: 16,
-                    color: "#5d5d5d",
+                    color: "text.secondary",
                   }}
                 >
                   {expanded
@@ -372,7 +372,7 @@ export default function ViewTeacherBook() {
                     sx={{
                       mt: 1,
                       p: 0,
-                      color: "#2d5aa7",
+                      color: "primary.main",
                       fontWeight: 600,
                       fontSize: 14,
                       textTransform: "none",
@@ -409,7 +409,7 @@ export default function ViewTeacherBook() {
                   <Typography
                     sx={{
                       fontWeight: 700,
-                      color: "#1A4D96",
+                      color: "primary.main",
                       fontSize: 14,
                       textTransform: "uppercase",
                       letterSpacing: 1,
@@ -423,9 +423,10 @@ export default function ViewTeacherBook() {
                   <Box
                     sx={{
                       p: 2.5,
-                      backgroundColor: "#ffffff",
+                      backgroundColor: "background.paper",
                       borderRadius: "12px",
-                      border: "1px solid #E1E1E1",
+                      border: "1px solid",
+                      borderColor: "divider",
                       boxShadow: "0 4px 10px rgba(0,0,0,0.03)",
                       mb: 3,
                     }}
@@ -445,7 +446,7 @@ export default function ViewTeacherBook() {
                             navigate(`/teacher/classes/${c.class_id ?? c.id}`)
                           }
                           sx={{
-                            backgroundColor: "#E3F2FD",
+                            backgroundColor: "rgba(21,101,192,0.12)",
                             color: "#1565C0",
                             fontWeight: 600,
                             fontSize: 14,
@@ -493,11 +494,11 @@ export default function ViewTeacherBook() {
                 >
                   <Box>
                     <Typography
-                      sx={{ fontSize: 15, color: "#1A4D96", fontWeight: 600 }}
+                      sx={{ fontSize: 15, color: "primary.main", fontWeight: 600 }}
                     >
                       Create a new class
                     </Typography>
-                    <Typography sx={{ fontSize: 13, color: "#666", mt: 0.3 }}>
+                    <Typography sx={{ fontSize: 13, color: "text.secondary", mt: 0.3 }}>
                       A unique class code will be generated automatically.
                     </Typography>
                   </Box>
@@ -506,7 +507,7 @@ export default function ViewTeacherBook() {
                     sx={{
                       borderRadius: "8px",
                       borderWidth: 2,
-                      color: "#1A4D96",
+                      color: "primary.main",
                       borderColor: "#1A4D96",
                       fontWeight: 600,
                       textTransform: "none",
@@ -515,7 +516,7 @@ export default function ViewTeacherBook() {
                       whiteSpace: "nowrap",
                       "&:hover": {
                         borderWidth: 2,
-                        backgroundColor: "#E3F2FD",
+                        backgroundColor: "rgba(21,101,192,0.12)",
                         borderColor: "#1A4D96",
                       },
                     }}
@@ -541,7 +542,7 @@ export default function ViewTeacherBook() {
               textAlign: "center",
               fontWeight: 500,
               fontSize: 14,
-              color: "#2d5aa7",
+              color: "primary.main",
             }}
           >
             alrowadpub.com

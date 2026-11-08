@@ -93,12 +93,13 @@ function DetailRow({ icon, label, value }) {
         py: 2,
         px: 3,
         borderRadius: 3,
-        bgcolor: "#f8fafc",
-        border: "1px solid #f1f5f9",
+        bgcolor: "background.paper",
+        border: "1px solid",
+        borderColor: "divider",
         transition: "all 0.15s ease",
         "&:hover": {
-          bgcolor: "#f1f5f9",
-          borderColor: "#e2e8f0",
+          bgcolor: "action.hover",
+          borderColor: "divider",
         },
       }}
     >
@@ -138,7 +139,7 @@ function DetailRow({ icon, label, value }) {
           sx={{
             fontSize: 14,
             fontWeight: 600,
-            color: "#1e293b",
+            color: "text.primary",
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
@@ -241,11 +242,11 @@ export default function ViewEvents() {
       "& .MuiTypography-root": {
         fontSize: 15,
         fontWeight: 700,
-        color: "#0f172a",
+        color: "text.primary",
       },
       "& .MuiIconButton-root": {
         color: "#64748b",
-        "&:hover": { bgcolor: "#f1f5f9" },
+        "&:hover": { bgcolor: "action.hover" },
       },
     },
   };
@@ -276,7 +277,7 @@ export default function ViewEvents() {
               sx={{
                 fontSize: 28,
                 fontWeight: 800,
-                color: "#295899",
+                color: "primary.main",
                 letterSpacing: "-0.5px",
               }}
             >
@@ -296,10 +297,10 @@ export default function ViewEvents() {
               height: 32,
               px: 0.5,
               bgcolor: "rgba(99, 102, 241, 0.08)",
-              color: "#2B5A9E",
+              color: "primary.main",
               border: "1px solid rgba(99, 102, 241, 0.15)",
               "& .MuiChip-icon": {
-                color: "#2B5A9E",
+                color: "primary.main",
               },
             }}
           />
@@ -312,8 +313,9 @@ export default function ViewEvents() {
             gap: 0,
             borderRadius: 4,
             overflow: "hidden",
-            border: "1.5px solid #e2e8f0",
-            bgcolor: "#fff",
+            border: "1.5px solid",
+            borderColor: "divider",
+            bgcolor: "background.paper",
           }}
         >
           {/* Left Panel — Calendar + Events */}
@@ -321,7 +323,8 @@ export default function ViewEvents() {
             sx={{
               width: 380,
               flexShrink: 0,
-              borderRight: "1.5px solid #e2e8f0",
+              borderRight: "1.5px solid",
+              borderColor: "divider",
               display: "flex",
               flexDirection: "column",
             }}
@@ -341,7 +344,7 @@ export default function ViewEvents() {
               </LocalizationProvider>
             </Box>
 
-            <Divider sx={{ mx: 3, borderColor: "#f1f5f9" }} />
+            <Divider sx={{ mx: 3 }} />
 
             {/* Events List */}
             <Box sx={{ flex: 1, p: 3, overflow: "auto", maxHeight: 340 }}>
@@ -374,13 +377,13 @@ export default function ViewEvents() {
                     bgcolor:
                       selectedEvents.length > 0
                         ? "rgba(99, 102, 241, 0.08)"
-                        : "#f1f5f9",
+                        : "action.hover",
                     color: selectedEvents.length > 0 ? "#6366f1" : "#94a3b8",
                     border: "1px solid",
                     borderColor:
                       selectedEvents.length > 0
                         ? "rgba(99, 102, 241, 0.15)"
-                        : "#e2e8f0",
+                        : "divider",
                   }}
                 />
               </Box>
@@ -393,8 +396,9 @@ export default function ViewEvents() {
                         width: 48,
                         height: 48,
                         borderRadius: 3,
-                        bgcolor: "#f8fafc",
-                        border: "1.5px dashed #cbd5e1",
+                        bgcolor: "action.hover",
+                        border: "1.5px dashed",
+                        borderColor: "divider",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -443,20 +447,20 @@ export default function ViewEvents() {
                             borderRadius: 3,
                             bgcolor: isSelected
                               ? "rgba(99, 102, 241, 0.06)"
-                              : "#f8fafc",
+                              : "action.hover",
                             border: "1.5px solid",
                             borderColor: isSelected
                               ? "rgba(99, 102, 241, 0.2)"
-                              : "#f1f5f9",
+                              : "divider",
                             cursor: "pointer",
                             transition: "all 0.15s ease",
                             "&:hover": {
                               bgcolor: isSelected
                                 ? "rgba(99, 102, 241, 0.08)"
-                                : "#f1f5f9",
+                                : "action.hover",
                               borderColor: isSelected
                                 ? "rgba(99, 102, 241, 0.25)"
-                                : "#e2e8f0",
+                                : "divider",
                               transform: "translateX(2px)",
                             },
                             animation: `slideIn 0.3s ease ${index * 0.05}s both`,
@@ -479,7 +483,9 @@ export default function ViewEvents() {
                               py: 0.5,
                               px: 1,
                               borderRadius: 2,
-                              bgcolor: isSelected ? "#eef2ff" : "#f1f5f9",
+                              bgcolor: isSelected
+                                ? "rgba(99,102,241,0.12)"
+                                : "action.hover",
                               border: "1px solid",
                               borderColor: isSelected
                                 ? "rgba(99, 102, 241, 0.12)"
@@ -515,7 +521,9 @@ export default function ViewEvents() {
                               sx={{
                                 fontSize: 13,
                                 fontWeight: isSelected ? 700 : 600,
-                                color: isSelected ? "#2B5A9E" : "#1e293b",
+                                color: isSelected
+                                  ? "primary.main"
+                                  : "text.primary",
                                 overflow: "hidden",
                                 textOverflow: "ellipsis",
                                 whiteSpace: "nowrap",
@@ -567,7 +575,7 @@ export default function ViewEvents() {
               p: 4,
               display: "flex",
               flexDirection: "column",
-              bgcolor: "#fff",
+              bgcolor: "background.paper",
             }}
           >
             {!selectedEvent ? (
@@ -589,8 +597,9 @@ export default function ViewEvents() {
                       width: 72,
                       height: 72,
                       borderRadius: 4,
-                      bgcolor: "#f8fafc",
-                      border: "2px dashed #e2e8f0",
+                      bgcolor: "action.hover",
+                      border: "2px dashed",
+                      borderColor: "divider",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -604,7 +613,7 @@ export default function ViewEvents() {
                     sx={{
                       fontSize: 16,
                       fontWeight: 700,
-                      color: "#334155",
+                      color: "text.primary",
                       mb: 0.5,
                     }}
                   >
@@ -668,7 +677,7 @@ export default function ViewEvents() {
                         sx={{
                           fontSize: 20,
                           fontWeight: 800,
-                          color: "#0f172a",
+                          color: "text.primary",
                           letterSpacing: "-0.3px",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
@@ -680,7 +689,7 @@ export default function ViewEvents() {
                     </Box>
                   </Box>
 
-                  <Divider sx={{ my: 3, borderColor: "#f1f5f9" }} />
+                  <Divider sx={{ my: 3 }} />
 
                   {/* Details */}
                   <Box

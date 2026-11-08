@@ -89,8 +89,9 @@ export default function Help() {
             flex: 1,
             borderRadius: "18px",
             p: { xs: 2, md: 1.5 },
-            background: "#fff",
-            border: "1px solid #f7f8fa",
+            background: "background.paper",
+            border: "1px solid",
+            borderColor: "divider",
             display: "flex",
             boxShadow: "0 4px 12px rgba(17, 24, 39, 0.08)",
             flexDirection: "column",
@@ -104,7 +105,7 @@ export default function Help() {
                 width: 55,
                 height: 55,
                 borderRadius: "50px",
-                background: "#edf4ff",
+                background: "rgba(37,99,235,0.12)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -118,7 +119,7 @@ export default function Help() {
                 sx={{
                   fontSize: { xs: "20px", md: "24px" },
                   fontWeight: 800,
-                  color: "#111827",
+                  color: "text.primary",
                   lineHeight: 1.2,
                 }}
               >
@@ -287,7 +288,7 @@ export default function Help() {
               <Typography
                 sx={{
                   fontSize: "12px",
-                  color: "#6b7280",
+                  color: "text.secondary",
                   fontWeight: 500,
                   lineHeight: 1.5,
                 }}
@@ -305,8 +306,9 @@ export default function Help() {
             flex: 1,
             borderRadius: "18px",
             p: { xs: 2, md: 3 },
-            background: "#fff",
-            border: "1px solid #f7f8fa",
+            background: "background.paper",
+            border: "1px solid",
+            borderColor: "divider",
             display: "flex",
             flexDirection: "column",
             boxShadow: "0 4px 12px rgba(17, 24, 39, 0.08)",
@@ -320,7 +322,7 @@ export default function Help() {
                 width: 55,
                 height: 55,
                 borderRadius: "50px",
-                background: "#edf4ff",
+                background: "rgba(37,99,235,0.12)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -336,7 +338,7 @@ export default function Help() {
                 sx={{
                   fontSize: { xs: "20px", md: "24px" },
                   fontWeight: 800,
-                  color: "#111827",
+                  color: "text.primary",
                   lineHeight: 1.2,
                 }}
               >
@@ -387,7 +389,7 @@ export default function Help() {
               gap: 1.5,
               p: 1.5,
               borderRadius: "12px",
-              background: "#f3f6fc",
+              background: "action.hover",
             }}
           >
             <InfoOutlinedIcon sx={{ color: "#2563eb", fontSize: 18 }} />
@@ -395,7 +397,7 @@ export default function Help() {
             <Typography
               sx={{
                 fontSize: "12px",
-                color: "#6b7280",
+                color: "text.secondary",
                 fontWeight: 500,
                 lineHeight: 1.5,
               }}
@@ -416,17 +418,17 @@ const labelStyle = {
   mb: 0.7,
   fontSize: "13px",
   fontWeight: 700,
-  color: "#374151",
+  color: "text.primary",
 };
 
 /* INPUT STYLE */
 const inputStyle = {
   "& .MuiOutlinedInput-root": {
     borderRadius: "12px",
-    background: "#fff",
+    background: "background.paper",
 
     "& fieldset": {
-      borderColor: "#e5e7eb",
+      borderColor: "divider",
     },
 
     "&:hover fieldset": {

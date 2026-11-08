@@ -129,7 +129,7 @@ export default function UpcomingScheduleCard() {
             }}
           >
             {/* LEFT */}
-            <Typography sx={{ fontSize: 12, color: "#9aa5b1" }}>
+            <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
               No events for this day
             </Typography>
 
@@ -142,7 +142,7 @@ export default function UpcomingScheduleCard() {
               }
               sx={{
                 fontSize: 12,
-                color: "#3f51b5",
+                color: "primary.main",
                 cursor: "pointer",
                 fontWeight: 500,
                 "&:hover": {
@@ -170,7 +170,7 @@ export default function UpcomingScheduleCard() {
                     {event.title}
                   </Typography>
 
-                  <Typography sx={{ fontSize: 12, color: "#7a869a" }}>
+                  <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
                     {event.subject}
                   </Typography>
                 </Box>
@@ -179,8 +179,8 @@ export default function UpcomingScheduleCard() {
                 <Box
                   sx={{
                     ...badge,
-                    backgroundColor: isPast ? "#eeeeee" : "#e3f2fd",
-                    color: isPast ? "#757575" : "#1976d2",
+                    backgroundColor: isPast ? "action.selected" : "rgba(25,118,210,0.12)",
+                    color: isPast ? "text.secondary" : "#1976d2",
                   }}
                 >
                   {isPast ? "Finished" : "Upcoming"}
@@ -212,7 +212,7 @@ export default function UpcomingScheduleCard() {
               sx={{
                 fontSize: 12,
                 fontWeight: 700,
-                color: "#2B5A9E",
+                color: "primary.main",
               }}
             >
               Show {hiddenCount} more
@@ -225,7 +225,7 @@ export default function UpcomingScheduleCard() {
 }
 
 const cardStyle = {
-  background: "#fff",
+  bgcolor: "background.paper",
   borderRadius: "14px",
   p: 1.5,
   boxShadow: "0 2px 10px rgba(0,0,0,0.06)",
@@ -243,7 +243,7 @@ const eventBox = {
   gap: 1,
   p: 1,
   borderRadius: "10px",
-  background: "#f5f7fb",
+  bgcolor: "action.hover",
 };
 
 const timeBox = {
@@ -252,8 +252,8 @@ const timeBox = {
   px: 1,
   py: 0.3,
   borderRadius: "8px",
-  backgroundColor: "#eef2ff",
-  color: "#3f51b5",
+  backgroundColor: "rgba(63,81,181,0.12)",
+  color: "primary.main",
   minWidth: 60,
   textAlign: "center",
 };
@@ -263,7 +263,7 @@ const badge = {
   px: 1,
   py: 0.2,
   borderRadius: "6px",
-  backgroundColor: "#e3f2fd",
+  backgroundColor: "rgba(25,118,210,0.12)",
   color: "#1976d2",
   fontWeight: 600,
 };

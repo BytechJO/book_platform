@@ -6,7 +6,6 @@ import {
   TextField,
   InputAdornment,
   Pagination,
-  CircularProgress,
   Chip,
   IconButton,
   Divider,
@@ -24,6 +23,7 @@ import QrCode2Icon from "@mui/icons-material/QrCode2";
 import { useGetTeacherClasses } from "../../api/Classes";
 import QrCodeDialog from "../../components/QrCodeDialog";
 import { buildClassQrUrl, downloadQrPdf } from "../../utils/qrCodes";
+import CurveLoader from "../../components/CurveLoader";
 
 export default function TeacherClasses() {
   const navigate = useNavigate();
@@ -70,18 +70,7 @@ export default function TeacherClasses() {
   };
 
   if (loading) {
-    return (
-      <Box
-        sx={{
-          height: "60vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <CircularProgress size={28} sx={{ color: "#6366f1" }} />
-      </Box>
-    );
+    return <CurveLoader />;
   }
 
   return (
@@ -123,7 +112,7 @@ export default function TeacherClasses() {
               sx={{
                 fontSize: 24,
                 fontWeight: 800,
-                color: "#0f172a",
+                color: "text.primary",
                 letterSpacing: "-0.5px",
               }}
             >
@@ -171,8 +160,9 @@ export default function TeacherClasses() {
             width: 220,
             "& .MuiOutlinedInput-root": {
               borderRadius: "10px",
-              background: "#fff",
-              border: "1px solid #e2e8f0",
+              background: "background.paper",
+              border: "1px solid",
+              borderColor: "divider",
               "&:hover": { borderColor: "#c7d2fe" },
               "&.Mui-focused": {
                 borderColor: "#6366f1",
@@ -187,9 +177,10 @@ export default function TeacherClasses() {
       {/* ── LIST ── */}
       <Box
         sx={{
-          background: "#fff",
+          background: "background.paper",
           borderRadius: "16px",
-          border: "1px solid #f1f5f9",
+          border: "1px solid",
+          borderColor: "divider",
           overflow: "hidden",
           boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
         }}
@@ -202,8 +193,9 @@ export default function TeacherClasses() {
             display: "flex",
             alignItems: "center",
             gap: 1,
-            borderBottom: "1px solid #f1f5f9",
-            background: "#fafbfc",
+            borderBottom: "1px solid",
+            borderColor: "divider",
+            background: "action.hover",
           }}
         >
           <Typography
@@ -233,7 +225,7 @@ export default function TeacherClasses() {
                 transition: "all 0.15s ease",
 
                 "&:hover": {
-                  background: "#f8f9ff",
+                  background: "action.hover",
                 },
               }}
             >
@@ -248,7 +240,8 @@ export default function TeacherClasses() {
                   borderRadius: "8px",
                   objectFit: "cover",
                   flexShrink: 0,
-                  border: "1px solid #f1f5f9",
+                  border: "1px solid",
+                  borderColor: "divider",
                 }}
               />
 
@@ -259,7 +252,7 @@ export default function TeacherClasses() {
                   sx={{
                     fontSize: 14,
                     fontWeight: 700,
-                    color: "#1e293b",
+                    color: "text.primary",
                     lineHeight: 1.3,
                   }}
                 >
@@ -303,8 +296,8 @@ export default function TeacherClasses() {
                   fontSize: 12,
                   fontWeight: 600,
                   color: "#4f46e5",
-                  background: "#eef2ff",
-                  border: "1px solid #e0e7ff",
+                  background: "rgba(99,102,241,0.12)",
+                  border: "1px solid rgba(99,102,241,0.2)",
                   borderRadius: "8px",
                   "& .MuiChip-icon": { ml: 0.5 },
                 }}
@@ -317,7 +310,7 @@ export default function TeacherClasses() {
                   event.stopPropagation();
                   setQrClass(cls);
                 }}
-                sx={{ color: "#6366f1", "&:hover": { background: "#eef2ff" } }}
+                sx={{ color: "#6366f1", "&:hover": { background: "rgba(99,102,241,0.12)" } }}
                 title="View class QR code"
               >
                 <QrCode2Icon sx={{ fontSize: 18 }} />
@@ -329,7 +322,7 @@ export default function TeacherClasses() {
                   transition: "0.15s",
                   "&:hover": {
                     color: "#6366f1",
-                    background: "#eef2ff",
+                    background: "rgba(99,102,241,0.12)",
                   },
                 }}
               >
@@ -338,7 +331,7 @@ export default function TeacherClasses() {
             </Box>
 
             {idx < paginatedClasses.length - 1 && (
-              <Divider sx={{ mx: 2.5, borderColor: "#f1f5f9" }} />
+              <Divider sx={{ mx: 2.5 }} />
             )}
           </Box>
         ))}
@@ -375,13 +368,14 @@ export default function TeacherClasses() {
                 minWidth: 32,
                 height: 32,
                 borderRadius: "8px",
-                border: "1px solid #e2e8f0",
+                border: "1px solid",
+                borderColor: "divider",
                 color: "#64748b",
-                background: "#fff",
+                background: "background.paper",
 
                 "&:hover": {
                   borderColor: "#c7d2fe",
-                  background: "#f8f9ff",
+                  background: "action.hover",
                 },
 
                 "&.Mui-selected": {

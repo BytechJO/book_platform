@@ -4,7 +4,6 @@ import {
   Typography,
   Chip,
   Pagination,
-  CircularProgress,
   TextField,
   InputAdornment,
   Divider,
@@ -20,6 +19,7 @@ import HistoryRoundedIcon from "@mui/icons-material/HistoryRounded";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useGetTeacherActivities } from "../../api/teacherActivities";
+import CurveLoader from "../../components/CurveLoader";
 
 dayjs.extend(relativeTime);
 
@@ -53,8 +53,8 @@ export default function TeacherActivities() {
         return {
           icon: <EventAvailableRoundedIcon sx={{ fontSize: 15 }} />,
           color: "#2563eb",
-          bg: "#eff6ff",
-          border: "#bfdbfe",
+          bg: "rgba(37,99,235,0.12)",
+          border: "rgba(37,99,235,0.25)",
           label: "Event",
           dot: "#2563eb",
         };
@@ -62,8 +62,8 @@ export default function TeacherActivities() {
         return {
           icon: <ClassRoundedIcon sx={{ fontSize: 15 }} />,
           color: "#7c3aed",
-          bg: "#f5f3ff",
-          border: "#ddd6fe",
+          bg: "rgba(124,58,237,0.12)",
+          border: "rgba(124,58,237,0.25)",
           label: "Class",
           dot: "#7c3aed",
         };
@@ -71,8 +71,8 @@ export default function TeacherActivities() {
         return {
           icon: <MenuBookRoundedIcon sx={{ fontSize: 15 }} />,
           color: "#059669",
-          bg: "#ecfdf5",
-          border: "#a7f3d0",
+          bg: "rgba(5,150,105,0.12)",
+          border: "rgba(5,150,105,0.25)",
           label: "Book",
           dot: "#059669",
         };
@@ -80,8 +80,8 @@ export default function TeacherActivities() {
         return {
           icon: <PersonRoundedIcon sx={{ fontSize: 15 }} />,
           color: "#64748b",
-          bg: "#f8fafc",
-          border: "#e2e8f0",
+          bg: "rgba(100,116,139,0.12)",
+          border: "rgba(100,116,139,0.25)",
           label: "Activity",
           dot: "#64748b",
         };
@@ -104,23 +104,7 @@ export default function TeacherActivities() {
   }, [paginatedActivities]);
 
   if (loading) {
-    return (
-      <Box
-        sx={{
-          height: "60vh",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: 1.5,
-        }}
-      >
-        <CircularProgress size={24} sx={{ color: "#2B5A9E" }} />
-        <Typography sx={{ fontSize: 12, color: "#94a3b8", fontWeight: 500 }}>
-          Loading activities...
-        </Typography>
-      </Box>
-    );
+    return <CurveLoader />;
   }
 
   return (
@@ -163,7 +147,7 @@ export default function TeacherActivities() {
               sx={{
                 fontSize: 20,
                 fontWeight: 800,
-                color: "#0f172a",
+                color: "text.primary",
                 lineHeight: 1.2,
                 letterSpacing: "-0.3px",
               }}
@@ -196,10 +180,10 @@ export default function TeacherActivities() {
             width: { xs: "100%", sm: 210 },
             "& .MuiOutlinedInput-root": {
               borderRadius: "9px",
-              background: "#fff",
+              background: "background.paper",
               fontSize: 13,
               height: 36,
-              "& fieldset": { borderColor: "#e8edf2", borderWidth: "1.5px" },
+              "& fieldset": { borderColor: "divider", borderWidth: "1.5px" },
               "&:hover fieldset": { borderColor: "#c2cdd8" },
               "&.Mui-focused fieldset": { borderColor: "#2B5A9E", borderWidth: "1.5px" },
             },
@@ -210,9 +194,10 @@ export default function TeacherActivities() {
       {/* ─── ACTIVITIES LIST ─── */}
       <Box
         sx={{
-          background: "#fff",
+          background: "background.paper",
           borderRadius: "14px",
-          border: "1.5px solid #f0f2f5",
+          border: "1.5px solid",
+          borderColor: "divider",
           overflow: "hidden",
           boxShadow: "0 1px 3px rgba(0,0,0,0.03)",
         }}
@@ -224,8 +209,9 @@ export default function TeacherActivities() {
               sx={{
                 px: 2.5,
                 py: 1.2,
-                background: "#fafbfc",
-                borderBottom: "1px solid #f0f2f5",
+                background: "action.hover",
+                borderBottom: "1px solid",
+                borderColor: "divider",
                 display: "flex",
                 alignItems: "center",
                 gap: 1,
@@ -250,7 +236,7 @@ export default function TeacherActivities() {
                   fontSize: 10,
                   fontWeight: 700,
                   color: "#94a3b8",
-                  background: "#f1f5f9",
+                  background: "action.hover",
                   borderRadius: "5px",
                 }}
               />
@@ -274,7 +260,7 @@ export default function TeacherActivities() {
                       transition: "background 0.15s ease",
                       cursor: "default",
 
-                      "&:hover": { background: "#f8faff" },
+                      "&:hover": { background: "action.hover" },
                     }}
                   >
                     {/* Colored dot + timeline line */}
@@ -303,7 +289,7 @@ export default function TeacherActivities() {
                             width: 1.5,
                             flex: 1,
                             minHeight: 20,
-                            background: "#f0f2f5",
+                            background: "divider",
                             mt: 0.5,
                           }}
                         />
@@ -343,7 +329,7 @@ export default function TeacherActivities() {
                           sx={{
                             fontSize: 13,
                             fontWeight: 700,
-                            color: "#1e293b",
+                            color: "text.primary",
                             lineHeight: 1.3,
                           }}
                         >
@@ -396,7 +382,7 @@ export default function TeacherActivities() {
                     </Typography>
                   </Box>
 
-                  {!isVeryLast && <Divider sx={{ borderColor: "#f5f7f9" }} />}
+                  {!isVeryLast && <Divider />}
                 </Box>
               );
             })}
@@ -433,10 +419,11 @@ export default function TeacherActivities() {
                 minWidth: 30,
                 height: 30,
                 borderRadius: "8px",
-                border: "1.5px solid #eef0f4",
+                border: "1.5px solid",
+                borderColor: "divider",
                 color: "#64748b",
-                background: "#fff",
-                "&:hover": { borderColor: "#c7d2fe", background: "#fafbff" },
+                background: "background.paper",
+                "&:hover": { borderColor: "#c7d2fe", background: "action.hover" },
                 "&.Mui-selected": {
                   background: "#2B5A9E",
                   color: "#fff",

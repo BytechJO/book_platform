@@ -30,7 +30,7 @@ export default function MyClassesCard() {
             alignItems: "center",
             justifyContent: "center",
             py: 6,
-            color: "#9aa5b1",
+            color: "text.secondary",
             textAlign: "center",
           }}
         >
@@ -75,7 +75,7 @@ export default function MyClassesCard() {
                 <Typography sx={classTitle}>{cls.book_title}</Typography>
 
                 <Box sx={studentsRow}>
-                  <GroupsIcon sx={{ fontSize: 14, color: "#9aa5b1" }} />
+                  <GroupsIcon sx={{ fontSize: 14, color: "text.secondary" }} />
                   <Typography sx={studentsText}>
                     {Number(cls.total_students)} Students
                   </Typography>
@@ -100,7 +100,7 @@ export default function MyClassesCard() {
                   size={36}
                   thickness={4}
                   sx={{
-                    color: "#2B5A9E",
+                    color: "primary.main",
                   }}
                 />
 
@@ -139,7 +139,7 @@ export default function MyClassesCard() {
           <ArrowForwardIosIcon
             sx={{
               fontSize: 12,
-              color: "#3f51b5",
+              color: "primary.main",
               ml: 0.5,
             }}
           />
@@ -160,12 +160,12 @@ const footerStyle = {
 
 const footerText = {
   fontSize: 12,
-  color: "#3f51b5",
+  color: "primary.main",
   fontWeight: 500,
   cursor: "pointer",
 };
 const cardStyle = {
-  background: "#fff",
+  bgcolor: "background.paper",
   borderRadius: "12px",
   p: 1.5,
   boxShadow: "0 1px 6px rgba(0,0,0,0.05)",
@@ -191,7 +191,7 @@ const rowStyle = {
   cursor: "pointer",
   transition: "background-color 0.2s ease, transform 0.2s ease",
   "&:hover": {
-    background: "#f8fafc",
+    bgcolor: "action.hover",
     borderRadius: "8px",
     transform: "translateX(2px)",
   },
@@ -206,8 +206,8 @@ const avatarStyle = {
   width: 36,
   height: 36,
   fontSize: 12,
-  background: "#f1f5f9",
-  color: "#64748b",
+  bgcolor: "action.hover",
+  color: "text.secondary",
 };
 
 const classTitle = {
@@ -224,7 +224,7 @@ const studentsRow = {
 
 const studentsText = {
   fontSize: 11,
-  color: "#7a869a",
+  color: "text.secondary",
 };
 
 const progressWrapper = {

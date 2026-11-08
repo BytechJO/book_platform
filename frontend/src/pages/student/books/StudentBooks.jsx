@@ -138,7 +138,7 @@ export default function StudentBooks() {
               gridColumn: { xs: "1 / -1", md: "auto" },
             }}
           >
-            <Typography variant="caption" sx={{ color: "#7a869a" }}>
+            <Typography variant="caption" color="text.secondary">
               Search:
             </Typography>
             <TextField
@@ -159,7 +159,7 @@ export default function StudentBooks() {
 
           {/* Sort */}
           <Box>
-            <Typography variant="caption" sx={{ color: "#7a869a" }}>
+            <Typography variant="caption" color="text.secondary">
               Sort by:
             </Typography>
             <FormControl fullWidth size="small">
@@ -177,7 +177,7 @@ export default function StudentBooks() {
 
           {/* Status */}
           <Box>
-            <Typography variant="caption" sx={{ color: "#7a869a" }}>
+            <Typography variant="caption" color="text.secondary">
               Status:
             </Typography>
             <FormControl fullWidth size="small">
@@ -233,7 +233,7 @@ export default function StudentBooks() {
                   sx={{
                     borderRadius: "16px",
                     cursor: isExpired ? "not-allowed" : "pointer",
-                    backgroundColor: "#fff",
+                    backgroundColor: "background.paper",
                     opacity: isExpired ? 0.5 : 1,
                     filter: isExpired ? "grayscale(35%)" : "none",
                     boxShadow: "0 0 12px rgba(0,0,0,0.06)",
@@ -309,7 +309,7 @@ export default function StudentBooks() {
                             variant="body2"
                             sx={{
                               mt: 1,
-                              color: "#7a869a",
+                              color: "text.secondary",
                               display: "-webkit-box",
                               WebkitLineClamp: 3,
                               WebkitBoxOrient: "vertical",
@@ -351,7 +351,7 @@ export default function StudentBooks() {
                             <PeopleAltIcon
                               sx={{ fontSize: 18, color: "#6b7280" }}
                             />
-                            <Typography variant="body2" color="#535353">
+                            <Typography variant="body2" color="text.secondary">
                               {book.teacher_name}
                             </Typography>
                           </Box>
@@ -361,7 +361,7 @@ export default function StudentBooks() {
                             sx={{
                               width: "1px",
                               height: "40px",
-                              backgroundColor: "#E6EAF0",
+                              backgroundColor: "divider",
                               mx: 2,
                             }}
                           />
@@ -381,7 +381,7 @@ export default function StudentBooks() {
                                 size={36}
                                 thickness={4}
                                 sx={{
-                                  color: "#E6EAF0",
+                                  color: "divider",
                                   position: "absolute",
                                   left: 0,
                                 }}
@@ -394,7 +394,7 @@ export default function StudentBooks() {
                                 size={36}
                                 thickness={4}
                                 sx={{
-                                  color: "#2B5A9E",
+                                  color: "primary.main",
                                 }}
                               />
                             </Box>
@@ -406,7 +406,7 @@ export default function StudentBooks() {
                               </Typography>
                               <Typography
                                 variant="caption"
-                                sx={{ color: "#9AA5B1", fontSize: 10 }}
+                                sx={{ color: "text.secondary", fontSize: 10 }}
                               >
                                 Avg. Progress
                               </Typography>
@@ -431,12 +431,12 @@ export default function StudentBooks() {
             >
               <Typography
                 variant="h6"
-                sx={{ color: "#1A4D96", fontWeight: 600, mb: 1 }}
+                sx={{ color: "primary.main", fontWeight: 600, mb: 1 }}
               >
                 No books found
               </Typography>
 
-              <Typography variant="body2" sx={{ color: "#7a869a" }}>
+              <Typography variant="body2" color="text.secondary">
                 Try changing your search or filters.
               </Typography>
             </Box>
@@ -452,7 +452,7 @@ export default function StudentBooks() {
             mt={5}
           >
             {/* 🔹 اليسار */}
-            <Typography variant="body2" color="#7a869a">
+            <Typography variant="body2" color="text.secondary">
               Showing {(page - 1) * booksPerPage + 1} to{" "}
               {Math.min(page * booksPerPage, sortedBooks.length)} of{" "}
               {sortedBooks.length} books
@@ -468,15 +468,16 @@ export default function StudentBooks() {
                 sx={{
                   "& .MuiPaginationItem-root": {
                     borderRadius: "8px",
-                    backgroundColor: "#fff",
-                    border: "1px solid #E6EAF0",
-                    color: "#535353",
+                    backgroundColor: "background.paper",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    color: "text.primary",
                     minWidth: 36,
                     height: 36,
                   },
 
                   "& .MuiPaginationItem-root:hover": {
-                    backgroundColor: "#f5f7fb",
+                    backgroundColor: "action.hover",
                   },
 
                   "& .Mui-selected": {
@@ -486,8 +487,9 @@ export default function StudentBooks() {
                   },
 
                   "& .MuiPaginationItem-previousNext": {
-                    backgroundColor: "#fff",
-                    border: "1px solid #E6EAF0",
+                    backgroundColor: "background.paper",
+                    border: "1px solid",
+                    borderColor: "divider",
                   },
                 }}
               />

@@ -112,7 +112,8 @@ export default function TeachBar() {
     <AppBar
       position="fixed"
       sx={{
-        backgroundColor: "#1A4D96",
+        backgroundColor: (theme) =>
+          theme.palette.mode === "dark" ? "#23466f" : "#1A4D96",
         boxShadow: "none",
       }}
     >
@@ -374,7 +375,8 @@ export default function TeachBar() {
               width: 70,
               height: 70,
               borderRadius: "50%",
-              background: "#e8f0fe",
+              background: (theme) =>
+                theme.palette.mode === "dark" ? "rgba(138,180,248,0.14)" : "#e8f0fe",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -382,14 +384,14 @@ export default function TeachBar() {
               mb: 2,
             }}
           >
-            <KeyIcon sx={{ color: "#2d5aa7", fontSize: 32 }} />
+            <KeyIcon sx={{ color: "primary.main", fontSize: 32 }} />
           </Box>
           {/* TITLE */}
           <Typography
             sx={{
               fontSize: 22,
               fontWeight: 700,
-              color: "#2d5aa7",
+              color: "primary.main",
               mb: 1,
             }}
           >
@@ -400,7 +402,7 @@ export default function TeachBar() {
           <Typography
             sx={{
               fontSize: 14,
-              color: "#6b7280",
+              color: "text.secondary",
               mb: 3,
             }}
           >
@@ -451,7 +453,7 @@ export default function TeachBar() {
               sx: {
                 height: 50,
                 borderRadius: "10px",
-                backgroundColor: "#f9fbff",
+                backgroundColor: "action.hover",
               },
             }}
           />
@@ -475,7 +477,7 @@ export default function TeachBar() {
                 borderRadius: "10px",
                 textTransform: "none",
                 fontWeight: 600,
-                backgroundColor: "#2d5aa7",
+                backgroundColor: "primary.main",
                 "&:hover": {
                   backgroundColor: "#244a87",
                 },
@@ -493,10 +495,10 @@ export default function TeachBar() {
                 borderRadius: "10px",
                 textTransform: "none",
                 fontWeight: 600,
-                backgroundColor: "#e5e7eb",
-                color: "#374151",
+                backgroundColor: "action.selected",
+                color: "text.primary",
                 "&:hover": {
-                  backgroundColor: "#d1d5db",
+                  backgroundColor: "action.hover",
                 },
               }}
             >

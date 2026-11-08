@@ -47,7 +47,7 @@ export default function WelcomeBanner({ variant = "home" }) {
       <Box>
         <Typography
           sx={{
-            color: "#6B7280",
+            color: "text.secondary",
             fontSize: "14px",
             mb: 0.5,
           }}
@@ -57,7 +57,7 @@ export default function WelcomeBanner({ variant = "home" }) {
 
         <Typography
           sx={{
-            color: "#1A4D96",
+            color: "primary.main",
             fontSize: { xs: "16px", md: "20px", lg: "22px" },
             fontWeight: 700,
           }}
@@ -66,7 +66,7 @@ export default function WelcomeBanner({ variant = "home" }) {
         </Typography>
         <Typography
           sx={{
-            color: "#6B7280",
+            color: "text.secondary",
             fontSize: "14px",
             mt: 0.5,
           }}

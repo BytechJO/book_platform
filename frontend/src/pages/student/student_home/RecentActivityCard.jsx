@@ -55,7 +55,7 @@ export default function RecentActivityCard() {
             alignItems: "center",
             justifyContent: "center",
             py: 6,
-            color: "#9aa5b1",
+            color: "text.secondary",
             textAlign: "center",
           }}
         >
@@ -131,7 +131,7 @@ export default function RecentActivityCard() {
         <ArrowForwardIosIcon
           sx={{
             fontSize: 12,
-            color: "#3f51b5",
+            color: "primary.main",
             ml: 0.5,
           }}
         />
@@ -151,12 +151,12 @@ const footerStyle = {
 
 const footerText = {
   fontSize: 12,
-  color: "#3f51b5",
+  color: "primary.main",
   fontWeight: 500,
   cursor: "pointer",
 };
 const cardStyle = {
-  background: "#fff",
+  bgcolor: "background.paper",
   borderRadius: "12px",
   p: 1.5,
   boxShadow: "0 1px 6px rgba(0,0,0,0.05)",
@@ -178,7 +178,7 @@ const rowStyle = {
   gap: 1.5, // 👈 نفس الكلاس
   py: 0.8,
   "&:hover": {
-    background: "#f8fafc",
+    bgcolor: "action.hover",
     borderRadius: "8px",
   },
 };
@@ -187,11 +187,11 @@ const iconBox = {
   width: 32,
   height: 32,
   borderRadius: "50%",
-  backgroundColor: "#f1f5f9",
+  bgcolor: "action.hover",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  color: "#64748b",
+  color: "text.secondary",
 };
 
 const textStyle = {
@@ -201,7 +201,7 @@ const textStyle = {
 
 const timeStyle = {
   fontSize: 11, // 👈 نفس الكلاس
-  color: "#7a869a",
+  color: "text.secondary",
   mt: 0.2,
 };
 

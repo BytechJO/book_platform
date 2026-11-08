@@ -9,6 +9,7 @@ import {
   Alert,
   IconButton,
   Divider,
+  Switch,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useState, useEffect } from "react";
@@ -22,8 +23,12 @@ import EmailIcon from "@mui/icons-material/Email";
 import SaveIcon from "@mui/icons-material/Save";
 import { Helmet } from "react-helmet-async";
 import CurveLoader from "../../components/CurveLoader";
+import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
+import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
+import { useTeacherTheme } from "../../contexts/teacherTheme";
 
 export default function UserProfile() {
+  const { mode, changeMode } = useTeacherTheme();
   const { user, loading, refetch } = useAuthMe();
   const [initialData, setInitialData] = useState({
     full_name: "",
@@ -50,7 +55,7 @@ export default function UserProfile() {
     severity: "success",
   });
 
-  const primaryColor = "#1A4D96";
+  const primaryColor = mode === "dark" ? "#8ab4f8" : "#1A4D96";
   useEffect(() => {
     if (user) {
       setFullName(user.full_name || "");
@@ -127,12 +132,15 @@ export default function UserProfile() {
   return (
     <>
       <Helmet>
-        <title>User Profile - Student Dashboard</title>
+        <title>User Profile - Teacher Dashboard</title>
       </Helmet>
       <Box
         sx={{
           p: { xs: 2, md: 4 },
           display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 3,
           justifyContent: "center",
         }}
       >
@@ -142,7 +150,11 @@ export default function UserProfile() {
             maxWidth: 600,
             borderRadius: 4,
             overflow: "hidden",
-            boxShadow: "0 10px 30px rgba(26, 77, 150, 0.15)",
+            border: "1px solid",
+            borderColor: "divider",
+            boxShadow: mode === "dark"
+              ? "0 12px 34px rgba(0, 0, 0, 0.35)"
+              : "0 10px 30px rgba(26, 77, 150, 0.15)",
           }}
         >
           <Box
@@ -194,9 +206,10 @@ export default function UserProfile() {
                   sx={{
                     width: 140,
                     height: 140,
-                    border: "5px solid white",
+                    border: "5px solid",
+                    borderColor: "background.paper",
                     boxShadow: 3,
-                    bgcolor: "#e0e0e0",
+                    bgcolor: "action.hover",
                   }}
                 />
                 <IconButton
@@ -223,7 +236,7 @@ export default function UserProfile() {
 
               <Typography
                 variant="h6"
-                sx={{ mt: 2, fontWeight: 600, color: "#333" }}
+                sx={{ mt: 2, fontWeight: 600, color: "text.primary" }}
               >
                 {fullName || "User Name"}
               </Typography>
@@ -318,6 +331,51 @@ export default function UserProfile() {
                 Save Changes
               </LoadingButton>
             </Stack>
+          </Box>
+        </Paper>
+
+        <Paper
+          sx={{
+            width: "100%",
+            maxWidth: 600,
+            p: { xs: 2.5, sm: 3 },
+            borderRadius: 4,
+            border: "1px solid",
+            borderColor: "divider",
+            boxShadow: mode === "dark"
+              ? "0 10px 28px rgba(0,0,0,0.28)"
+              : "0 8px 24px rgba(26,77,150,0.08)",
+          }}
+        >
+          <Typography variant="h6" fontWeight={700}>Appearance</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: 2.5 }}>
+            Choose how your teacher dashboard looks.
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 2,
+              p: 2,
+              borderRadius: 3,
+              bgcolor: "action.hover",
+              border: "1px solid",
+              borderColor: "divider",
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+              {mode === "dark" ? <DarkModeOutlinedIcon color="primary" /> : <LightModeOutlinedIcon color="primary" />}
+              <Box>
+                <Typography fontWeight={600}>{mode === "dark" ? "Dark mode" : "Light mode"}</Typography>
+                <Typography variant="caption" color="text.secondary">Saved automatically on this device</Typography>
+              </Box>
+            </Box>
+            <Switch
+              checked={mode === "dark"}
+              onChange={(event) => changeMode(event.target.checked ? "dark" : "light")}
+              inputProps={{ "aria-label": "Toggle dark mode" }}
+            />
           </Box>
         </Paper>
       </Box>

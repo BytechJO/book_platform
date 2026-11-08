@@ -143,7 +143,7 @@ export default function QrScanButton({ kind, onScan, title = "Scan QR code" }) {
         onClick={() => setOpen(true)}
         title={title}
         aria-label={title}
-        sx={{ color: "#2d5aa7" }}
+        sx={{ color: "primary.main" }}
       >
         <QrCodeScannerIcon />
       </IconButton>
