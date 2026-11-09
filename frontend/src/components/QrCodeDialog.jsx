@@ -13,7 +13,7 @@ import {
 import DownloadIcon from "@mui/icons-material/Download";
 import PrintIcon from "@mui/icons-material/Print";
 import { generateQrDataUrl } from "../utils/qrCodes";
-import { useDashboardLanguage } from "../contexts/dashboardLanguage";
+import { useOptionalDashboardLanguage } from "../contexts/dashboardLanguage";
 
 const escapeHtml = (value) =>
   String(value || "").replace(/[&<>"']/g, (character) => {
@@ -36,7 +36,9 @@ export default function QrCodeDialog({
   value,
   fileName = "qr-code",
 }) {
-  const { t, language } = useDashboardLanguage();
+  const languageContext = useOptionalDashboardLanguage();
+  const t = languageContext?.t ?? ((text) => text);
+  const language = languageContext?.language ?? "en";
 
   const isArabic = language === "ar";
 

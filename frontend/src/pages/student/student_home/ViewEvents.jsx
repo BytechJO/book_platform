@@ -157,7 +157,7 @@ function DetailRow({ icon, label, value }) {
 export default function ViewEvents() {
   const { language, t } = useDashboardLanguage();
   const location = useLocation();
-  const { events } = useGetStudentEvents();
+  const { events, refetch } = useGetStudentEvents();
 
   const [date, setDate] = useState(
     location.state?.selectedDate ? dayjs(location.state.selectedDate) : dayjs(),
@@ -165,6 +165,35 @@ export default function ViewEvents() {
   const [selectedEventId, setSelectedEventId] = useState(
     location.state?.selectedEventId ?? null,
   );
+  const routedEventId = location.state?.selectedEventId;
+  const routedEventDate = location.state?.selectedDate;
+
+  useEffect(() => {
+    if (!routedEventId) return undefined;
+
+    let active = true;
+
+    const openRoutedEvent = async () => {
+      try {
+        await refetch();
+      } catch (error) {
+        console.error("Could not refresh events:", error);
+      }
+
+      if (active) {
+        if (routedEventDate) setDate(dayjs(routedEventDate));
+        setSelectedEventId(routedEventId);
+      }
+    };
+
+    openRoutedEvent();
+
+    return () => {
+      active = false;
+    };
+    // The location key changes when another notification targets this page.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.key, routedEventDate, routedEventId]);
 
   const selectedEvents = events
     .filter(
@@ -185,7 +214,6 @@ export default function ViewEvents() {
     );
 
     if (!selectedEventIsOnThisDay && selectedEvents.length > 0) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedEventId(selectedEvents[0].id);
     }
   }, [date, events, selectedEventId, selectedEvents]);

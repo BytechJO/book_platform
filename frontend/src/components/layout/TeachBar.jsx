@@ -303,6 +303,11 @@ export default function TeachBar() {
             items={notifications}
             title={t("Notifications")}
             emptyText={t("No notifications")}
+            emptySubtitle={t("New updates will appear here.")}
+            countText={t("{count} notifications", {
+              count: notifications.length,
+            })}
+            role={role}
           />
           {/* User */}
           <IconButton

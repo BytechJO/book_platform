@@ -136,7 +136,7 @@ export default function TopBar() {
             <SettingsIcon size={24} />
           </IconButton>
 
-          <NotificationMenu items={notifications} />
+          <NotificationMenu items={notifications} role="admin" />
 
           <IconButton
             sx={{

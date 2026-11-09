@@ -81,7 +81,7 @@ export default function DashBar() {
           </IconButton>
 
           {/* Notifications */}
-          <NotificationMenu items={notifications} />
+          <NotificationMenu items={notifications} role="admin" />
           {/* User */}
           <IconButton
             sx={{

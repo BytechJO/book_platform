@@ -11,6 +11,8 @@ const arabic = {
   Logout: "تسجيل الخروج",
   Notifications: "الإشعارات",
   "No notifications": "لا توجد إشعارات",
+  "New updates will appear here.": "ستظهر التحديثات الجديدة هنا.",
+  "{count} notifications": "{count} إشعار",
   "Activate a book code": "تفعيل رمز كتاب",
   "Enter your activation code to access your class or content.":
     "أدخل رمز التفعيل للوصول إلى الكتاب أو المحتوى.",

@@ -9,3 +9,7 @@ export function useDashboardLanguage() {
   }
   return context;
 }
+
+export function useOptionalDashboardLanguage() {
+  return useContext(DashboardLanguageContext);
+}

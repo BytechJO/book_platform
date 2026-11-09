@@ -50,6 +50,7 @@ const getStudentNotifications = async (req, res) => {
       `
       SELECT
         a.*,
+        e.date AS event_date,
 
         CASE
           WHEN ar.id IS NOT NULL THEN true
@@ -57,6 +58,9 @@ const getStudentNotifications = async (req, res) => {
         END AS is_read
 
       FROM activities a
+
+      LEFT JOIN events e
+      ON e.id = a.event_id
 
       LEFT JOIN activity_reads ar
       ON ar.activity_id = a.id
